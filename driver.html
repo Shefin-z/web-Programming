@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="ParkFlow driver portal for live parking availability, reservations, secure OTP access, issue reporting, receipts, and manager chat.">
+    <meta name="theme-color" content="#101927">
+    <title>Driver Dashboard — ParkFlow</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css?v=2">
+    <link rel="stylesheet" href="driver.css?v=3">
+  </head>
+
+  <body class="dashboard-page driver-portal">
+    <svg class="svg-sprite" aria-hidden="true">
+      <symbol id="d-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></symbol>
+      <symbol id="d-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></symbol>
+      <symbol id="d-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></symbol>
+      <symbol id="d-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></symbol>
+      <symbol id="d-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5M12 7v5l3 2"></path></symbol>
+      <symbol id="d-alert" viewBox="0 0 24 24"><path d="M10.3 3.8 2.2 18a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4M12 17h.01"></path></symbol>
+      <symbol id="d-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.8 9.8 0 0 1-4-.9L3 21l1.6-4.6A8.5 8.5 0 1 1 21 11.5Z"></path></symbol>
+      <symbol id="d-car" viewBox="0 0 24 24"><path d="m5 17-1 2v2h2v-2h12v2h2v-2l-1-2M3 12l2-6h14l2 6v5H3v-5Z"></path><circle cx="7" cy="14.5" r="1"></circle><circle cx="17" cy="14.5" r="1"></circle></symbol>
+      <symbol id="d-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path></symbol>
+      <symbol id="d-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></symbol>
+      <symbol id="d-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></symbol>
+      <symbol id="d-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></symbol>
+      <symbol id="d-arrow-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"></path></symbol>
+      <symbol id="d-arrow-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></symbol>
+      <symbol id="d-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></symbol>
+      <symbol id="d-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></symbol>
+      <symbol id="d-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="5"></circle><path d="m11.5 11.5 8-8M16 7l2 2M18 5l2 2"></path></symbol>
+      <symbol id="d-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></symbol>
+      <symbol id="d-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></symbol>
+      <symbol id="d-filter" viewBox="0 0 24 24"><path d="M4 5h16M7 12h10M10 19h4"></path></symbol>
+      <symbol id="d-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"></circle><circle cx="18" cy="5" r="2"></circle><path d="M6 17c0-5 12-3 12-10"></path></symbol>
+      <symbol id="d-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.6 2.8 8.7 7 10 4.2-1.3 7-5.4 7-10V6l-7-3Z"></path><path d="m9 12 2 2 4-4"></path></symbol>
+      <symbol id="d-receipt" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"></path><path d="M9 8h6M9 12h6M9 16h3"></path></symbol>
+      <symbol id="d-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4 13 13 0 0 0 2.8.7 2 2 0 0 1 1.7 2Z"></path></symbol>
+      <symbol id="d-attach" viewBox="0 0 24 24"><path d="m21.4 11.6-8.9 8.9a6 6 0 0 1-8.5-8.5l9.6-9.6a4 4 0 0 1 5.7 5.7l-9.6 9.6a2 2 0 0 1-2.8-2.8l8.9-8.9"></path></symbol>
+      <symbol id="d-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7Z"></path><path d="M22 2 11 13"></path></symbol>
+      <symbol id="d-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></symbol>
+      <symbol id="d-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></symbol>
+      <symbol id="d-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></symbol>
+      <symbol id="d-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.5 1A7 7 0 0 0 14.7 6L14.4 3h-4.8l-.3 3A7 7 0 0 0 7.6 7L5.1 6l-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.5-1a7 7 0 0 0 1.7 1l.3 3h4.8l.3-3a7 7 0 0 0 1.7-1l2.5 1 2-3.5-2-1.5a7 7 0 0 0 .1-1Z"></path></symbol>
+      <symbol id="d-log-out" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path></symbol>
+    </svg>
+
+    <a class="skip-link" href="#driver-main">Skip to driver dashboard</a>
+
+    <div class="app-shell">
+      <aside class="dashboard-sidebar" aria-label="Driver navigation">
+        <a class="sidebar-brand" href="driver.html" aria-label="Refresh driver portal"><span class="sidebar-brand__mark">P</span><span class="sidebar-brand__text"><strong>Park<span>Flow</span></strong><small>Driver Portal</small></span></a>
+        <nav class="sidebar-nav">
+          <div class="sidebar-nav__group">
+            <span class="sidebar-nav__label">Parking</span>
+            <ul class="sidebar-nav__list">
+              <li><a class="sidebar-nav__link is-active" href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-grid"></use></svg>Dashboard</a></li>
+              <li><a class="sidebar-nav__link" href="#availability"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-pin"></use></svg>Find parking</a></li>
+              <li><a class="sidebar-nav__link" href="#reservation"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-calendar"></use></svg>Reserve a space</a></li>
+              <li><a class="sidebar-nav__link" href="#active-booking"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-key"></use></svg>Active booking<span class="sidebar-nav__count">1</span></a></li>
+              <li><a class="sidebar-nav__link" href="#history"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-history"></use></svg>Parking history</a></li>
+            </ul>
+          </div>
+          <div class="sidebar-nav__group">
+            <span class="sidebar-nav__label">Support</span>
+            <ul class="sidebar-nav__list">
+              <li><a class="sidebar-nav__link" href="#issues"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-alert"></use></svg>Report an issue</a></li>
+              <li><a class="sidebar-nav__link" href="#messages"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-chat"></use></svg>Manager chat<span class="sidebar-nav__count sidebar-nav__count--danger">1</span></a></li>
+              <li><a class="sidebar-nav__link" href="#vehicles"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-car"></use></svg>My vehicles</a></li>
+            </ul>
+          </div>
+        </nav>
+        <div class="driver-wallet">
+          <span class="driver-wallet__icon">৳</span>
+          <span><small>ParkFlow balance</small><strong>৳1,250</strong></span>
+          <button type="button" aria-label="Add funds"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-plus"></use></svg></button>
+        </div>
+        <div class="sidebar-footer">
+          <a class="sidebar-profile" href="#profile"><span class="sidebar-profile__avatar"><span class="avatar">NM</span><span class="live-dot"></span></span><span class="sidebar-profile__text"><strong class="driver-name">Nafis Mahmud</strong><small>Verified driver</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-more"></use></svg></a>
+        </div>
+      </aside>
+
+      <main class="dashboard-main" id="driver-main">
+        <header class="dashboard-topbar">
+          <div class="topbar-start">
+            <details class="mobile-sidebar">
+              <summary class="topbar-icon" aria-label="Open navigation"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-menu"></use></svg></summary>
+              <span class="mobile-sidebar__backdrop"></span>
+              <div class="mobile-sidebar__panel">
+                <div class="mobile-sidebar__header"><a class="sidebar-brand" href="driver.html" aria-label="Refresh driver portal"><span class="sidebar-brand__mark">P</span><span class="sidebar-brand__text"><strong>Park<span>Flow</span></strong><small>Driver Portal</small></span></a><span class="mobile-sidebar__close"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-close"></use></svg></span></div>
+                <nav class="sidebar-nav" aria-label="Mobile driver navigation">
+                  <div class="sidebar-nav__group"><span class="sidebar-nav__label">Parking</span><ul class="sidebar-nav__list">
+                    <li><a class="sidebar-nav__link is-active" href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-grid"></use></svg>Dashboard</a></li>
+                    <li><a class="sidebar-nav__link" href="#availability"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-pin"></use></svg>Find parking</a></li>
+                    <li><a class="sidebar-nav__link" href="#reservation"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-calendar"></use></svg>Reserve a space</a></li>
+                    <li><a class="sidebar-nav__link" href="#active-booking"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-key"></use></svg>Active booking</a></li>
+                    <li><a class="sidebar-nav__link" href="#history"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-history"></use></svg>Parking history</a></li>
+                    <li><a class="sidebar-nav__link" href="#issues"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-alert"></use></svg>Report an issue</a></li>
+                    <li><a class="sidebar-nav__link" href="#messages"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-chat"></use></svg>Manager chat</a></li>
+                    <li><a class="sidebar-nav__link" href="#vehicles"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-car"></use></svg>My vehicles</a></li>
+                  </ul></div>
+                </nav>
+              </div>
+            </details>
+            <div class="topbar-context"><strong>Driver dashboard</strong><small>Sunday, 26 July 2026</small></div>
+          </div>
+          <form class="topbar-search input-group search-input" role="search"><span class="input-group__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-search"></use></svg></span><label class="sr-only" for="driver-search">Search parking locations</label><input class="input" id="driver-search" type="search" placeholder="Search area, landmark, or parking…"></form>
+          <div class="topbar-actions">
+            <a class="btn btn--primary topbar-reserve" href="#reservation"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-plus"></use></svg>New reservation</a>
+            <details class="topbar-details">
+              <summary class="topbar-icon" aria-label="View notifications"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-bell"></use></svg><span class="topbar-icon__dot"></span></summary>
+              <section class="topbar-popover" aria-label="Driver notifications">
+                <header class="topbar-popover__header"><h2>Notifications</h2><button type="button">Mark all read</button></header>
+                <div class="notification-list">
+                  <a class="notification-item is-unread" href="#active-booking"><span class="notification-item__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-key"></use></svg></span><span class="notification-item__body"><strong>Your space is ready</strong><p>Use OTP 8426 at Gulshan City Center.</p><time>2 min ago</time></span><span class="notification-item__unread"></span></a>
+                  <a class="notification-item is-unread" href="#messages"><span class="notification-item__icon notification-item__icon--success"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-chat"></use></svg></span><span class="notification-item__body"><strong>Message from Mahmudul</strong><p>Gate 1 is on the north entrance.</p><time>5 min ago</time></span><span class="notification-item__unread"></span></a>
+                  <a class="notification-item" href="#history"><span class="notification-item__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-receipt"></use></svg></span><span class="notification-item__body"><strong>Receipt available</strong><p>Your Police Plaza receipt is ready.</p><time>Yesterday</time></span></a>
+                </div>
+              </section>
+            </details>
+            <details class="topbar-details">
+              <summary class="topbar-profile"><span class="avatar avatar--sm">NM</span><span class="topbar-profile__text"><strong class="driver-name">Nafis Mahmud</strong><small>Verified driver</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-arrow-down"></use></svg></summary>
+              <nav class="topbar-popover profile-popover" aria-label="Profile options"><a href="#profile"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-user"></use></svg>My profile</a><a href="#vehicles"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-car"></use></svg>My vehicles</a><a href="#profile"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-settings"></use></svg>Settings</a><hr><a href="index.html"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-log-out"></use></svg>Sign out</a></nav>
+            </details>
+          </div>
+        </header>
+
+        <div class="dashboard-content app-views">
+          <section class="driver-section is-view-active" id="overview" aria-labelledby="driver-overview-title">
+            <header class="page-header">
+              <div class="page-header__copy"><span class="page-header__eyebrow"><span class="live-dot"></span>1,284 spaces available now</span><h1 id="driver-overview-title">Good evening, Nafis</h1><p>Your reserved space is ready. You can check in from 10:15 AM.</p></div>
+              <div class="page-header__actions"><a class="btn btn--secondary" href="#availability"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-search"></use></svg>Find nearby</a><a class="btn btn--primary" href="#reservation"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-calendar"></use></svg>Reserve parking</a></div>
+            </header>
+
+            <article class="active-booking-card" id="active-booking">
+              <div class="active-booking-card__glow"></div>
+              <header class="active-booking-card__header"><span class="active-booking-card__status"><span class="live-dot"></span>Upcoming reservation</span><span>Booking #PF-84291</span></header>
+              <div class="active-booking-card__body">
+                <div class="booking-location">
+                  <span class="booking-location__mark">P</span>
+                  <div><h2>Gulshan City Center</h2><p><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-pin"></use></svg>Gulshan Avenue, Circle 1 · Gate 1</p><div class="booking-location__features"><span>Covered</span><span>CCTV</span><span>Ground floor</span></div></div>
+                </div>
+                <dl class="booking-details"><div><dt>Date</dt><dd>Sun, 26 July</dd></div><div><dt>Time</dt><dd>10:30 AM–12:30 PM</dd></div><div><dt>Space</dt><dd>A-18</dd></div><div><dt>Vehicle</dt><dd>DHA-GA-18-7264</dd></div></dl>
+                <div class="booking-otp">
+                  <span class="booking-otp__label"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-key"></use></svg>Check-in OTP</span>
+                  <strong><span>8</span><span>4</span><span>2</span><span>6</span></strong>
+                  <small>Show this code to the parking manager or enter it at Gate 1.</small>
+                </div>
+              </div>
+              <footer class="active-booking-card__footer"><div class="arrival-countdown"><span class="arrival-countdown__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-clock"></use></svg></span><span><small>Check-in opens in</small><strong>18 minutes</strong></span></div><div><a class="btn btn--ghost" href="#messages">Message manager</a><a class="btn btn--secondary" href="#availability"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-route"></use></svg>Directions</a><button class="btn btn--primary" type="button">Open booking</button></div></footer>
+            </article>
+
+            <div class="dashboard-grid dashboard-grid--wide-aside">
+              <article class="dashboard-panel">
+                <header class="panel-header"><div class="panel-header__copy"><h2>Parking near you</h2><p>Live availability around Gulshan</p></div><a class="btn btn--ghost btn--sm" href="#availability">View map</a></header>
+                <div class="nearby-list">
+                  <article class="nearby-item"><span class="nearby-item__visual nearby-item__visual--blue">P</span><div class="nearby-item__body"><div><h3>Navana Tower Garage</h3><span class="badge badge--warning badge--dot">6 spaces</span></div><p><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-pin"></use></svg>0.6 km · 5 min drive</p><div><span>Covered</span><span>24/7</span><span>EV charging</span></div></div><div class="nearby-item__price"><strong>৳100</strong><span>/hour</span><a class="btn btn--outline btn--sm" href="#reservation">Reserve</a></div></article>
+                  <article class="nearby-item"><span class="nearby-item__visual nearby-item__visual--green">P</span><div class="nearby-item__body"><div><h3>Lakeview Smart Parking</h3><span class="badge badge--free badge--dot">24 spaces</span></div><p><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-pin"></use></svg>0.9 km · 7 min drive</p><div><span>Open air</span><span>Security</span><span>Well lit</span></div></div><div class="nearby-item__price"><strong>৳70</strong><span>/hour</span><a class="btn btn--outline btn--sm" href="#reservation">Reserve</a></div></article>
+                  <article class="nearby-item"><span class="nearby-item__visual nearby-item__visual--violet">P</span><div class="nearby-item__body"><div><h3>Police Plaza Parking</h3><span class="badge badge--free badge--dot">18 spaces</span></div><p><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-pin"></use></svg>1.2 km · 9 min drive</p><div><span>Covered</span><span>CCTV</span><span>Lift</span></div></div><div class="nearby-item__price"><strong>৳60</strong><span>/hour</span><a class="btn btn--outline btn--sm" href="#reservation">Reserve</a></div></article>
+                </div>
+              </article>
+              <aside class="dashboard-panel">
+                <header class="panel-header"><div class="panel-header__copy"><h2>Quick actions</h2><p>Common parking tasks</p></div></header>
+                <div class="panel-body quick-actions">
+                  <a class="quick-action" href="#reservation"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-calendar"></use></svg></span><span class="quick-action__label"><strong>Reserve a space</strong><small>Book nearby parking</small></span></a>
+                  <a class="quick-action" href="#history"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-receipt"></use></svg></span><span class="quick-action__label"><strong>Get a receipt</strong><small>Download a parking PDF</small></span></a>
+                  <a class="quick-action" href="#issues"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-alert"></use></svg></span><span class="quick-action__label"><strong>Report an issue</strong><small>Tell us what happened</small></span></a>
+                  <a class="quick-action" href="#messages"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-chat"></use></svg></span><span class="quick-action__label"><strong>Chat with manager</strong><small>Get location support</small></span></a>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="driver-section" id="profile" aria-labelledby="profile-title">
+            <header class="driver-section-heading">
+              <div><span>Driver account</span><h2 id="profile-title">My profile</h2><p>Keep your contact details and parking preferences up to date.</p></div>
+              <a class="btn btn--secondary" href="#overview">Back to dashboard</a>
+            </header>
+
+            <div class="profile-layout">
+              <form class="dashboard-panel profile-details-form" id="driver-profile-form">
+                <header class="profile-identity">
+                  <span class="profile-identity__avatar">NM<span class="live-dot"></span></span>
+                  <span><small>Verified driver</small><h3 class="driver-name">Nafis Mahmud</h3><p>Member since January 2025</p></span>
+                  <span class="badge badge--success badge--dot">Account verified</span>
+                </header>
+                <div class="panel-body form">
+                  <div class="form-row">
+                    <div class="form-field"><label class="form-label" for="driver-profile-name">Full name</label><input class="input" id="driver-profile-name" name="name" type="text" value="Nafis Mahmud" required></div>
+                    <div class="form-field"><label class="form-label" for="driver-profile-phone">Mobile number</label><input class="input" id="driver-profile-phone" name="phone" type="tel" value="+880 1712-345678" required></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field"><label class="form-label" for="driver-profile-email">Email address</label><input class="input" id="driver-profile-email" name="email" type="email" value="nafis.mahmud@email.com" required></div>
+                    <div class="form-field"><label class="form-label" for="driver-profile-city">Home area</label><input class="input" id="driver-profile-city" name="city" type="text" value="Gulshan, Dhaka"></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field"><label class="form-label" for="driver-profile-contact">Emergency contact</label><input class="input" id="driver-profile-contact" name="emergencyContact" type="tel" value="+880 1810-123456"></div>
+                    <div class="form-field"><label class="form-label" for="driver-profile-language">Preferred language</label><select class="select" id="driver-profile-language" name="language"><option>English</option><option>বাংলা</option></select></div>
+                  </div>
+                  <label class="check-control"><input id="driver-profile-updates" name="updates" type="checkbox" checked>Receive booking updates and parking reminders by SMS.</label>
+                </div>
+                <footer class="profile-details-form__footer"><button class="btn btn--secondary" type="reset">Reset changes</button><button class="btn btn--primary" type="submit"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-check"></use></svg>Save profile</button></footer>
+              </form>
+
+              <aside class="profile-summary">
+                <article class="dashboard-panel profile-summary__card">
+                  <header><span class="profile-summary__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-shield"></use></svg></span><span><small>Account status</small><strong>Verified driver</strong></span></header>
+                  <dl><div><dt>Phone number</dt><dd><span class="badge badge--success">Verified</span></dd></div><div><dt>Email address</dt><dd><span class="badge badge--success">Verified</span></dd></div><div><dt>Primary vehicle</dt><dd>Toyota Premio</dd></div></dl>
+                </article>
+                <article class="dashboard-panel profile-summary__card">
+                  <header><span class="profile-summary__icon profile-summary__icon--violet"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-history"></use></svg></span><span><small>Parking activity</small><strong>14 completed sessions</strong></span></header>
+                  <div class="profile-stats"><span><small>Total parking time</small><strong>31h 45m</strong></span><span><small>Saved this month</small><strong>৳240</strong></span></div>
+                  <a class="btn btn--outline btn--sm" href="#history">View parking history</a>
+                </article>
+                <article class="profile-help"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-phone"></use></svg><span><strong>Need help with your account?</strong><small>Our support team is available 24/7.</small></span><a href="#messages">Chat now</a></article>
+              </aside>
+            </div>
+          </section>
+
+          <section class="driver-section" id="availability" aria-labelledby="availability-title">
+            <header class="driver-section-heading"><div><span>Live availability</span><h2 id="availability-title">Find parking near you</h2><p>Compare current capacity, walking distance, and hourly rates.</p></div><span class="availability-sync"><span class="live-dot"></span>Updated 28 seconds ago</span></header>
+            <article class="dashboard-panel driver-map-browser">
+              <form class="driver-map-search">
+                <div class="input-group search-input"><span class="input-group__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-search"></use></svg></span><label class="sr-only" for="availability-search">Search location</label><input class="input" id="availability-search" type="search" value="Gulshan, Dhaka"></div>
+                <label><span class="sr-only">Parking date</span><input class="input" type="date" value="2026-07-26"></label>
+                <label><span class="sr-only">Arrival time</span><select class="select"><option>Now</option><option>11:00 AM</option><option>11:30 AM</option></select></label>
+                <button class="btn btn--dark" type="submit">Search</button>
+              </form>
+              <div class="driver-map-layout">
+                <figure class="driver-live-map">
+                  <figcaption class="sr-only">Live parking availability map around Gulshan</figcaption>
+                  <span class="driver-live-map__road driver-live-map__road--a"></span><span class="driver-live-map__road driver-live-map__road--b"></span><span class="driver-live-map__road driver-live-map__road--c"></span><span class="driver-live-map__lake"></span>
+                  <button class="driver-map-pin driver-map-pin--a" type="button"><strong>৳80</strong><small>18 free</small></button>
+                  <button class="driver-map-pin driver-map-pin--b" type="button"><strong>৳100</strong><small>6 free</small></button>
+                  <button class="driver-map-pin driver-map-pin--c" type="button"><strong>৳70</strong><small>24 free</small></button>
+                  <button class="driver-map-pin driver-map-pin--d" type="button"><strong>৳60</strong><small>18 free</small></button>
+                  <span class="driver-map-user" aria-label="Your current location"><i></i></span>
+                  <span class="driver-map-area driver-map-area--gulshan">Gulshan</span><span class="driver-map-area driver-map-area--banani">Banani</span>
+                  <div class="driver-map-controls"><button type="button" aria-label="Zoom in">+</button><button type="button" aria-label="Zoom out">−</button></div>
+                </figure>
+                <aside class="driver-map-results">
+                  <header><div><strong>32 locations</strong><span>near Gulshan</span></div><select aria-label="Sort results"><option>Recommended</option><option>Nearest</option><option>Lowest price</option></select></header>
+                  <article class="map-result is-selected"><span class="map-result__mark">P</span><div><div><h3>City Center Parking</h3><span>★ 4.9</span></div><p>0.3 km · Covered · CCTV</p><span class="badge badge--free badge--dot">18 available</span></div><div><strong>৳80</strong><small>/hr</small><a href="#reservation">Select</a></div></article>
+                  <article class="map-result"><span class="map-result__mark map-result__mark--violet">P</span><div><div><h3>Navana Tower Garage</h3><span>★ 4.8</span></div><p>0.6 km · Underground · 24/7</p><span class="badge badge--warning badge--dot">6 available</span></div><div><strong>৳100</strong><small>/hr</small><a href="#reservation">Select</a></div></article>
+                  <article class="map-result"><span class="map-result__mark map-result__mark--green">P</span><div><div><h3>Lakeview Smart Parking</h3><span>★ 4.7</span></div><p>0.9 km · Open air · Security</p><span class="badge badge--free badge--dot">24 available</span></div><div><strong>৳70</strong><small>/hr</small><a href="#reservation">Select</a></div></article>
+                  <article class="map-result"><span class="map-result__mark map-result__mark--amber">P</span><div><div><h3>Police Plaza Parking</h3><span>★ 4.6</span></div><p>1.2 km · Covered · Lift</p><span class="badge badge--free badge--dot">18 available</span></div><div><strong>৳60</strong><small>/hr</small><a href="#reservation">Select</a></div></article>
+                </aside>
+              </div>
+            </article>
+          </section>
+
+          <section class="driver-section" id="reservation" aria-labelledby="reservation-builder-title">
+            <header class="driver-section-heading"><div><span>New reservation</span><h2 id="reservation-builder-title">Reserve your parking space</h2><p>Choose a location, parking slot, arrival time, duration, and vehicle.</p></div><span class="badge badge--success badge--dot">Free cancellation until 10:00 AM</span></header>
+            <div class="reservation-builder">
+              <form class="reservation-form">
+                <fieldset class="reservation-step">
+                  <legend><span>1</span><strong>Location &amp; date</strong></legend>
+                  <div class="reservation-step__body">
+                    <label class="form-field"><span class="form-label">Parking location</span><span class="input-group"><span class="input-group__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-pin"></use></svg></span><select class="select"><option>Gulshan City Center — ৳80/hr</option><option>Navana Tower Garage — ৳100/hr</option><option>Lakeview Smart Parking — ৳70/hr</option></select></span></label>
+                    <div class="form-row"><label class="form-field"><span class="form-label">Parking date</span><input class="input" type="date" value="2026-07-26"></label><label class="form-field"><span class="form-label">Arrival time</span><select class="select"><option>10:30 AM</option><option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option></select></label></div>
+                  </div>
+                </fieldset>
+                <fieldset class="reservation-step">
+                  <legend><span>2</span><strong>Choose your parking slot</strong></legend>
+                  <div class="reservation-step__body">
+                    <div class="slot-picker__header"><div><strong>Zone A · Ground floor</strong><small>Pick any free slot for your vehicle.</small></div><div class="slot-picker__legend" aria-label="Parking slot status legend"><span><i class="slot-legend__free"></i>Free</span><span><i class="slot-legend__occupied"></i>Occupied</span><span><i class="slot-legend__reserved"></i>Reserved</span><span><i class="slot-legend__blocked"></i>Blocked</span></div></div>
+                    <div class="slot-grid" role="group" aria-label="Available parking slots">
+                      <button class="slot-button slot-button--free" type="button" data-slot="A-01" data-status="free" aria-pressed="false"><strong>A-01</strong><small>Free</small></button>
+                      <button class="slot-button slot-button--occupied" type="button" data-slot="A-02" data-status="occupied" aria-label="A-02 occupied" disabled><strong>A-02</strong><small>Occupied</small></button>
+                      <button class="slot-button slot-button--free" type="button" data-slot="A-03" data-status="free" aria-pressed="false"><strong>A-03</strong><small>Free</small></button>
+                      <button class="slot-button slot-button--reserved" type="button" data-slot="A-04" data-status="reserved" aria-label="A-04 reserved" disabled><strong>A-04</strong><small>Reserved</small></button>
+                      <button class="slot-button slot-button--free" type="button" data-slot="A-05" data-status="free" aria-pressed="false"><strong>A-05</strong><small>Free</small></button>
+                      <button class="slot-button slot-button--blocked" type="button" data-slot="A-06" data-status="blocked" aria-label="A-06 blocked" disabled><strong>A-06</strong><small>Blocked</small></button>
+                      <button class="slot-button slot-button--occupied" type="button" data-slot="A-07" data-status="occupied" aria-label="A-07 occupied" disabled><strong>A-07</strong><small>Occupied</small></button>
+                      <button class="slot-button slot-button--free" type="button" data-slot="A-08" data-status="free" aria-pressed="false"><strong>A-08</strong><small>Free</small></button>
+                      <button class="slot-button slot-button--free" type="button" data-slot="A-09" data-status="free" aria-pressed="false"><strong>A-09</strong><small>Free</small></button>
+                      <button class="slot-button slot-button--reserved" type="button" data-slot="A-10" data-status="reserved" aria-label="A-10 reserved" disabled><strong>A-10</strong><small>Reserved</small></button>
+                      <button class="slot-button slot-button--free" type="button" data-slot="A-11" data-status="free" aria-pressed="false"><strong>A-11</strong><small>Free</small></button>
+                      <button class="slot-button slot-button--occupied" type="button" data-slot="A-12" data-status="occupied" aria-label="A-12 occupied" disabled><strong>A-12</strong><small>Occupied</small></button>
+                    </div>
+                    <p class="slot-picker__hint"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-info"></use></svg>Your selected slot will be held for 15 minutes after the reservation starts.</p>
+                  </div>
+                </fieldset>
+                <fieldset class="reservation-step">
+                  <legend><span>3</span><strong>Select duration</strong></legend>
+                  <div class="reservation-step__body">
+                    <div class="duration-options">
+                      <label><input type="radio" name="duration"><span><strong>1 hour</strong><small>৳80</small></span></label>
+                      <label><input type="radio" name="duration" checked><span><strong>2 hours</strong><small>৳160</small></span></label>
+                      <label><input type="radio" name="duration"><span><strong>3 hours</strong><small>৳240</small></span></label>
+                      <label><input type="radio" name="duration"><span><strong>4 hours</strong><small>৳320</small></span></label>
+                    </div>
+                    <div class="reservation-time-summary"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-clock"></use></svg></span><div><small>Your parking window</small><strong>10:30 AM → 12:30 PM</strong></div><span class="badge badge--free badge--dot">18 spaces</span></div>
+                  </div>
+                </fieldset>
+                <fieldset class="reservation-step">
+                  <legend><span>4</span><strong>Vehicle &amp; preferences</strong></legend>
+                  <div class="reservation-step__body">
+                    <div class="vehicle-options">
+                      <label><input type="radio" name="vehicle" checked><span class="vehicle-option"><i><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-car"></use></svg></i><span><strong>Toyota Premio</strong><small>DHA-METRO-GA-18-7264</small></span><em><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-check"></use></svg></em></span></label>
+                      <button type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-plus"></use></svg>Add another vehicle</button>
+                    </div>
+                    <div class="preference-row"><label class="check-control"><input type="checkbox">EV charging needed</label><label class="check-control"><input type="checkbox">Accessible space</label><label class="check-control"><input type="checkbox" checked>Covered preferred</label></div>
+                  </div>
+                </fieldset>
+              </form>
+              <aside class="booking-summary">
+                <header><span class="booking-summary__mark">P</span><div><small>YOUR RESERVATION</small><h3>Gulshan City Center</h3><p>Select a free parking slot below.</p></div></header>
+                <div class="booking-summary__timeline"><span><i></i><div><small>ARRIVE</small><strong>10:30 AM</strong><p>Sunday, 26 July</p></div></span><em>2 hours</em><span><i></i><div><small>LEAVE</small><strong>12:30 PM</strong><p>Sunday, 26 July</p></div></span></div>
+                <dl class="booking-summary__cost"><div><dt>Parking · 2 hours</dt><dd>৳160</dd></div><div><dt>Service fee</dt><dd>৳8</dd></div><div><dt>Tax</dt><dd>Included</dd></div><div><dt>Total</dt><dd>৳168</dd></div></dl>
+                <div class="booking-summary__payment"><span><small>Payment method</small><strong>Visa ending 4821</strong></span><button type="button">Change</button></div>
+                <button class="btn btn--primary btn--block btn--lg" id="create-reservation" type="button">Reserve for ৳168</button>
+                <p><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-shield"></use></svg>Secure payment · Free cancellation before 10:00 AM</p>
+              </aside>
+            </div>
+          </section>
+
+          <section class="driver-section" id="history" aria-labelledby="history-title">
+            <header class="driver-section-heading"><div><span>Past activity</span><h2 id="history-title">Parking history</h2><p>Review completed reservations and download PDF receipts.</p></div><div class="driver-section-heading__actions"><select class="select select--sm" aria-label="Filter parking history"><option>Last 30 days</option><option>Last 3 months</option><option>This year</option></select><button class="btn btn--secondary" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-download"></use></svg>Export all</button></div></header>
+            <article class="dashboard-panel">
+              <div class="history-summary"><div><span class="history-summary__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-history"></use></svg></span><span><small>Parking sessions</small><strong>14</strong></span></div><div><span class="history-summary__icon history-summary__icon--green"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-clock"></use></svg></span><span><small>Total parking time</small><strong>31h 45m</strong></span></div><div><span class="history-summary__icon history-summary__icon--violet">৳</span><span><small>Total spent</small><strong>৳2,580</strong></span></div></div>
+              <div class="dashboard-table-wrap">
+                <table class="dashboard-table">
+                  <caption class="sr-only">Completed parking reservations</caption>
+                  <thead><tr><th scope="col">Reservation</th><th scope="col">Location</th><th scope="col">Date &amp; time</th><th scope="col">Duration</th><th scope="col">Vehicle</th><th scope="col">Amount</th><th scope="col">Receipt</th></tr></thead>
+                  <tbody>
+                    <tr><td><strong>#PF-83942</strong><br><span class="badge badge--completed badge--dot">Completed</span></td><td><div class="history-location"><span>P</span><div><strong>Police Plaza Parking</strong><small>Space C-12</small></div></div></td><td><strong>25 Jul 2026</strong><br><small>4:15–6:15 PM</small></td><td>2h 00m</td><td>DHA-GA-18-7264</td><td><strong>৳120</strong></td><td><a class="btn btn--outline btn--sm" href="#receipt-preview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-download"></use></svg>Receipt PDF</a></td></tr>
+                    <tr><td><strong>#PF-83418</strong><br><span class="badge badge--completed badge--dot">Completed</span></td><td><div class="history-location"><span>P</span><div><strong>Navana Tower Garage</strong><small>Space B-07</small></div></div></td><td><strong>22 Jul 2026</strong><br><small>9:00–11:30 AM</small></td><td>2h 30m</td><td>DHA-GA-18-7264</td><td><strong>৳250</strong></td><td><a class="btn btn--outline btn--sm" href="#receipt-preview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-download"></use></svg>Receipt PDF</a></td></tr>
+                    <tr><td><strong>#PF-82976</strong><br><span class="badge badge--completed badge--dot">Completed</span></td><td><div class="history-location"><span>P</span><div><strong>Lakeview Smart Parking</strong><small>Space A-04</small></div></div></td><td><strong>18 Jul 2026</strong><br><small>6:30–9:30 PM</small></td><td>3h 00m</td><td>DHA-GA-18-7264</td><td><strong>৳210</strong></td><td><a class="btn btn--outline btn--sm" href="#receipt-preview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-download"></use></svg>Receipt PDF</a></td></tr>
+                    <tr><td><strong>#PF-82105</strong><br><span class="badge badge--neutral badge--dot">Cancelled</span></td><td><div class="history-location"><span>P</span><div><strong>City Center Parking</strong><small>No space assigned</small></div></div></td><td><strong>12 Jul 2026</strong><br><small>2:00–4:00 PM</small></td><td>—</td><td>DHA-GA-18-7264</td><td><strong>৳0</strong></td><td><span class="text-muted">Not available</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <footer class="table-pagination"><span>Showing 1–4 of 14 sessions</span><nav class="pagination" aria-label="Parking history pages"><a class="pagination__item" href="#history" aria-label="Previous page">‹</a><a class="pagination__item" href="#history" aria-current="page">1</a><a class="pagination__item" href="#history">2</a><a class="pagination__item" href="#history">3</a><a class="pagination__item" href="#history" aria-label="Next page">›</a></nav></footer>
+            </article>
+          </section>
+
+          <section class="driver-section" id="issues" aria-labelledby="issues-title">
+            <header class="driver-section-heading"><div><span>Issue &amp; violation reporting</span><h2 id="issues-title">Report a parking issue</h2><p>Send details and evidence directly to the location manager.</p></div><span class="badge badge--info badge--dot">Average response: 8 minutes</span></header>
+            <div class="dashboard-grid dashboard-grid--wide-aside">
+              <form class="dashboard-panel issue-form">
+                <header class="panel-header"><div class="panel-header__copy"><h3>New issue report</h3><p>Fields marked required help us respond faster.</p></div><span class="issue-form__shield"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-shield"></use></svg></span></header>
+                <div class="panel-body form">
+                  <div class="form-row"><div class="form-field"><label class="form-label" for="issue-reservation">Related reservation</label><select class="select" id="issue-reservation"><option>#PF-84291 · Gulshan City Center</option><option>#PF-83942 · Police Plaza</option><option>Not related to a reservation</option></select></div><div class="form-field"><label class="form-label" for="issue-category">Issue category</label><select class="select" id="issue-category" required><option value="">Select a category</option><option>Assigned space occupied</option><option>Access gate or OTP problem</option><option>Unsafe or blocked access</option><option>Payment or receipt issue</option><option>Vehicle damage concern</option><option>Other</option></select></div></div>
+                  <div class="form-field"><label class="form-label" for="issue-location">Exact location or space</label><input class="input" id="issue-location" type="text" placeholder="e.g. Zone A, space A-18 or Gate 1"></div>
+                  <div class="form-field"><label class="form-label" for="issue-description">What happened?</label><textarea class="textarea issue-description" id="issue-description" placeholder="Describe the issue, when it happened, and anything the manager should know…" required></textarea><span class="helper-text">Please avoid including sensitive payment information.</span></div>
+                  <div class="form-field"><span class="form-label">Photo or supporting evidence <span class="form-label__optional">Optional</span></span><label class="file-dropzone issue-upload"><input class="sr-only" type="file" accept="image/*"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-plus"></use></svg></span><strong>Upload a photo</strong><small>PNG or JPG up to 5 MB</small></label></div>
+                  <label class="check-control"><input type="checkbox" checked>Send me status updates by notification and email</label>
+                </div>
+                <footer class="panel-footer"><p>Reports are shared with the assigned parking manager.</p><button class="btn btn--primary" type="submit"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-send"></use></svg>Submit issue report</button></footer>
+              </form>
+              <aside class="dashboard-panel">
+                <header class="panel-header"><div class="panel-header__copy"><h3>Your recent reports</h3><p>Track investigation progress</p></div></header>
+                <div class="issue-tracker">
+                  <article class="issue-ticket"><header><span><strong>#IS-2048</strong><small>24 Jul · Police Plaza</small></span><span class="badge badge--success badge--dot">Resolved</span></header><h4>Payment receipt missing</h4><p>Your corrected receipt was emailed and added to parking history.</p><footer><span>Resolved in 18 minutes</span><button type="button">View details</button></footer></article>
+                  <article class="issue-ticket"><header><span><strong>#IS-1972</strong><small>18 Jul · Lakeview</small></span><span class="badge badge--warning badge--dot">Reviewing</span></header><h4>Entrance signage unclear</h4><p>The location manager is reviewing your photo and description.</p><footer><span>Updated 2 days ago</span><button type="button">View details</button></footer></article>
+                </div>
+                <footer class="panel-footer"><a class="btn btn--ghost btn--block" href="#issues">View all issue reports</a></footer>
+              </aside>
+            </div>
+          </section>
+
+          <section class="driver-section" id="vehicles" aria-labelledby="vehicles-title">
+            <header class="driver-section-heading">
+              <div><span>Vehicle management</span><h2 id="vehicles-title">My vehicles</h2><p>Manage the vehicles available when making a reservation.</p></div>
+              <a class="btn btn--primary" href="#add-driver-vehicle"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-plus"></use></svg>Add vehicle</a>
+            </header>
+            <div class="driver-vehicle-grid">
+              <article class="driver-vehicle-card driver-vehicle-card--primary">
+                <header><span class="driver-vehicle-card__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-car"></use></svg></span><span class="badge badge--active badge--dot">Primary</span></header>
+                <div><h3>Toyota Premio</h3><p>2021 · Pearl White · Sedan</p></div>
+                <strong class="driver-vehicle-card__plate">DHA-METRO-GA-18-7264</strong>
+                <dl><div><dt>Reservations</dt><dd>14</dd></div><div><dt>Parking time</dt><dd>31h 45m</dd></div><div><dt>Account status</dt><dd class="text-success">Verified</dd></div></dl>
+                <footer><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-shield"></use></svg>Documents verified 12 Jan 2026</span><button class="btn btn--secondary btn--sm" type="button">Edit vehicle</button></footer>
+              </article>
+              <article class="driver-vehicle-card">
+                <header><span class="driver-vehicle-card__icon driver-vehicle-card__icon--violet"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-car"></use></svg></span><button class="icon-btn" type="button" aria-label="Vehicle options"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-more"></use></svg></button></header>
+                <div><h3>Honda Vezel</h3><p>2020 · Midnight Blue · SUV</p></div>
+                <strong class="driver-vehicle-card__plate">DHA-METRO-GHA-24-1189</strong>
+                <dl><div><dt>Reservations</dt><dd>4</dd></div><div><dt>Parking time</dt><dd>8h 30m</dd></div><div><dt>Account status</dt><dd class="text-success">Verified</dd></div></dl>
+                <footer><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-shield"></use></svg>Documents verified 04 Mar 2026</span><button class="btn btn--secondary btn--sm" type="button">Set as primary</button></footer>
+              </article>
+              <a class="driver-vehicle-add" href="#add-driver-vehicle">
+                <span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-plus"></use></svg></span>
+                <strong>Add another vehicle</strong>
+                <small>Register a car, SUV, motorcycle, or electric vehicle.</small>
+              </a>
+            </div>
+          </section>
+
+          <section class="driver-section" id="messages" aria-labelledby="driver-messages-title">
+            <header class="driver-section-heading"><div><span>Parking support</span><h2 id="driver-messages-title">Manager chat</h2><p>Talk directly with managers for active and upcoming reservations.</p></div><span class="badge badge--active badge--dot">Manager online</span></header>
+            <article class="dashboard-panel message-layout">
+              <aside class="conversation-sidebar">
+                <header class="conversation-sidebar__header"><h3>Conversations</h3><div class="input-group search-input"><span class="input-group__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-search"></use></svg></span><label class="sr-only" for="driver-conversation-search">Search conversations</label><input class="input input--sm" id="driver-conversation-search" type="search" placeholder="Search locations…"></div></header>
+                <ul class="conversation-list">
+                  <li><a class="conversation-item is-active" href="#messages"><span class="conversation-item__avatar"><span class="avatar">MH</span><span class="live-dot"></span></span><span class="conversation-item__body"><span class="conversation-item__name"><strong>Mahmudul · City Center</strong><time>10:39</time></span><p>Gate 1 is on the north entrance…</p></span><span class="conversation-item__unread">1</span></a></li>
+                  <li><a class="conversation-item" href="#messages"><span class="conversation-item__avatar"><span class="avatar">AK</span></span><span class="conversation-item__body"><span class="conversation-item__name"><strong>Arif · Police Plaza</strong><time>25 Jul</time></span><p>Your receipt has been corrected.</p></span></a></li>
+                  <li><a class="conversation-item" href="#messages"><span class="conversation-item__avatar"><span class="avatar">NR</span></span><span class="conversation-item__body"><span class="conversation-item__name"><strong>Nazmul · Lakeview</strong><time>18 Jul</time></span><p>Thanks for reporting the sign issue.</p></span></a></li>
+                </ul>
+              </aside>
+              <div class="chat-window">
+                <header class="chat-window__header"><div class="chat-person"><span class="avatar">MH</span><span class="chat-person__text"><strong>Mahmudul Hasan</strong><small>Online · Gulshan City Center</small></span></div><div class="chat-window__actions"><a class="icon-btn" href="tel:+8801700000000" aria-label="Call manager"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-phone"></use></svg></a><button class="icon-btn" type="button" aria-label="Conversation options"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-more"></use></svg></button></div></header>
+                <div class="chat-messages">
+                  <span class="chat-date">Today, 26 July</span>
+                  <div class="chat-message chat-message--outgoing"><p class="chat-message__bubble">Hi, I have a reservation at Gulshan City Center but I'm not sure which entrance to use.</p><time>10:34 AM · Read</time></div>
+                  <div class="chat-message"><p class="chat-message__bubble">Hello Nafis! Please use Gate 1 on the north side of the building. Your assigned space is A-18.</p><time>10:35 AM</time></div>
+                  <div class="chat-message chat-message--outgoing"><p class="chat-message__bubble">Got it. I'm at Gate 1 now. Is A-18 on the ground floor?</p><time>10:38 AM · Read</time></div>
+                  <div class="chat-message"><p class="chat-message__bubble">Yes, ground floor. Enter your 4-digit OTP at the kiosk and follow the blue Zone A signs. I can verify it here if needed.</p><time>10:39 AM</time></div>
+                </div>
+                <form class="chat-composer"><button class="icon-btn" type="button" aria-label="Attach a file"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-attach"></use></svg></button><label class="sr-only" for="driver-message">Message Mahmudul</label><textarea class="textarea" id="driver-message" placeholder="Type a message…"></textarea><button class="btn btn--primary" type="submit" aria-label="Send message"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-send"></use></svg></button></form>
+              </div>
+            </article>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <a class="dashboard-fab" href="#messages"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-chat"></use></svg><span>Chat with manager</span><span class="dashboard-fab__dot">1</span></a>
+
+    <section class="modal" id="reservation-confirmed" role="dialog" aria-modal="true" aria-labelledby="reservation-confirmed-title">
+      <div class="modal__dialog reservation-success-dialog">
+        <a class="modal__close reservation-success-dialog__close" href="#reservation" aria-label="Close confirmation"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-close"></use></svg></a>
+        <div class="reservation-success">
+          <span class="reservation-success__icon"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-check"></use></svg></span>
+          <span class="badge badge--success badge--dot">Reservation confirmed</span>
+          <h2 id="reservation-confirmed-title">Your space is secured!</h2>
+          <p>We reserved parking at Gulshan City Center for Sunday, 26 July.</p>
+          <div class="reservation-success__ticket"><header><span><small>BOOKING</small><strong>#PF-84312</strong></span><span><small>SPACE</small><strong>A-22</strong></span></header><div><span><small>ARRIVAL</small><strong>10:30 AM</strong></span><span><small>DURATION</small><strong>2 hours</strong></span><span><small>TOTAL</small><strong>৳168</strong></span></div><footer><span>Your check-in OTP</span><strong>9 1 7 4</strong></footer></div>
+          <div class="reservation-success__actions"><a class="btn btn--secondary" href="#overview">Back to dashboard</a><button class="btn btn--primary" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-route"></use></svg>Get directions</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="modal" id="receipt-preview" role="dialog" aria-modal="true" aria-labelledby="receipt-title">
+      <div class="modal__dialog receipt-dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="receipt-title">Parking receipt</h2><p>Reservation #PF-83942</p></div><a class="modal__close" href="#history" aria-label="Close receipt"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-close"></use></svg></a></header>
+        <div class="modal__body">
+          <article class="receipt-sheet">
+            <header><span class="receipt-sheet__mark">P</span><span><strong>ParkFlow</strong><small>Payment receipt</small></span><span><small>RECEIPT NO.</small><strong>RC-83942-0725</strong></span></header>
+            <div class="receipt-sheet__status"><span><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-check"></use></svg></span><div><strong>Payment successful</strong><small>25 July 2026 · 6:16 PM</small></div></div>
+            <dl><div><dt>Parking location</dt><dd>Police Plaza Parking</dd></div><div><dt>Vehicle</dt><dd>DHA-METRO-GA-18-7264</dd></div><div><dt>Space</dt><dd>C-12</dd></div><div><dt>Entry</dt><dd>25 Jul · 4:15 PM</dd></div><div><dt>Exit</dt><dd>25 Jul · 6:15 PM</dd></div><div><dt>Duration</dt><dd>2h 00m</dd></div></dl>
+            <div class="receipt-sheet__cost"><span><small>Parking fee</small><strong>৳120</strong></span><span><small>Service fee</small><strong>৳6</strong></span><span><small>Total paid</small><strong>৳126</strong></span></div>
+            <footer><p>Paid with Visa ending 4821</p><p>Thank you for parking with ParkFlow.</p></footer>
+          </article>
+        </div>
+        <footer class="modal__footer"><a class="btn btn--secondary" href="#history">Close</a><button class="btn btn--primary" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#d-download"></use></svg>Download Receipt (PDF)</button></footer>
+      </div>
+    </section>
+
+    <section class="modal" id="add-driver-vehicle" role="dialog" aria-modal="true" aria-labelledby="add-driver-vehicle-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="add-driver-vehicle-title">Add another vehicle</h2><p>Vehicle details will be available for future reservations.</p></div><a class="modal__close" href="#vehicles" aria-label="Close vehicle form"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#d-close"></use></svg></a></header>
+        <form>
+          <div class="modal__body form">
+            <div class="form-row"><div class="form-field"><label class="form-label" for="new-vehicle-make">Make &amp; model</label><input class="input" id="new-vehicle-make" type="text" placeholder="e.g. Toyota Corolla" required></div><div class="form-field"><label class="form-label" for="new-vehicle-year">Year</label><input class="input" id="new-vehicle-year" type="number" min="1990" max="2026" placeholder="2024" required></div></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="new-vehicle-plate">Registration number</label><input class="input" id="new-vehicle-plate" type="text" placeholder="DHA-METRO-GA-00-0000" required></div><div class="form-field"><label class="form-label" for="new-vehicle-type">Vehicle type</label><select class="select" id="new-vehicle-type"><option>Sedan</option><option>SUV</option><option>Hatchback</option><option>Motorcycle</option><option>Electric vehicle</option></select></div></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="new-vehicle-color">Color</label><input class="input" id="new-vehicle-color" type="text" placeholder="Vehicle color"></div><div class="form-field"><label class="form-label" for="new-vehicle-fuel">Powertrain</label><select class="select" id="new-vehicle-fuel"><option>Petrol</option><option>Diesel</option><option>Hybrid</option><option>Electric</option></select></div></div>
+            <label class="check-control"><input type="checkbox">Make this my primary reservation vehicle</label>
+          </div>
+          <footer class="modal__footer"><a class="btn btn--secondary" href="#vehicles">Cancel</a><button class="btn btn--primary" type="submit">Add vehicle</button></footer>
+        </form>
+      </div>
+    </section>
+    <script src="app.js?v=4" defer></script>
+    <script src="frontend/driver-ui.js?v=6" defer></script>
+  </body>
+</html>

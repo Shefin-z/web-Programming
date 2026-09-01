@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Find and reserve verified parking spaces in Dhaka with live availability, transparent pricing, secure access, and digital receipts."
+    >
+    <meta name="theme-color" content="#101927">
+    <title>ParkFlow — Smarter Parking Starts Here</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="guest.css?v=2">
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="brand" href="#home" aria-label="ParkFlow home">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" role="img">
+              <path d="M11 31V9h10.2c5.6 0 9.3 3.1 9.3 8.1 0 5.1-3.7 8.3-9.3 8.3h-4V31H11Z"></path>
+              <path d="M17.2 14.3v5.8h3.6c2.3 0 3.7-1 3.7-2.9s-1.4-2.9-3.7-2.9h-3.6Z"></path>
+              <path class="brand__mark-accent" d="M25.8 27.5h6.6v3.6h-6.6z"></path>
+            </svg>
+          </span>
+          <span class="brand__name">Park<span>Flow</span></span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a class="desktop-nav__link" href="#locations">Find parking</a>
+          <a class="desktop-nav__link" href="#how-it-works">How it works</a>
+          <a class="desktop-nav__link" href="#pricing">Pricing</a>
+          <a class="desktop-nav__link" href="#support">Support</a>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="btn btn--ghost header-login" href="login.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <path d="m10 17 5-5-5-5M15 12H3"></path>
+            </svg>
+            Log in
+          </a>
+          <a class="btn btn--primary header-cta" href="#find-parking">Reserve a space</a>
+
+          <details class="mobile-menu">
+            <summary class="mobile-menu__trigger" aria-label="Open navigation">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16"></path>
+              </svg>
+            </summary>
+            <nav class="mobile-menu__panel" aria-label="Mobile navigation">
+              <a href="#locations">Find parking</a>
+              <a href="#how-it-works">How it works</a>
+              <a href="#pricing">Pricing</a>
+              <a href="#support">Support</a>
+              <span class="mobile-menu__divider"></span>
+              <a href="login.html">Log in</a>
+              <a class="mobile-menu__primary" href="#find-parking">Reserve a space</a>
+            </nav>
+          </details>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" id="home">
+        <div class="hero__orb hero__orb--one" aria-hidden="true"></div>
+        <div class="hero__orb hero__orb--two" aria-hidden="true"></div>
+
+        <div class="container hero__grid">
+          <div class="hero__content">
+            <div class="hero__eyebrow">
+              <span class="live-dot" aria-hidden="true"></span>
+              <span>1,284 spaces available across Dhaka</span>
+            </div>
+
+            <h1 class="hero__title">
+              Your parking space,
+              <span class="gradient-text">ready when you are.</span>
+            </h1>
+
+            <p class="hero__description">
+              Find, reserve, and pay for verified parking in seconds. No circling,
+              no hidden fees, and no last-minute uncertainty.
+            </p>
+
+            <form class="parking-search glass-panel" id="find-parking" action="#locations" method="get">
+              <div class="parking-search__field parking-search__field--location">
+                <label for="search-location">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                    <circle cx="12" cy="10" r="2.5"></circle>
+                  </svg>
+                  Location
+                </label>
+                <input
+                  id="search-location"
+                  name="location"
+                  type="search"
+                  value="Gulshan, Dhaka"
+                  autocomplete="street-address"
+                  aria-label="Parking location"
+                >
+              </div>
+
+              <div class="parking-search__divider" aria-hidden="true"></div>
+
+              <div class="parking-search__field">
+                <label for="search-date">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                    <path d="M16 3v4M8 3v4M3 10h18"></path>
+                  </svg>
+                  Date
+                </label>
+                <input id="search-date" name="date" type="date" value="2026-07-26">
+              </div>
+
+              <div class="parking-search__divider" aria-hidden="true"></div>
+
+              <div class="parking-search__field">
+                <label for="search-time">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 7v5l3 2"></path>
+                  </svg>
+                  Arrival
+                </label>
+                <select id="search-time" name="time" aria-label="Arrival time">
+                  <option>Now</option>
+                  <option>11:00 AM</option>
+                  <option>11:30 AM</option>
+                  <option>12:00 PM</option>
+                </select>
+              </div>
+
+              <button class="parking-search__button" type="submit" aria-label="Search available parking">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m20 20-4-4"></path>
+                </svg>
+                <span>Find parking</span>
+              </button>
+            </form>
+
+            <div class="hero__trust" aria-label="ParkFlow service benefits">
+              <div class="hero__trust-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+                Free cancellation
+              </div>
+              <div class="hero__trust-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M12 3 5 6v5c0 4.6 2.8 8.7 7 10 4.2-1.3 7-5.4 7-10V6l-7-3Z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+                Secure payments
+              </div>
+              <div class="hero__trust-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M20 12a8 8 0 1 1-2.3-5.7"></path>
+                  <path d="M20 4v6h-6"></path>
+                </svg>
+                Live availability
+              </div>
+            </div>
+          </div>
+
+          <aside class="live-preview" aria-label="Live parking availability preview">
+            <div class="live-preview__glow" aria-hidden="true"></div>
+            <div class="live-preview__window">
+              <header class="live-preview__header">
+                <div>
+                  <span class="eyebrow">Live availability</span>
+                  <h2>Gulshan Avenue</h2>
+                </div>
+                <span class="badge badge--free badge--dot badge--live">24 free</span>
+              </header>
+
+              <div class="mini-map" aria-label="Map preview showing nearby parking locations">
+                <span class="mini-map__road mini-map__road--horizontal" aria-hidden="true"></span>
+                <span class="mini-map__road mini-map__road--vertical" aria-hidden="true"></span>
+                <span class="mini-map__block mini-map__block--one" aria-hidden="true"></span>
+                <span class="mini-map__block mini-map__block--two" aria-hidden="true"></span>
+                <span class="mini-map__block mini-map__block--three" aria-hidden="true"></span>
+
+                <span class="map-pin map-pin--one">
+                  <span class="map-pin__price">৳80</span>
+                </span>
+                <span class="map-pin map-pin--two">
+                  <span class="map-pin__price">৳100</span>
+                </span>
+                <span class="map-pin map-pin--three map-pin--active">
+                  <span class="map-pin__price">৳70</span>
+                </span>
+
+                <span class="user-location" aria-label="Your location">
+                  <span></span>
+                </span>
+
+                <div class="map-legend">
+                  <span><i class="map-legend__free"></i>Available</span>
+                  <span><i class="map-legend__busy"></i>Filling fast</span>
+                </div>
+              </div>
+
+              <article class="preview-space">
+                <div class="preview-space__icon" aria-hidden="true">P</div>
+                <div class="preview-space__info">
+                  <h3>City Center Parking</h3>
+                  <p>0.3 km away · Covered</p>
+                </div>
+                <div class="preview-space__price">
+                  <strong>৳80</strong>
+                  <span>/hour</span>
+                </div>
+              </article>
+
+              <footer class="live-preview__footer">
+                <div>
+                  <span>Available now</span>
+                  <strong>18 spaces</strong>
+                </div>
+                <a class="btn btn--primary btn--sm" href="#locations">View spaces</a>
+              </footer>
+            </div>
+
+            <div class="floating-card floating-card--reservation" aria-label="Reservation confirmed notification">
+              <span class="floating-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="m5 12 4 4L19 6"></path>
+                </svg>
+              </span>
+              <span>
+                <small>Reservation confirmed</small>
+                <strong>Space A-18 · 10:30 AM</strong>
+              </span>
+            </div>
+
+            <div class="floating-card floating-card--rating" aria-label="Customer rating 4.9 out of 5">
+              <span class="floating-card__star" aria-hidden="true">★</span>
+              <span>
+                <strong>4.9</strong>
+                <small>12k+ drivers</small>
+              </span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="trust-strip" aria-labelledby="trust-heading">
+        <div class="container">
+          <h2 class="sr-only" id="trust-heading">ParkFlow at a glance</h2>
+          <dl class="trust-stats">
+            <div class="trust-stat">
+              <dt>Verified locations</dt>
+              <dd>120<span>+</span></dd>
+            </div>
+            <div class="trust-stat">
+              <dt>Active drivers</dt>
+              <dd>12K<span>+</span></dd>
+            </div>
+            <div class="trust-stat">
+              <dt>Successful bookings</dt>
+              <dd>98<span>%</span></dd>
+            </div>
+            <div class="trust-stat">
+              <dt>Average time saved</dt>
+              <dd>14 <span>min</span></dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="section section--how" id="how-it-works">
+        <div class="container">
+          <header class="section-heading section-heading--center">
+            <span class="section-heading__tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"></path>
+              </svg>
+              Effortless by design
+            </span>
+            <h2>From search to parked in three simple steps</h2>
+            <p>
+              ParkFlow removes the guesswork so every journey starts and ends smoothly.
+            </p>
+          </header>
+
+          <ol class="steps-list">
+            <li class="step-card">
+              <div class="step-card__number">01</div>
+              <div class="step-card__visual step-card__visual--search" aria-hidden="true">
+                <span class="visual-search">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="6"></circle>
+                    <path d="m20 20-4.3-4.3"></path>
+                  </svg>
+                  Gulshan
+                </span>
+                <span class="visual-pin visual-pin--a">P</span>
+                <span class="visual-pin visual-pin--b">P</span>
+                <span class="visual-route"></span>
+              </div>
+              <h3>Search nearby</h3>
+              <p>Enter your destination and arrival time to see verified spaces in real time.</p>
+            </li>
+
+            <li class="step-card">
+              <div class="step-card__number">02</div>
+              <div class="step-card__visual step-card__visual--reserve" aria-hidden="true">
+                <span class="visual-ticket">
+                  <i>P</i>
+                  <span>
+                    <small>SPACE</small>
+                    <strong>A-18</strong>
+                  </span>
+                  <em>৳80/hr</em>
+                </span>
+                <span class="visual-check">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m5 12 4 4L19 6"></path>
+                  </svg>
+                </span>
+              </div>
+              <h3>Reserve instantly</h3>
+              <p>Choose a space, confirm your time, and receive a secure check-in OTP.</p>
+            </li>
+
+            <li class="step-card">
+              <div class="step-card__number">03</div>
+              <div class="step-card__visual step-card__visual--park" aria-hidden="true">
+                <span class="visual-phone">
+                  <i></i>
+                  <small>ENTRY CODE</small>
+                  <strong>8 4 2 6</strong>
+                </span>
+                <span class="visual-gate"></span>
+              </div>
+              <h3>Park with confidence</h3>
+              <p>Use your OTP at entry, park in your assigned space, and leave stress-free.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section section--locations" id="locations">
+        <div class="container">
+          <header class="section-heading section-heading--split">
+            <div>
+              <span class="section-heading__tag">
+                <span class="live-dot" aria-hidden="true"></span>
+                Updated moments ago
+              </span>
+              <h2>Parking near you, right now</h2>
+              <p>Compare verified locations, availability, and hourly rates at a glance.</p>
+            </div>
+            <a class="btn btn--secondary" href="#all-locations">
+              View all locations
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
+            </a>
+          </header>
+
+          <div class="location-browser">
+            <form class="location-filters" action="#location-results" method="get" aria-label="Filter parking locations">
+              <div class="input-group search-input location-filters__search">
+                <span class="input-group__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m20 20-4-4"></path>
+                  </svg>
+                </span>
+                <label class="sr-only" for="location-filter-search">Search area or landmark</label>
+                <input
+                  class="input"
+                  id="location-filter-search"
+                  name="query"
+                  type="search"
+                  placeholder="Search area or landmark"
+                >
+              </div>
+
+              <label class="location-filter">
+                <span class="sr-only">Parking type</span>
+                <select class="select" name="type">
+                  <option>All parking types</option>
+                  <option>Covered</option>
+                  <option>Open air</option>
+                  <option>Underground</option>
+                </select>
+              </label>
+
+              <label class="location-filter">
+                <span class="sr-only">Maximum hourly price</span>
+                <select class="select" name="price">
+                  <option>Any price</option>
+                  <option>Under ৳60/hour</option>
+                  <option>Under ৳100/hour</option>
+                  <option>Under ৳150/hour</option>
+                </select>
+              </label>
+
+              <button class="btn btn--dark" type="submit">Apply filters</button>
+            </form>
+
+            <div class="location-layout" id="location-results">
+              <figure class="public-map">
+                <figcaption class="sr-only">
+                  Public map of available parking locations around Gulshan, Dhaka
+                </figcaption>
+                <span class="public-map__road public-map__road--a" aria-hidden="true"></span>
+                <span class="public-map__road public-map__road--b" aria-hidden="true"></span>
+                <span class="public-map__road public-map__road--c" aria-hidden="true"></span>
+                <span class="public-map__water" aria-hidden="true"></span>
+                <span class="public-map__park public-map__park--a" aria-hidden="true"></span>
+                <span class="public-map__park public-map__park--b" aria-hidden="true"></span>
+
+                <button class="public-map__pin public-map__pin--a" type="button" aria-label="City Center Parking, 80 taka per hour">
+                  <span>৳80</span>
+                </button>
+                <button class="public-map__pin public-map__pin--b" type="button" aria-label="Navana Tower Parking, 100 taka per hour">
+                  <span>৳100</span>
+                </button>
+                <button class="public-map__pin public-map__pin--c" type="button" aria-label="Lakeview Garage, 70 taka per hour">
+                  <span>৳70</span>
+                </button>
+                <button class="public-map__pin public-map__pin--d public-map__pin--busy" type="button" aria-label="Banani Plaza, 120 taka per hour, filling fast">
+                  <span>৳120</span>
+                </button>
+                <button class="public-map__pin public-map__pin--e" type="button" aria-label="Police Plaza Parking, 60 taka per hour">
+                  <span>৳60</span>
+                </button>
+
+                <span class="public-map__area public-map__area--gulshan">Gulshan</span>
+                <span class="public-map__area public-map__area--banani">Banani</span>
+                <span class="public-map__area public-map__area--badda">Badda</span>
+
+                <div class="public-map__controls" aria-label="Map controls">
+                  <button type="button" aria-label="Zoom in">+</button>
+                  <button type="button" aria-label="Zoom out">−</button>
+                </div>
+
+                <button class="public-map__locate" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path>
+                  </svg>
+                  My location
+                </button>
+              </figure>
+
+              <div class="location-results" id="all-locations">
+                <div class="location-results__meta">
+                  <p><strong>32 parking locations</strong> near Gulshan</p>
+                  <label>
+                    <span class="sr-only">Sort parking locations</span>
+                    <select name="sort">
+                      <option>Recommended</option>
+                      <option>Lowest price</option>
+                      <option>Nearest first</option>
+                      <option>Most available</option>
+                    </select>
+                  </label>
+                </div>
+
+                <article class="location-card location-card--featured" data-location-type="covered" data-rate="80" data-availability="18" data-distance="3">
+                  <div class="location-card__visual location-card__visual--city">
+                    <span class="location-card__featured">Best match</span>
+                    <span class="location-card__distance">3 min walk</span>
+                    <span class="garage-art" aria-hidden="true">
+                      <i>P</i>
+                      <b></b><b></b><b></b><b></b><b></b><b></b>
+                    </span>
+                  </div>
+                  <div class="location-card__body">
+                    <header class="location-card__header">
+                      <div>
+                        <h3>City Center Parking</h3>
+                        <p>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="2.5"></circle>
+                          </svg>
+                          Gulshan Avenue, Circle 1
+                        </p>
+                      </div>
+                      <span class="location-card__rating">
+                        <span aria-hidden="true">★</span> 4.9
+                      </span>
+                    </header>
+                    <ul class="location-card__features" role="list">
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M4 11V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6M2 11h20v10H2zM6 15h4"></path>
+                        </svg>
+                        Covered
+                      </li>
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M12 3 5 6v5c0 4.6 2.8 8.7 7 10 4.2-1.3 7-5.4 7-10V6l-7-3Z"></path>
+                        </svg>
+                        CCTV
+                      </li>
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M13 2 5 14h7l-1 8 8-12h-7l1-8Z"></path>
+                        </svg>
+                        EV charging
+                      </li>
+                    </ul>
+                    <footer class="location-card__footer">
+                      <div class="location-card__availability">
+                        <span class="badge badge--free badge--dot">18 spaces</span>
+                        <small>Available now</small>
+                        <button class="location-card__details guest-location-details-trigger" type="button">View details</button>
+                      </div>
+                      <div class="location-card__booking">
+                        <p><strong>৳80</strong><span>/hour</span></p>
+                        <a class="btn btn--primary btn--sm" href="login.html">Reserve</a>
+                      </div>
+                    </footer>
+                  </div>
+                </article>
+
+                <article class="location-card" data-location-type="underground" data-rate="100" data-availability="6" data-distance="5">
+                  <div class="location-card__visual location-card__visual--navana">
+                    <span class="location-card__distance">5 min walk</span>
+                    <span class="garage-art garage-art--tower" aria-hidden="true">
+                      <i>P</i>
+                      <b></b><b></b><b></b><b></b><b></b><b></b>
+                    </span>
+                  </div>
+                  <div class="location-card__body">
+                    <header class="location-card__header">
+                      <div>
+                        <h3>Navana Tower Garage</h3>
+                        <p>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="2.5"></circle>
+                          </svg>
+                          Gulshan Avenue, Circle 2
+                        </p>
+                      </div>
+                      <span class="location-card__rating">
+                        <span aria-hidden="true">★</span> 4.8
+                      </span>
+                    </header>
+                    <ul class="location-card__features" role="list">
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M4 11V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6M2 11h20v10H2z"></path>
+                        </svg>
+                        Underground
+                      </li>
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9"></circle>
+                          <path d="M12 7v5l3 2"></path>
+                        </svg>
+                        Open 24/7
+                      </li>
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M7 20V10M17 20V10M3 20h18M5 10l7-7 7 7"></path>
+                        </svg>
+                        Lift access
+                      </li>
+                    </ul>
+                    <footer class="location-card__footer">
+                      <div class="location-card__availability">
+                        <span class="badge badge--warning badge--dot">6 spaces</span>
+                        <small>Filling quickly</small>
+                        <button class="location-card__details guest-location-details-trigger" type="button">View details</button>
+                      </div>
+                      <div class="location-card__booking">
+                        <p><strong>৳100</strong><span>/hour</span></p>
+                        <a class="btn btn--primary btn--sm" href="login.html">Reserve</a>
+                      </div>
+                    </footer>
+                  </div>
+                </article>
+
+                <article class="location-card" data-location-type="open-air" data-rate="70" data-availability="24" data-distance="7">
+                  <div class="location-card__visual location-card__visual--lake">
+                    <span class="location-card__distance">7 min walk</span>
+                    <span class="garage-art garage-art--open" aria-hidden="true">
+                      <i>P</i>
+                      <b></b><b></b><b></b><b></b><b></b><b></b>
+                    </span>
+                  </div>
+                  <div class="location-card__body">
+                    <header class="location-card__header">
+                      <div>
+                        <h3>Lakeview Smart Parking</h3>
+                        <p>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="2.5"></circle>
+                          </svg>
+                          Gulshan Lake Drive
+                        </p>
+                      </div>
+                      <span class="location-card__rating">
+                        <span aria-hidden="true">★</span> 4.7
+                      </span>
+                    </header>
+                    <ul class="location-card__features" role="list">
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M4 18h16M6 18v-8l6-5 6 5v8"></path>
+                        </svg>
+                        Open air
+                      </li>
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M12 3 5 6v5c0 4.6 2.8 8.7 7 10 4.2-1.3 7-5.4 7-10V6l-7-3Z"></path>
+                        </svg>
+                        Security
+                      </li>
+                      <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                          <path d="M6 20h12M8 20v-5a4 4 0 0 1 8 0v5M12 2v3M4.9 4.9 7 7M19.1 4.9 17 7"></path>
+                        </svg>
+                        Well lit
+                      </li>
+                    </ul>
+                    <footer class="location-card__footer">
+                      <div class="location-card__availability">
+                        <span class="badge badge--free badge--dot">24 spaces</span>
+                        <small>Available now</small>
+                        <button class="location-card__details guest-location-details-trigger" type="button">View details</button>
+                      </div>
+                      <div class="location-card__booking">
+                        <p><strong>৳70</strong><span>/hour</span></p>
+                        <a class="btn btn--primary btn--sm" href="login.html">Reserve</a>
+                      </div>
+                    </footer>
+                  </div>
+                </article>
+
+                <a class="location-results__more" href="login.html">
+                  Show 29 more nearby locations
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="m9 18 6-6-6-6"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--benefits">
+        <div class="container benefits-grid">
+          <div class="benefits-copy">
+            <span class="section-heading__tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M12 3 5 6v5c0 4.6 2.8 8.7 7 10 4.2-1.3 7-5.4 7-10V6l-7-3Z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+              Parking without the uncertainty
+            </span>
+            <h2>Built for calmer journeys and safer vehicles</h2>
+            <p>
+              Every ParkFlow location is verified, clearly priced, and monitored by
+              an on-site parking team.
+            </p>
+
+            <ul class="benefit-list" role="list">
+              <li>
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M12 3 5 6v5c0 4.6 2.8 8.7 7 10 4.2-1.3 7-5.4 7-10V6l-7-3Z"></path>
+                  </svg>
+                </span>
+                <div>
+                  <h3>Verified and monitored</h3>
+                  <p>Security features and operating hours are checked before a location goes live.</p>
+                </div>
+              </li>
+              <li>
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M3 12h18M12 3v18"></path>
+                    <circle cx="12" cy="12" r="9"></circle>
+                  </svg>
+                </span>
+                <div>
+                  <h3>Transparent, dynamic pricing</h3>
+                  <p>See the exact hourly rate and estimated total before confirming your reservation.</p>
+                </div>
+              </li>
+              <li>
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M4 5h16v12H7l-3 3V5Z"></path>
+                    <path d="M8 9h8M8 13h5"></path>
+                  </svg>
+                </span>
+                <div>
+                  <h3>Human support when needed</h3>
+                  <p>Message the parking manager directly from your reservation whenever you need help.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="benefits-visual">
+            <div class="phone-mockup" aria-label="ParkFlow mobile reservation preview">
+              <div class="phone-mockup__speaker" aria-hidden="true"></div>
+              <div class="phone-mockup__screen">
+                <header>
+                  <span>
+                    <small>Good morning</small>
+                    <strong>Ready to park?</strong>
+                  </span>
+                  <span class="avatar">AR</span>
+                </header>
+                <div class="phone-map">
+                  <span class="phone-map__road"></span>
+                  <span class="phone-map__pin">৳80</span>
+                  <span class="phone-map__pin phone-map__pin--two">৳70</span>
+                  <span class="phone-map__user"></span>
+                </div>
+                <article class="phone-booking">
+                  <div class="phone-booking__top">
+                    <span class="phone-booking__p">P</span>
+                    <span>
+                      <small>UPCOMING</small>
+                      <strong>City Center</strong>
+                    </span>
+                    <span class="badge badge--active">Confirmed</span>
+                  </div>
+                  <dl>
+                    <div>
+                      <dt>Space</dt>
+                      <dd>A-18</dd>
+                    </div>
+                    <div>
+                      <dt>Arrival</dt>
+                      <dd>10:30 AM</dd>
+                    </div>
+                    <div>
+                      <dt>OTP</dt>
+                      <dd>8426</dd>
+                    </div>
+                  </dl>
+                </article>
+              </div>
+            </div>
+
+            <div class="benefits-visual__metric">
+              <span class="benefits-visual__metric-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 7v5l3 2"></path>
+                </svg>
+              </span>
+              <span>
+                <small>Average search time</small>
+                <strong>Under 2 minutes</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--pricing" id="pricing">
+        <div class="container pricing-layout">
+          <header class="section-heading">
+            <span class="section-heading__tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M20 12V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7"></path>
+                <path d="M8 7h8M8 11h5M17 16v5M14.5 18.5h5"></path>
+              </svg>
+              Clear from the start
+            </span>
+            <h2>Simple, transparent parking rates</h2>
+            <p>
+              Rates vary by location, time, and demand. You will always see the full
+              estimate before confirming.
+            </p>
+          </header>
+
+          <div class="pricing-card glass-panel">
+            <header class="pricing-card__header">
+              <div>
+                <span class="eyebrow">Live rate preview</span>
+                <h3>Gulshan &amp; Banani</h3>
+              </div>
+              <span class="badge badge--success badge--dot">Standard demand</span>
+            </header>
+
+            <div class="table-responsive">
+              <table class="pricing-table">
+                <caption class="sr-only">Example parking rates for Gulshan and Banani</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Parking type</th>
+                    <th scope="col">Hourly rate</th>
+                    <th scope="col">Daily cap</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">
+                      <span class="pricing-table__icon pricing-table__icon--blue">P</span>
+                      Open air
+                    </th>
+                    <td><strong>৳50–70</strong></td>
+                    <td>৳500</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <span class="pricing-table__icon pricing-table__icon--violet">P</span>
+                      Covered
+                    </th>
+                    <td><strong>৳80–100</strong></td>
+                    <td>৳750</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <span class="pricing-table__icon pricing-table__icon--green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                          <path d="M13 2 5 14h7l-1 8 8-12h-7l1-8Z"></path>
+                        </svg>
+                      </span>
+                      EV charging
+                    </th>
+                    <td><strong>৳120–150</strong></td>
+                    <td>৳1,000</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <footer class="pricing-card__footer">
+              <p>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 11v5M12 8h.01"></path>
+                </svg>
+                A small service fee may apply. Taxes are included.
+              </p>
+              <a class="btn btn--outline btn--sm" href="#locations">Compare live rates</a>
+            </footer>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--testimonials">
+        <div class="container">
+          <header class="section-heading section-heading--center">
+            <span class="section-heading__tag">Trusted on busy days</span>
+            <h2>Drivers spend less time searching</h2>
+            <p>Real feedback from people parking with ParkFlow around Dhaka.</p>
+          </header>
+
+          <div class="testimonial-grid">
+            <figure class="testimonial-card">
+              <div class="testimonial-card__stars" aria-label="5 out of 5 stars">★★★★★</div>
+              <blockquote>
+                “I reserved beside my office before leaving home. The space was ready,
+                and check-in took less than a minute.”
+              </blockquote>
+              <figcaption>
+                <span class="avatar">NS</span>
+                <span><strong>Nabila S.</strong><small>Daily commuter · Gulshan</small></span>
+              </figcaption>
+            </figure>
+
+            <figure class="testimonial-card testimonial-card--featured">
+              <div class="testimonial-card__stars" aria-label="5 out of 5 stars">★★★★★</div>
+              <blockquote>
+                “The live availability is genuinely useful. I no longer lose twenty
+                minutes circling Banani before meetings.”
+              </blockquote>
+              <figcaption>
+                <span class="avatar">RH</span>
+                <span><strong>Rafi H.</strong><small>Business traveler · Banani</small></span>
+              </figcaption>
+            </figure>
+
+            <figure class="testimonial-card">
+              <div class="testimonial-card__stars" aria-label="5 out of 5 stars">★★★★★</div>
+              <blockquote>
+                “Clear pricing, easy receipts, and the manager replied immediately when
+                I needed help finding the entrance.”
+              </blockquote>
+              <figcaption>
+                <span class="avatar">TA</span>
+                <span><strong>Tasnia A.</strong><small>Weekend driver · Dhanmondi</small></span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--faq">
+        <div class="container faq-layout">
+          <header class="section-heading">
+            <span class="section-heading__tag">Questions, answered</span>
+            <h2>Everything you need before you park</h2>
+            <p>
+              Still unsure? Our support team is available every day.
+            </p>
+            <a class="btn btn--secondary" href="#support">Contact support</a>
+          </header>
+
+          <div class="faq-list">
+            <details open>
+              <summary>
+                How does a parking reservation work?
+                <span aria-hidden="true"></span>
+              </summary>
+              <p>
+                Choose a location and time, confirm your vehicle, and pay securely. We
+                will assign your space and provide a one-time code for entry.
+              </p>
+            </details>
+            <details>
+              <summary>
+                Can I cancel or change my booking?
+                <span aria-hidden="true"></span>
+              </summary>
+              <p>
+                Yes. Most reservations can be changed or cancelled free of charge until
+                30 minutes before the scheduled arrival time.
+              </p>
+            </details>
+            <details>
+              <summary>
+                What happens if I stay longer than planned?
+                <span aria-hidden="true"></span>
+              </summary>
+              <p>
+                You can extend an active reservation from your driver dashboard when the
+                space remains available. The additional time uses the current hourly rate.
+              </p>
+            </details>
+            <details>
+              <summary>
+                How do I report a parking issue?
+                <span aria-hidden="true"></span>
+              </summary>
+              <p>
+                Open your active reservation to message the parking manager or submit an
+                issue report with the location, category, and supporting details.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--support" id="support">
+        <div class="container support-panel">
+          <div class="support-panel__copy">
+            <span class="section-heading__tag section-heading__tag--light">
+              <span class="live-dot" aria-hidden="true"></span>
+              Support online
+            </span>
+            <h2>Need help planning your parking?</h2>
+            <p>
+              Send us a message and our parking support team will help you find the
+              right location or resolve an existing booking.
+            </p>
+
+            <address class="support-channels">
+              <a href="tel:+8809600127275">
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4 13 13 0 0 0 2.8.7 2 2 0 0 1 1.7 2Z"></path>
+                  </svg>
+                </span>
+                <span><small>Call us</small><strong>+880 9600 127 275</strong></span>
+              </a>
+              <a href="mailto:support@parkflow.example">
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                    <path d="m3 7 9 6 9-6"></path>
+                  </svg>
+                </span>
+                <span><small>Email us</small><strong>support@parkflow.example</strong></span>
+              </a>
+            </address>
+          </div>
+
+          <form class="support-form" action="#support" method="post">
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label" for="support-name">Your name</label>
+                <input class="input" id="support-name" name="name" type="text" placeholder="Full name" autocomplete="name" required>
+              </div>
+              <div class="form-field">
+                <label class="form-label" for="support-email">Email address</label>
+                <input class="input" id="support-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="support-topic">How can we help?</label>
+              <select class="select" id="support-topic" name="topic" required>
+                <option value="">Select a topic</option>
+                <option>Finding a parking location</option>
+                <option>Existing reservation</option>
+                <option>Payment or receipt</option>
+                <option>Report a parking issue</option>
+                <option>General question</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="support-message">Message</label>
+              <textarea
+                class="textarea"
+                id="support-message"
+                name="message"
+                placeholder="Tell us what you need help with..."
+                required
+              ></textarea>
+            </div>
+            <button class="btn btn--primary btn--block" type="submit">
+              Send message
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="m22 2-7 20-4-9-9-4 20-7Z"></path>
+                <path d="M22 2 11 13"></path>
+              </svg>
+            </button>
+            <p class="support-form__note">
+              We usually respond within 10 minutes during service hours.
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <section class="section section--cta">
+        <div class="container cta-panel">
+          <div class="cta-panel__pattern" aria-hidden="true"></div>
+          <div class="cta-panel__content">
+            <span class="cta-panel__icon" aria-hidden="true">P</span>
+            <h2>Ready to leave parking stress behind?</h2>
+            <p>Create your free account and reserve your next space in under two minutes.</p>
+            <div class="cta-panel__actions">
+              <a class="btn btn--primary btn--lg" href="register.html">Create free account</a>
+              <a class="btn btn--ghost btn--lg cta-panel__secondary" href="#locations">
+                Explore locations
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="site-footer__top">
+          <div class="site-footer__brand">
+            <a class="brand brand--footer" href="#home" aria-label="ParkFlow home">
+              <span class="brand__mark" aria-hidden="true">
+                <svg viewBox="0 0 40 40">
+                  <path d="M11 31V9h10.2c5.6 0 9.3 3.1 9.3 8.1 0 5.1-3.7 8.3-9.3 8.3h-4V31H11Z"></path>
+                  <path d="M17.2 14.3v5.8h3.6c2.3 0 3.7-1 3.7-2.9s-1.4-2.9-3.7-2.9h-3.6Z"></path>
+                  <path class="brand__mark-accent" d="M25.8 27.5h6.6v3.6h-6.6z"></path>
+                </svg>
+              </span>
+              <span class="brand__name">Park<span>Flow</span></span>
+            </a>
+            <p>Making every arrival simpler, safer, and more predictable.</p>
+            <div class="site-footer__social">
+              <a href="#home" aria-label="ParkFlow on Facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M14 8h3V4h-3c-3 0-5 2-5 5v2H6v4h3v7h4v-7h3l1-4h-4V9c0-.6.4-1 1-1Z"></path>
+                </svg>
+              </a>
+              <a href="#home" aria-label="ParkFlow on Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"></circle>
+                </svg>
+              </a>
+              <a href="#home" aria-label="ParkFlow on LinkedIn">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M6.5 8.5H3V21h3.5V8.5ZM4.8 3A2.1 2.1 0 1 0 4.8 7.2 2.1 2.1 0 0 0 4.8 3ZM21 14c0-3.8-2-5.8-4.8-5.8-2.2 0-3.2 1.2-3.8 2.1V8.5H9V21h3.5v-6.2c0-1.6.3-3.2 2.4-3.2 2 0 2 1.9 2 3.3V21H21v-7Z"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <nav class="site-footer__nav" aria-label="Footer navigation">
+            <div>
+              <h2>Parking</h2>
+              <a href="#locations">Find parking</a>
+              <a href="#pricing">Hourly rates</a>
+              <a href="#locations">Parking locations</a>
+              <a href="#how-it-works">How it works</a>
+            </div>
+            <div>
+              <h2>Drivers</h2>
+              <a href="register.html">Create account</a>
+              <a href="login.html">Driver login</a>
+              <a href="#support">Help center</a>
+              <a href="#support">Report an issue</a>
+            </div>
+            <div>
+              <h2>Company</h2>
+              <a href="#home">About ParkFlow</a>
+              <a href="#support">List your parking</a>
+              <a href="#support">Careers</a>
+              <a href="#support">Contact</a>
+            </div>
+            <div>
+              <h2>Legal</h2>
+              <a href="#support">Privacy policy</a>
+              <a href="#support">Terms of service</a>
+              <a href="#support">Cookie policy</a>
+              <a href="#support">Accessibility</a>
+            </div>
+          </nav>
+        </div>
+
+        <div class="site-footer__bottom">
+          <p>&copy; 2026 ParkFlow. All rights reserved.</p>
+          <p>
+            <span class="live-dot" aria-hidden="true"></span>
+            All systems operational
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <section class="modal" id="guest-location-details" role="dialog" aria-modal="true" aria-labelledby="guest-location-details-title">
+      <div class="modal__dialog modal__dialog--sm guest-location-dialog">
+        <header class="modal__header">
+          <div class="modal__title-group"><h2 id="guest-location-details-title">Parking location details</h2><p class="guest-location-details__address">Gulshan, Dhaka</p></div>
+          <a class="modal__close" href="#locations" aria-label="Close location details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></a>
+        </header>
+        <div class="modal__body guest-location-details">
+          <div class="guest-location-details__summary"><span><small>Hourly rate</small><strong class="guest-location-details__rate">৳80/hr</strong></span><span><small>Availability</small><strong class="guest-location-details__availability">18 spaces free</strong></span><span><small>Distance</small><strong class="guest-location-details__distance">3 min walk</strong></span></div>
+          <div><h3>Parking features</h3><ul class="guest-location-details__features"></ul></div>
+          <div class="guest-location-details__notice"><strong>Guest information</strong><p>Sign in or create a driver account to choose a time slot, select a parking space, and receive your secure check-in OTP.</p></div>
+        </div>
+        <footer class="modal__footer"><a class="btn btn--secondary" href="#locations">Back to locations</a><a class="btn btn--primary" href="login.html">Log in to reserve</a></footer>
+      </div>
+    </section>
+
+    <a class="floating-support" href="#support" aria-label="Open parking support">
+      <span class="floating-support__status" aria-hidden="true"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.8 9.8 0 0 1-4-.9L3 21l1.6-4.6A8.5 8.5 0 1 1 21 11.5Z"></path>
+        <path d="M8 12h.01M12 12h.01M16 12h.01"></path>
+      </svg>
+      <span>Need help?</span>
+    </a>
+    <script src="app.js?v=4" defer></script>
+    <script src="frontend/guest-ui.js?v=2" defer></script>
+  </body>
+</html>

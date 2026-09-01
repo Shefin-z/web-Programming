@@ -1,0 +1,16 @@
+# Local Python and database artifacts (the GitHub project is frontend-only)
+__pycache__/
+*.pyc
+parkflow.db
+*.log
+
+# Legacy local backend files, intentionally excluded from the frontend demo
+server.py
+parking-system.js
+
+# Exported design archives
+*.zip
+
+# Unused Figma plugin/export sources
+figma-parkflow/
+ParkFlow-Figma-1920x1080/

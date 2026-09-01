@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="ParkFlow parking manager portal for reservations, space operations, OTP verification, violations, reports, and driver support.">
+    <meta name="theme-color" content="#101927">
+    <title>Manager Operations — ParkFlow</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css?v=2">
+    <link rel="stylesheet" href="manager.css">
+  </head>
+
+  <body class="dashboard-page manager-portal">
+    <svg class="svg-sprite" aria-hidden="true">
+      <symbol id="m-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></symbol>
+      <symbol id="m-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></symbol>
+      <symbol id="m-car" viewBox="0 0 24 24"><path d="m5 17-1 2v2h2v-2h12v2h2v-2l-1-2M3 12l2-6h14l2 6v5H3v-5Z"></path><circle cx="7" cy="14.5" r="1"></circle><circle cx="17" cy="14.5" r="1"></circle></symbol>
+      <symbol id="m-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="5"></circle><path d="m11.5 11.5 8-8M16 7l2 2M18 5l2 2"></path></symbol>
+      <symbol id="m-alert" viewBox="0 0 24 24"><path d="M10.3 3.8 2.2 18a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4M12 17h.01"></path></symbol>
+      <symbol id="m-report" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6M8 13h8M8 17h6"></path></symbol>
+      <symbol id="m-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.8 9.8 0 0 1-4-.9L3 21l1.6-4.6A8.5 8.5 0 1 1 21 11.5Z"></path></symbol>
+      <symbol id="m-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></symbol>
+      <symbol id="m-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path></symbol>
+      <symbol id="m-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></symbol>
+      <symbol id="m-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></symbol>
+      <symbol id="m-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></symbol>
+      <symbol id="m-arrow-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"></path></symbol>
+      <symbol id="m-arrow-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></symbol>
+      <symbol id="m-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></symbol>
+      <symbol id="m-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></symbol>
+      <symbol id="m-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></symbol>
+      <symbol id="m-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="2.5"></circle></symbol>
+      <symbol id="m-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z"></path></symbol>
+      <symbol id="m-filter" viewBox="0 0 24 24"><path d="M4 5h16M7 12h10M10 19h4"></path></symbol>
+      <symbol id="m-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></symbol>
+      <symbol id="m-print" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"></path></symbol>
+      <symbol id="m-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4 13 13 0 0 0 2.8.7 2 2 0 0 1 1.7 2Z"></path></symbol>
+      <symbol id="m-attach" viewBox="0 0 24 24"><path d="m21.4 11.6-8.9 8.9a6 6 0 0 1-8.5-8.5l9.6-9.6a4 4 0 0 1 5.7 5.7l-9.6 9.6a2 2 0 0 1-2.8-2.8l8.9-8.9"></path></symbol>
+      <symbol id="m-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7Z"></path><path d="M22 2 11 13"></path></symbol>
+      <symbol id="m-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></symbol>
+      <symbol id="m-log-out" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path></symbol>
+      <symbol id="m-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></symbol>
+      <symbol id="m-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.5 1A7 7 0 0 0 14.7 6L14.4 3h-4.8l-.3 3A7 7 0 0 0 7.6 7L5.1 6l-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.5-1a7 7 0 0 0 1.7 1l.3 3h4.8l.3-3a7 7 0 0 0 1.7-1l2.5 1 2-3.5-2-1.5a7 7 0 0 0 .1-1Z"></path></symbol>
+    </svg>
+
+    <a class="skip-link" href="#manager-main">Skip to operations</a>
+
+    <div class="app-shell">
+      <aside class="dashboard-sidebar" aria-label="Parking manager navigation">
+        <a class="sidebar-brand" href="manager.html" aria-label="Refresh manager portal"><span class="sidebar-brand__mark">P</span><span class="sidebar-brand__text"><strong>Park<span>Flow</span></strong><small>Parking Manager</small></span></a>
+        <nav class="sidebar-nav">
+          <div class="sidebar-nav__group">
+            <span class="sidebar-nav__label">Operations</span>
+            <ul class="sidebar-nav__list">
+              <li><a class="sidebar-nav__link is-active" href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-grid"></use></svg>Area overview</a></li>
+              <li><a class="sidebar-nav__link" href="#reservations"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-calendar"></use></svg>Reservations<span class="sidebar-nav__count">24</span></a></li>
+              <li><a class="sidebar-nav__link" href="#spaces"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-car"></use></svg>Space status</a></li>
+              <li><a class="sidebar-nav__link" href="#verification"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg>OTP verification<span class="sidebar-nav__count">6</span></a></li>
+            </ul>
+          </div>
+          <div class="sidebar-nav__group">
+            <span class="sidebar-nav__label">Compliance</span>
+            <ul class="sidebar-nav__list">
+              <li><a class="sidebar-nav__link" href="#violations"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-alert"></use></svg>Violations<span class="sidebar-nav__count sidebar-nav__count--danger">5</span></a></li>
+              <li><a class="sidebar-nav__link" href="#reports"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-report"></use></svg>Area reports</a></li>
+            </ul>
+          </div>
+          <div class="sidebar-nav__group">
+            <span class="sidebar-nav__label">Communication</span>
+            <ul class="sidebar-nav__list">
+              <li><a class="sidebar-nav__link" href="#messages"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-chat"></use></svg>Driver messages<span class="sidebar-nav__count sidebar-nav__count--danger">3</span></a></li>
+            </ul>
+          </div>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="sidebar-profile" type="button"><span class="sidebar-profile__avatar"><span class="avatar">MH</span><span class="live-dot"></span></span><span class="sidebar-profile__text"><strong>Mahmudul Hasan</strong><small>Morning shift manager</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-more"></use></svg></button>
+        </div>
+      </aside>
+
+      <main class="dashboard-main" id="manager-main">
+        <header class="dashboard-topbar">
+          <div class="topbar-start">
+            <details class="mobile-sidebar">
+              <summary class="topbar-icon" aria-label="Open navigation"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-menu"></use></svg></summary>
+              <span class="mobile-sidebar__backdrop"></span>
+              <div class="mobile-sidebar__panel">
+                <div class="mobile-sidebar__header"><a class="sidebar-brand" href="manager.html" aria-label="Refresh manager portal"><span class="sidebar-brand__mark">P</span><span class="sidebar-brand__text"><strong>Park<span>Flow</span></strong><small>Parking Manager</small></span></a><span class="mobile-sidebar__close"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></span></div>
+                <nav class="sidebar-nav" aria-label="Mobile manager navigation">
+                  <div class="sidebar-nav__group"><span class="sidebar-nav__label">Operations</span><ul class="sidebar-nav__list">
+                    <li><a class="sidebar-nav__link is-active" href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-grid"></use></svg>Area overview</a></li>
+                    <li><a class="sidebar-nav__link" href="#reservations"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-calendar"></use></svg>Reservations</a></li>
+                    <li><a class="sidebar-nav__link" href="#spaces"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-car"></use></svg>Space status</a></li>
+                    <li><a class="sidebar-nav__link" href="#verification"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg>OTP verification</a></li>
+                    <li><a class="sidebar-nav__link" href="#violations"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-alert"></use></svg>Violations</a></li>
+                    <li><a class="sidebar-nav__link" href="#reports"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-report"></use></svg>Area reports</a></li>
+                    <li><a class="sidebar-nav__link" href="#messages"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-chat"></use></svg>Driver messages</a></li>
+                  </ul></div>
+                </nav>
+              </div>
+            </details>
+            <div class="topbar-context"><strong>Gulshan City Center</strong><small>Zone A, B &amp; EV deck</small></div>
+          </div>
+          <form class="topbar-search input-group search-input" role="search"><span class="input-group__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-search"></use></svg></span><label class="sr-only" for="manager-search">Search reservations or vehicles</label><input class="input" id="manager-search" type="search" placeholder="Search reservation, driver, plate…"></form>
+          <div class="topbar-actions">
+            <span class="manager-live-clock"><span class="live-dot"></span><span><strong>10:42 PM</strong><small>Live operations</small></span></span>
+            <details class="topbar-details">
+              <summary class="topbar-icon" aria-label="View notifications"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-bell"></use></svg><span class="topbar-icon__dot"></span></summary>
+              <section class="topbar-popover" aria-label="Manager notifications">
+                <header class="topbar-popover__header"><h2>Notifications</h2><button type="button">Mark all read</button></header>
+                <div class="notification-list">
+                  <a class="notification-item is-unread" href="#verification"><span class="notification-item__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg></span><span class="notification-item__body"><strong>Driver waiting at Gate 1</strong><p>Reservation #PF-84291 requires check-in.</p><time>1 min ago</time></span><span class="notification-item__unread"></span></a>
+                  <a class="notification-item is-unread" href="#violations"><span class="notification-item__icon notification-item__icon--warning"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-alert"></use></svg></span><span class="notification-item__body"><strong>New obstruction reported</strong><p>Space B-14 access lane.</p><time>8 min ago</time></span><span class="notification-item__unread"></span></a>
+                  <a class="notification-item" href="#spaces"><span class="notification-item__icon notification-item__icon--success"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-car"></use></svg></span><span class="notification-item__body"><strong>Space A-04 released</strong><p>Automatic sensor update received.</p><time>15 min ago</time></span></a>
+                </div>
+              </section>
+            </details>
+            <details class="topbar-details">
+              <summary class="topbar-profile"><span class="avatar avatar--sm">MH</span><span class="topbar-profile__text"><strong>Mahmudul Hasan</strong><small>Area Manager</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-arrow-down"></use></svg></summary>
+              <nav class="topbar-popover profile-popover" aria-label="Profile options"><a href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-user"></use></svg>My profile</a><a href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-settings"></use></svg>Shift settings</a><a href="admin.html"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-grid"></use></svg>Admin portal</a><hr><a href="index.html"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-log-out"></use></svg>Sign out</a></nav>
+            </details>
+          </div>
+        </header>
+
+        <div class="dashboard-content app-views">
+          <section class="manager-section is-view-active" id="overview" aria-labelledby="manager-overview-title">
+            <header class="page-header">
+              <div class="page-header__copy"><span class="page-header__eyebrow"><span class="live-dot"></span>Live area operations</span><h1 id="manager-overview-title">Gulshan City Center</h1><p>Sunday, 26 July · Morning shift · Last sensor sync 32 seconds ago</p></div>
+              <div class="page-header__actions"><span class="date-filter"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-pin"></use></svg>Zone A, B &amp; EV</span><a class="btn btn--secondary" href="#reports"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-report"></use></svg>Area report</a><a class="btn btn--primary" href="#otp-checkin"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg>Verify OTP</a></div>
+            </header>
+
+            <div class="kpi-grid">
+              <article class="kpi-card kpi-card--success"><div class="kpi-card__top"><span class="kpi-card__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-car"></use></svg></span><span class="badge badge--free badge--dot">Live</span></div><div class="kpi-card__value"><span>Free spaces</span><strong>42</strong></div><div class="kpi-card__bottom"><span class="kpi-card__trend"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-arrow-up"></use></svg>8 available</span><span>in last hour</span></div></article>
+              <article class="kpi-card"><div class="kpi-card__top"><span class="kpi-card__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-calendar"></use></svg></span><button class="kpi-card__menu" type="button" aria-label="Reservation metric options"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-more"></use></svg></button></div><div class="kpi-card__value"><span>Reservations today</span><strong>164</strong></div><div class="kpi-card__bottom"><span class="kpi-card__trend"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-arrow-up"></use></svg>12.4%</span><span>vs last Sunday</span></div></article>
+              <article class="kpi-card kpi-card--warning"><div class="kpi-card__top"><span class="kpi-card__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg></span><span class="badge badge--warning">Action needed</span></div><div class="kpi-card__value"><span>Awaiting verification</span><strong>6</strong></div><div class="kpi-card__bottom"><span class="kpi-card__trend kpi-card__trend--neutral">3 check-in · 3 out</span><span>at gates</span></div></article>
+              <article class="kpi-card kpi-card--violet"><div class="kpi-card__top"><span class="kpi-card__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-alert"></use></svg></span><span class="badge badge--danger badge--dot">5 open</span></div><div class="kpi-card__value"><span>Open violations</span><strong>5</strong></div><div class="kpi-card__bottom"><span class="kpi-card__trend kpi-card__trend--down"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-arrow-up"></use></svg>2 new</span><span>this shift</span></div></article>
+            </div>
+
+            <div class="dashboard-grid">
+              <article class="dashboard-panel occupancy-timeline">
+                <header class="panel-header"><div class="panel-header__copy"><h2>Today's occupancy</h2><p>Hourly utilization against capacity</p></div><div class="segmented-control"><button class="is-active" type="button">Today</button><button type="button">Week</button></div></header>
+                <div class="panel-body">
+                  <div class="manager-chart-stats"><span><small>Current occupancy</small><strong>82.5%</strong></span><span><small>Peak today</small><strong>91.2%</strong></span><span><small>Average stay</small><strong>2h 18m</strong></span></div>
+                  <div class="bar-chart" aria-label="Occupancy by hour">
+                    <div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar bar--38"></span></div><span>6 AM</span></div>
+                    <div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar bar--52"></span></div><span>8 AM</span></div>
+                    <div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar bar--74"></span></div><span>10 AM</span></div>
+                    <div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar bar--88"></span></div><span>12 PM</span></div>
+                    <div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar bar--82"></span></div><span>2 PM</span></div>
+                    <div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar bar--91"></span></div><span>4 PM</span></div>
+                    <div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar bar--84"></span></div><span>6 PM</span></div>
+                    <div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar bar--66"></span></div><span>8 PM</span></div>
+                  </div>
+                </div>
+              </article>
+              <aside class="dashboard-panel">
+                <header class="panel-header"><div class="panel-header__copy"><h2>Gate activity</h2><p>Live entry and exit feed</p></div><span class="live-dot"></span></header>
+                <ul class="activity-list">
+                  <li class="activity-item"><span class="activity-item__icon activity-item__icon--success"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-car"></use></svg></span><span class="activity-item__body"><p><strong>DHA-GA-18-7264</strong> checked in</p><small>Gate 1 · Space A-18</small></span><time>Now</time></li>
+                  <li class="activity-item"><span class="activity-item__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-car"></use></svg></span><span class="activity-item__body"><p><strong>DHA-CHA-43-9821</strong> checked out</p><small>Gate 2 · Space B-07</small></span><time>3m</time></li>
+                  <li class="activity-item"><span class="activity-item__icon activity-item__icon--warning"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg></span><span class="activity-item__body"><p>OTP retry at <strong>Gate 1</strong></p><small>Reservation #PF-84278</small></span><time>7m</time></li>
+                  <li class="activity-item"><span class="activity-item__icon activity-item__icon--danger"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-alert"></use></svg></span><span class="activity-item__body"><p>Overstay detected at <strong>A-22</strong></p><small>12 minutes beyond booking</small></span><time>12m</time></li>
+                </ul>
+              </aside>
+            </div>
+          </section>
+
+          <section class="manager-section" id="reservations" aria-labelledby="reservations-title">
+            <header class="manager-section-heading">
+              <div><span>Reservation operations</span><h2 id="reservations-title">Area reservations</h2><p>Review upcoming, active, and completed parking sessions.</p></div>
+              <div class="manager-section-heading__actions"><div class="segmented-control"><button class="is-active" type="button">All 164</button><button type="button">Upcoming 24</button><button type="button">Active 38</button></div><button class="btn btn--secondary" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-filter"></use></svg>Filter</button></div>
+            </header>
+            <article class="dashboard-panel">
+              <div class="dashboard-table-wrap">
+                <table class="dashboard-table reservation-table">
+                  <caption class="sr-only">Reservations for Gulshan City Center</caption>
+                  <thead><tr><th scope="col">Reservation</th><th scope="col">Driver &amp; vehicle</th><th scope="col">Space</th><th scope="col">Time slot</th><th scope="col">Gate status</th><th scope="col">Payment</th><th scope="col">Action</th></tr></thead>
+                  <tbody>
+                    <tr><td><strong>#PF-84291</strong><br><small>Booked 9:42 AM</small></td><td><div class="table-identity"><span class="avatar">NM</span><span class="table-identity__text"><strong>Nafis Mahmud</strong><small>DHA-METRO-GA-18-7264</small></span></div></td><td><span class="space-code">A-18</span></td><td><strong>10:30–12:30</strong><br><small>2 hours</small></td><td><span class="badge badge--warning badge--dot">Waiting at gate</span></td><td><span class="text-success font-semibold">Paid · ৳160</span></td><td><a class="btn btn--primary btn--sm" href="#otp-checkin">Check in</a></td></tr>
+                    <tr><td><strong>#PF-84288</strong><br><small>Booked 8:14 AM</small></td><td><div class="table-identity"><span class="avatar">FA</span><span class="table-identity__text"><strong>Farhana Akter</strong><small>DHA-METRO-KA-16-7352</small></span></div></td><td><span class="space-code">B-04</span></td><td><strong>08:30–10:30</strong><br><small>2 hours</small></td><td><span class="badge badge--active badge--dot">Parked</span></td><td><span class="text-success font-semibold">Paid · ৳160</span></td><td><a class="btn btn--secondary btn--sm" href="#otp-checkout">Check out</a></td></tr>
+                    <tr><td><strong>#PF-84296</strong><br><small>Booked 10:02 AM</small></td><td><div class="table-identity"><span class="avatar">IR</span><span class="table-identity__text"><strong>Imran Rahman</strong><small>DHA-METRO-GA-22-1048</small></span></div></td><td><span class="space-code">A-07</span></td><td><strong>11:15–14:15</strong><br><small>3 hours</small></td><td><span class="badge badge--pending badge--dot">Upcoming</span></td><td><span class="text-success font-semibold">Paid · ৳240</span></td><td><button class="btn btn--ghost btn--sm" type="button">View</button></td></tr>
+                    <tr><td><strong>#PF-84274</strong><br><small>Booked yesterday</small></td><td><div class="table-identity"><span class="avatar">SA</span><span class="table-identity__text"><strong>Shafiq Alam</strong><small>DHA-METRO-GHA-11-2480</small></span></div></td><td><span class="space-code">EV-03</span></td><td><strong>07:00–10:00</strong><br><small>3 hours</small></td><td><span class="badge badge--danger badge--dot">Overstayed</span></td><td><span class="text-warning font-semibold">৳80 due</span></td><td><a class="btn btn--danger btn--sm" href="#violation-review">Review</a></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <footer class="table-pagination"><span>Showing 1–4 of 164 reservations</span><nav class="pagination" aria-label="Reservation pages"><a class="pagination__item" href="#reservations" aria-label="Previous page">‹</a><a class="pagination__item" href="#reservations" aria-current="page">1</a><a class="pagination__item" href="#reservations">2</a><a class="pagination__item" href="#reservations">3</a><a class="pagination__item" href="#reservations" aria-label="Next page">›</a></nav></footer>
+            </article>
+          </section>
+
+          <section class="manager-section" id="spaces" aria-labelledby="spaces-title">
+            <header class="manager-section-heading">
+              <div><span>Live facility map</span><h2 id="spaces-title">Parking space status</h2><p>Select any space to update its operational status.</p></div>
+              <div class="manager-section-heading__actions"><span class="sensor-sync"><span class="live-dot"></span>Sensors synced 32s ago</span><button class="btn btn--secondary" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-filter"></use></svg>Filter spaces</button></div>
+            </header>
+            <article class="dashboard-panel parking-map-panel">
+              <header class="parking-map-toolbar">
+                <div class="parking-zone-tabs" role="tablist" aria-label="Parking zones"><button class="is-active" type="button" role="tab" aria-selected="true">Zone A <span>80 spaces</span></button><button type="button" role="tab" aria-selected="false">Zone B <span>120 spaces</span></button><button type="button" role="tab" aria-selected="false">EV Deck <span>40 spaces</span></button></div>
+                <ul class="space-legend" role="list"><li><i class="space-legend__free"></i>Free <strong>18</strong></li><li><i class="space-legend__occupied"></i>Occupied <strong>52</strong></li><li><i class="space-legend__reserved"></i>Reserved <strong>6</strong></li><li><i class="space-legend__blocked"></i>Blocked <strong>4</strong></li></ul>
+              </header>
+              <div class="parking-floor">
+                <div class="parking-floor__entrance"><span>ENTRY</span><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-arrow-down"></use></svg></div>
+                <div class="parking-lane">
+                  <span class="parking-row-label">A</span>
+                  <button class="parking-space parking-space--free" type="button"><span>A-01</span><small>Free</small></button>
+                  <button class="parking-space parking-space--occupied" type="button"><span>A-02</span><small>DHA-1842</small></button>
+                  <button class="parking-space parking-space--occupied" type="button"><span>A-03</span><small>DHA-7291</small></button>
+                  <button class="parking-space parking-space--free" type="button"><span>A-04</span><small>Free</small></button>
+                  <button class="parking-space parking-space--reserved" type="button"><span>A-05</span><small>11:00 AM</small></button>
+                  <button class="parking-space parking-space--blocked" type="button"><span>A-06</span><small>Blocked</small></button>
+                  <button class="parking-space parking-space--occupied" type="button"><span>A-07</span><small>DHA-1048</small></button>
+                  <button class="parking-space parking-space--free" type="button"><span>A-08</span><small>Free</small></button>
+                </div>
+                <div class="drive-aisle"><span>DRIVE AISLE</span><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="parking-lane">
+                  <span class="parking-row-label">B</span>
+                  <button class="parking-space parking-space--occupied" type="button"><span>A-09</span><small>DHA-6193</small></button>
+                  <button class="parking-space parking-space--free" type="button"><span>A-10</span><small>Free</small></button>
+                  <button class="parking-space parking-space--reserved" type="button"><span>A-11</span><small>11:30 AM</small></button>
+                  <button class="parking-space parking-space--occupied" type="button"><span>A-12</span><small>DHA-4437</small></button>
+                  <button class="parking-space parking-space--occupied" type="button"><span>A-13</span><small>DHA-8874</small></button>
+                  <button class="parking-space parking-space--blocked" type="button"><span>A-14</span><small>Cleaning</small></button>
+                  <button class="parking-space parking-space--free" type="button"><span>A-15</span><small>Free</small></button>
+                  <button class="parking-space parking-space--occupied" type="button"><span>A-16</span><small>DHA-7264</small></button>
+                </div>
+                <div class="parking-floor__exit"><span>EXIT</span><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-arrow-up"></use></svg></div>
+              </div>
+              <footer class="parking-map-footer"><p><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-info"></use></svg>Space statuses update automatically from sensors. Manual changes are recorded in the audit log.</p><a class="btn btn--primary btn--sm" href="#update-space"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-edit"></use></svg>Update selected space</a></footer>
+            </article>
+          </section>
+
+          <section class="manager-section" id="verification" aria-labelledby="verification-title">
+            <header class="manager-section-heading"><div><span>Secure access control</span><h2 id="verification-title">OTP verification queue</h2><p>Verify arrivals and departures using the driver's one-time code.</p></div><a class="btn btn--primary" href="#otp-checkin"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg>Enter OTP manually</a></header>
+            <div class="verification-grid">
+              <article class="verification-card verification-card--urgent"><header><span class="verification-card__type"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-arrow-down"></use></svg>Check-in</span><span class="badge badge--warning badge--dot">Waiting 4m</span></header><div class="verification-card__driver"><span class="avatar avatar--lg">NM</span><span><h3>Nafis Mahmud</h3><p>DHA-METRO-GA-18-7264</p></span></div><dl><div><dt>Reservation</dt><dd>#PF-84291</dd></div><div><dt>Space</dt><dd>A-18</dd></div><div><dt>Time</dt><dd>10:30 AM</dd></div></dl><footer><a class="btn btn--primary btn--block" href="#otp-checkin">Verify check-in OTP</a></footer></article>
+              <article class="verification-card"><header><span class="verification-card__type verification-card__type--out"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-arrow-up"></use></svg>Check-out</span><span class="badge badge--info badge--dot">Waiting 2m</span></header><div class="verification-card__driver"><span class="avatar avatar--lg">FA</span><span><h3>Farhana Akter</h3><p>DHA-METRO-KA-16-7352</p></span></div><dl><div><dt>Reservation</dt><dd>#PF-84288</dd></div><div><dt>Space</dt><dd>B-04</dd></div><div><dt>Due</dt><dd>৳0</dd></div></dl><footer><a class="btn btn--secondary btn--block" href="#otp-checkout">Verify check-out OTP</a></footer></article>
+              <article class="verification-card"><header><span class="verification-card__type"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-arrow-down"></use></svg>Check-in</span><span class="badge badge--neutral badge--dot">Waiting 1m</span></header><div class="verification-card__driver"><span class="avatar avatar--lg">SH</span><span><h3>Sadia Haque</h3><p>DHA-METRO-CHA-24-6702</p></span></div><dl><div><dt>Reservation</dt><dd>#PF-84299</dd></div><div><dt>Space</dt><dd>B-18</dd></div><div><dt>Time</dt><dd>10:45 AM</dd></div></dl><footer><a class="btn btn--primary btn--block" href="#otp-checkin">Verify check-in OTP</a></footer></article>
+            </div>
+          </section>
+
+          <section class="manager-section" id="violations" aria-labelledby="manager-violations-title">
+            <header class="manager-section-heading"><div><span>Compliance &amp; review</span><h2 id="manager-violations-title">Parking violations</h2><p>Investigate reports, apply actions, and track resolution.</p></div><div class="manager-section-heading__actions"><div class="segmented-control"><button class="is-active" type="button">Open 5</button><button type="button">Resolved 18</button></div><button class="btn btn--secondary" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-filter"></use></svg>Filter</button></div></header>
+            <article class="dashboard-panel">
+              <div class="dashboard-table-wrap">
+                <table class="dashboard-table violation-table">
+                  <caption class="sr-only">Open parking violation reports</caption>
+                  <thead><tr><th scope="col">Case</th><th scope="col">Violation</th><th scope="col">Vehicle &amp; driver</th><th scope="col">Location</th><th scope="col">Reported</th><th scope="col">Priority</th><th scope="col">Action</th></tr></thead>
+                  <tbody>
+                    <tr><td><strong>#VL-1084</strong><br><small>Sensor generated</small></td><td><strong>Overstayed reservation</strong><br><small>28 minutes beyond slot</small></td><td><div class="table-identity"><span class="avatar">SA</span><span class="table-identity__text"><strong>Shafiq Alam</strong><small>DHA-METRO-GHA-11-2480</small></span></div></td><td>EV-03</td><td>10:28 AM</td><td><span class="badge badge--danger">High</span></td><td><a class="btn btn--primary btn--sm" href="#violation-review">Review</a></td></tr>
+                    <tr><td><strong>#VL-1083</strong><br><small>Driver report</small></td><td><strong>Obstructed access</strong><br><small>Vehicle blocks aisle</small></td><td><div class="table-identity"><span class="avatar">UK</span><span class="table-identity__text"><strong>Unknown vehicle</strong><small>DHA-METRO-TA-09-5521</small></span></div></td><td>B-14 aisle</td><td>10:17 AM</td><td><span class="badge badge--warning">Medium</span></td><td><a class="btn btn--primary btn--sm" href="#violation-review">Review</a></td></tr>
+                    <tr><td><strong>#VL-1081</strong><br><small>Manager report</small></td><td><strong>Wrong space usage</strong><br><small>Assigned B-02, parked B-04</small></td><td><div class="table-identity"><span class="avatar">RA</span><span class="table-identity__text"><strong>Rasel Ahmed</strong><small>DHA-METRO-KA-12-8890</small></span></div></td><td>B-04</td><td>9:44 AM</td><td><span class="badge badge--warning">Medium</span></td><td><a class="btn btn--primary btn--sm" href="#violation-review">Review</a></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+
+          <section class="manager-section" id="reports" aria-labelledby="area-report-title">
+            <header class="manager-section-heading"><div><span>Operational reporting</span><h2 id="area-report-title">Generate area report</h2><p>Review shift performance and export a signed PDF report.</p></div><div class="manager-section-heading__actions"><button class="btn btn--secondary" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-print"></use></svg>Print preview</button><a class="btn btn--primary" href="#reports" data-report-download><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-download"></use></svg>Generate Area Report (PDF)</a></div></header>
+            <div class="dashboard-grid dashboard-grid--wide-aside">
+              <article class="area-report-preview">
+                <header><div><span class="report-mark">P</span><span><strong>ParkFlow</strong><small>Area operations report</small></span></div><span><small>Report period</small><strong>26 July 2026 · Morning shift</strong></span></header>
+                <div class="area-report-preview__title"><div><span>LOCATION</span><h3>Gulshan City Center</h3><p>Zone A, Zone B &amp; EV Deck</p></div><span class="badge badge--success badge--dot">Shift completed</span></div>
+                <dl class="area-report-metrics"><div><dt>Reservations</dt><dd>164</dd><small>+12.4% vs last Sunday</small></div><div><dt>Average occupancy</dt><dd>82.5%</dd><small>Peak 91.2% at 4 PM</small></div><div><dt>Revenue processed</dt><dd>৳42,680</dd><small>98.6% reconciled</small></div><div><dt>Violations</dt><dd>7</dd><small>2 remain open</small></div></dl>
+                <table class="area-report-table">
+                  <caption>Shift activity summary</caption>
+                  <thead><tr><th scope="col">Metric</th><th scope="col">Zone A</th><th scope="col">Zone B</th><th scope="col">EV Deck</th><th scope="col">Total</th></tr></thead>
+                  <tbody><tr><th scope="row">Check-ins</th><td>61</td><td>78</td><td>25</td><td><strong>164</strong></td></tr><tr><th scope="row">Check-outs</th><td>54</td><td>69</td><td>21</td><td><strong>144</strong></td></tr><tr><th scope="row">Manual status changes</th><td>2</td><td>3</td><td>1</td><td><strong>6</strong></td></tr><tr><th scope="row">Incidents reported</th><td>2</td><td>4</td><td>1</td><td><strong>7</strong></td></tr></tbody>
+                </table>
+                <footer><p>Prepared by Mahmudul Hasan · Area Manager</p><p>Generated by ParkFlow Operations</p></footer>
+              </article>
+              <aside class="dashboard-panel report-options">
+                <header class="panel-header"><div class="panel-header__copy"><h3>Report options</h3><p>Customize the PDF export</p></div></header>
+                <form class="panel-body form">
+                  <div class="form-field"><label class="form-label" for="report-period">Reporting period</label><select class="select" id="report-period"><option>Current shift</option><option>Today</option><option>This week</option><option>Custom range</option></select></div>
+                  <fieldset class="report-option-group"><legend>Include sections</legend><label class="check-control"><input type="checkbox" checked>Reservation summary</label><label class="check-control"><input type="checkbox" checked>Space utilization</label><label class="check-control"><input type="checkbox" checked>Violation activity</label><label class="check-control"><input type="checkbox" checked>Revenue reconciliation</label><label class="check-control"><input type="checkbox">Detailed audit log</label></fieldset>
+                  <div class="form-field"><label class="form-label" for="report-note">Manager note <span class="form-label__optional">Optional</span></label><textarea class="textarea" id="report-note" placeholder="Add a handover or operational note…"></textarea></div>
+                  <a class="btn btn--primary btn--block" href="#reports"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-download"></use></svg>Generate PDF report</a>
+                </form>
+              </aside>
+            </div>
+          </section>
+
+          <section class="manager-section" id="messages" aria-labelledby="messages-title">
+            <header class="manager-section-heading"><div><span>Driver communication</span><h2 id="messages-title">Messages</h2><p>Help drivers with arrivals, space access, and active reservations.</p></div><span class="badge badge--active badge--dot">3 unread conversations</span></header>
+            <article class="dashboard-panel message-layout">
+              <aside class="conversation-sidebar">
+                <header class="conversation-sidebar__header"><h3>Driver conversations</h3><div class="input-group search-input"><span class="input-group__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-search"></use></svg></span><label class="sr-only" for="conversation-search">Search conversations</label><input class="input input--sm" id="conversation-search" type="search" placeholder="Search drivers…"></div></header>
+                <ul class="conversation-list">
+                  <li><a class="conversation-item is-active" href="#messages"><span class="conversation-item__avatar"><span class="avatar">NM</span><span class="live-dot"></span></span><span class="conversation-item__body"><span class="conversation-item__name"><strong>Nafis Mahmud</strong><time>10:38</time></span><p>I'm at Gate 1 now. Is A-18…</p></span><span class="conversation-item__unread">2</span></a></li>
+                  <li><a class="conversation-item" href="#messages"><span class="conversation-item__avatar"><span class="avatar">FA</span></span><span class="conversation-item__body"><span class="conversation-item__name"><strong>Farhana Akter</strong><time>10:21</time></span><p>Thank you for the directions!</p></span></a></li>
+                  <li><a class="conversation-item" href="#messages"><span class="conversation-item__avatar"><span class="avatar">IR</span><span class="live-dot"></span></span><span class="conversation-item__body"><span class="conversation-item__name"><strong>Imran Rahman</strong><time>10:08</time></span><p>Can I arrive 15 minutes early?</p></span><span class="conversation-item__unread">1</span></a></li>
+                  <li><a class="conversation-item" href="#messages"><span class="conversation-item__avatar"><span class="avatar">SH</span></span><span class="conversation-item__body"><span class="conversation-item__name"><strong>Sadia Haque</strong><time>Yesterday</time></span><p>My receipt has arrived, thanks.</p></span></a></li>
+                </ul>
+              </aside>
+              <div class="chat-window">
+                <header class="chat-window__header"><div class="chat-person"><span class="avatar">NM</span><span class="chat-person__text"><strong>Nafis Mahmud</strong><small>Online · Reservation #PF-84291</small></span></div><div class="chat-window__actions"><a class="icon-btn" href="tel:+8801700000000" aria-label="Call Nafis"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-phone"></use></svg></a><button class="icon-btn" type="button" aria-label="Conversation options"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-more"></use></svg></button></div></header>
+                <div class="chat-messages">
+                  <span class="chat-date">Today, 26 July</span>
+                  <div class="chat-message"><p class="chat-message__bubble">Hi, I have a reservation at Gulshan City Center but I'm not sure which entrance to use.</p><time>10:34 AM</time></div>
+                  <div class="chat-message chat-message--outgoing"><p class="chat-message__bubble">Hello Nafis! Please use Gate 1 on the north side of the building. Your assigned space is A-18.</p><time>10:35 AM · Read</time></div>
+                  <div class="chat-message"><p class="chat-message__bubble">Got it. I'm at Gate 1 now. Is A-18 on the ground floor?</p><time>10:38 AM</time></div>
+                  <div class="chat-message chat-message--outgoing"><p class="chat-message__bubble">Yes, ground floor. Enter your 4-digit OTP at the kiosk and follow the blue Zone A signs. I can also verify it here if needed.</p><time>10:39 AM · Delivered</time></div>
+                </div>
+                <form class="chat-composer"><button class="icon-btn" type="button" aria-label="Attach a file"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-attach"></use></svg></button><label class="sr-only" for="manager-message">Message Nafis</label><textarea class="textarea" id="manager-message" placeholder="Type a message…"></textarea><button class="btn btn--primary" type="submit" aria-label="Send message"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-send"></use></svg></button></form>
+              </div>
+            </article>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <a class="dashboard-fab" href="#messages"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-chat"></use></svg><span>Driver messages</span><span class="dashboard-fab__dot">3</span></a>
+
+    <section class="modal otp-modal" id="otp-checkin" role="dialog" aria-modal="true" aria-labelledby="otp-checkin-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="otp-checkin-title">Verify driver check-in</h2><p>Reservation #PF-84291 · Gate 1</p></div><a class="modal__close" href="#verification" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></a></header>
+        <form>
+          <div class="modal__body">
+            <div class="otp-driver-summary"><span class="avatar avatar--lg">NM</span><span><strong>Nafis Mahmud</strong><small>DHA-METRO-GA-18-7264 · Space A-18</small></span><span class="badge badge--warning badge--dot">At gate</span></div>
+            <div class="otp-entry">
+              <span class="otp-entry__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg></span>
+              <h3>Enter 4-digit check-in OTP</h3>
+              <p>Ask the driver for the code shown in their reservation.</p>
+              <div class="otp-inputs">
+                <label><span class="sr-only">OTP digit 1</span><input type="text" inputmode="numeric" maxlength="1" value="8" required></label>
+                <label><span class="sr-only">OTP digit 2</span><input type="text" inputmode="numeric" maxlength="1" value="4" required></label>
+                <label><span class="sr-only">OTP digit 3</span><input type="text" inputmode="numeric" maxlength="1" value="2" required></label>
+                <label><span class="sr-only">OTP digit 4</span><input type="text" inputmode="numeric" maxlength="1" placeholder="•" required></label>
+              </div>
+              <span class="otp-entry__hint"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-info"></use></svg>2 attempts remaining before manual override is required.</span>
+            </div>
+          </div>
+          <footer class="modal__footer"><a class="btn btn--secondary" href="#verification">Cancel</a><button class="btn btn--primary" type="submit"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-check"></use></svg>Verify &amp; check in</button></footer>
+        </form>
+      </div>
+    </section>
+
+    <section class="modal otp-modal" id="otp-checkout" role="dialog" aria-modal="true" aria-labelledby="otp-checkout-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="otp-checkout-title">Verify driver check-out</h2><p>Reservation #PF-84288 · Gate 2</p></div><a class="modal__close" href="#verification" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></a></header>
+        <form>
+          <div class="modal__body">
+            <div class="otp-driver-summary"><span class="avatar avatar--lg">FA</span><span><strong>Farhana Akter</strong><small>DHA-METRO-KA-16-7352 · Space B-04</small></span><span class="badge badge--info badge--dot">Exiting</span></div>
+            <div class="checkout-balance"><span><small>Parking duration</small><strong>1h 54m</strong></span><span><small>Amount paid</small><strong>৳160</strong></span><span><small>Balance due</small><strong class="text-success">৳0</strong></span></div>
+            <div class="otp-entry"><h3>Enter check-out OTP</h3><div class="otp-inputs"><label><span class="sr-only">OTP digit 1</span><input type="text" inputmode="numeric" maxlength="1" required></label><label><span class="sr-only">OTP digit 2</span><input type="text" inputmode="numeric" maxlength="1" required></label><label><span class="sr-only">OTP digit 3</span><input type="text" inputmode="numeric" maxlength="1" required></label><label><span class="sr-only">OTP digit 4</span><input type="text" inputmode="numeric" maxlength="1" required></label></div></div>
+          </div>
+          <footer class="modal__footer"><a class="btn btn--secondary" href="#verification">Cancel</a><button class="btn btn--success" type="submit"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-check"></use></svg>Complete check-out</button></footer>
+        </form>
+      </div>
+    </section>
+
+    <section class="modal" id="update-space" role="dialog" aria-modal="true" aria-labelledby="update-space-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="update-space-title">Update space A-06</h2><p>Current status: Blocked · Zone A</p></div><a class="modal__close" href="#spaces" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></a></header>
+        <form>
+          <div class="modal__body form">
+            <fieldset class="status-picker"><legend>New space status</legend><label class="status-option status-option--free"><input type="radio" name="space-status"><span><i></i><strong>Free</strong><small>Ready for reservation</small></span></label><label class="status-option status-option--occupied"><input type="radio" name="space-status"><span><i></i><strong>Occupied</strong><small>Vehicle currently parked</small></span></label><label class="status-option status-option--blocked"><input type="radio" name="space-status" checked><span><i></i><strong>Blocked</strong><small>Unavailable for use</small></span></label></fieldset>
+            <div class="form-field"><label class="form-label" for="space-reason">Reason for change</label><select class="select" id="space-reason"><option>Cleaning in progress</option><option>Maintenance required</option><option>Safety concern</option><option>Manual sensor correction</option><option>Other</option></select></div>
+            <div class="form-field"><label class="form-label" for="space-note">Operational note</label><textarea class="textarea" id="space-note" placeholder="Add details for the audit log…"></textarea></div>
+          </div>
+          <footer class="modal__footer"><a class="btn btn--secondary" href="#spaces">Cancel</a><button class="btn btn--primary" type="submit">Update space status</button></footer>
+        </form>
+      </div>
+    </section>
+
+    <section class="modal" id="violation-review" role="dialog" aria-modal="true" aria-labelledby="violation-review-title">
+      <div class="modal__dialog violation-review-dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="violation-review-title">Review violation #VL-1084</h2><p>Overstayed reservation · EV-03</p></div><a class="modal__close" href="#violations" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></a></header>
+        <div class="modal__body">
+          <div class="violation-evidence"><span class="violation-evidence__visual"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-car"></use></svg><small>Sensor snapshot · 10:28 AM</small></span><dl><div><dt>Driver</dt><dd>Shafiq Alam</dd></div><div><dt>Vehicle</dt><dd>DHA-METRO-GHA-11-2480</dd></div><div><dt>Reservation ended</dt><dd>10:00 AM</dd></div><div><dt>Current overstay</dt><dd class="text-danger">28 minutes</dd></div></dl></div>
+          <form class="form violation-action-form"><div class="form-field"><label class="form-label" for="violation-action">Resolution action</label><select class="select" id="violation-action"><option>Apply overstay fee and notify driver</option><option>Issue formal warning</option><option>Dismiss — sensor error</option><option>Escalate to administrator</option></select></div><div class="form-field"><label class="form-label" for="violation-note">Review note</label><textarea class="textarea" id="violation-note" placeholder="Document evidence and the decision…"></textarea></div></form>
+        </div>
+        <footer class="modal__footer"><a class="btn btn--secondary" href="#violations">Cancel</a><button class="btn btn--primary" type="button">Resolve violation</button></footer>
+      </div>
+    </section>
+    <script src="app.js?v=4" defer></script>
+    <script src="frontend/manager-ui.js?v=2" defer></script>
+  </body>
+</html>
