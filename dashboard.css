@@ -133,7 +133,15 @@
     flex: 1;
     padding: var(--space-5) var(--space-3);
     overflow-y: auto;
-    scrollbar-width: thin;
+    /* Keep all navigation links reachable on short screens without showing
+       a second scrollbar beside the main dashboard scrollbar. */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .sidebar-nav::-webkit-scrollbar {
+    width: 0;
+    height: 0;
   }
 
   .sidebar-nav__group + .sidebar-nav__group {
@@ -189,6 +197,14 @@
     border-color: rgba(89, 177, 255, 0.16);
     background: linear-gradient(90deg, rgba(47, 143, 255, 0.2), rgba(47, 143, 255, 0.07));
     box-shadow: inset 3px 0 0 var(--color-primary-400);
+  }
+
+  /* The active state already identifies the current page.  Suppress the
+     browser focus ring on that same link so keyboard/click focus does not
+     create a second, nested blue outline. */
+  .sidebar-nav__link[aria-current="page"]:focus-visible,
+  .sidebar-nav__link.is-active:focus-visible {
+    outline: 0;
   }
 
   .sidebar-nav__link svg {

@@ -1,88 +1,35 @@
-/* Frontend-only sign-in and registration routing for the three demo portals. */
+/* Small non-network authentication UI helpers. Authentication itself is handled by backend-auth.js. */
 (function () {
   'use strict';
 
-  var ui = window.ParkFlowUI;
-  if (!ui) return;
-
-  var DEMO_ACCOUNTS = {
-    admin: { email: 'admin@parkflow.local', password: 'Admin2026!', page: 'admin.html' },
-    manager: { email: 'manager@parkflow.local', password: 'Manager2026!', page: 'manager.html' },
-    driver: { email: 'nafis@example.com', password: 'ParkFlow2026', page: 'driver.html' }
+  // Staff access links include ?account=manager or ?account=admin.  Keep these
+  // credentials in sync with the local development seed so the selected portal
+  // is authenticated as the intended role, rather than the default driver.
+  var staffAccounts = {
+    manager: {
+      email: 'manager@parkflow.local',
+      password: 'Manager2026!',
+      label: 'PARKING MANAGER PORTAL'
+    },
+    admin: {
+      email: 'admin@parkflow.local',
+      password: 'Admin2026!',
+      label: 'ADMINISTRATOR PORTAL'
+    }
   };
-
-  function getAccountType(email) {
-    var normalized = (email || '').toLowerCase();
-    if (normalized.indexOf('admin') !== -1) return 'admin';
-    if (normalized.indexOf('manager') !== -1) return 'manager';
-    return 'driver';
+  var loginForm = document.getElementById('login-form');
+  var requestedAccount = new URLSearchParams(window.location.search).get('account');
+  if (loginForm && staffAccounts[requestedAccount]) {
+    var account = staffAccounts[requestedAccount];
+    if (loginForm.elements.email) loginForm.elements.email.value = account.email;
+    if (loginForm.elements.password) loginForm.elements.password.value = account.password;
+    var portalTag = document.querySelector('.auth-form-header__tag');
+    if (portalTag) portalTag.textContent = account.label;
   }
-
-  function rememberDemoUser(type) {
-    var account = DEMO_ACCOUNTS[type];
-    window.localStorage.setItem('parkflow-demo-role', type);
-    window.localStorage.setItem('parkflow-demo-email', account.email);
-  }
-
-  function initialiseLoginForm() {
-    var form = document.getElementById('login-form');
-    if (!form) return;
-
-    var requestedAccount = new URLSearchParams(window.location.search).get('account');
-    if (DEMO_ACCOUNTS[requestedAccount]) {
-      form.elements.email.value = DEMO_ACCOUNTS[requestedAccount].email;
-      form.elements.password.value = DEMO_ACCOUNTS[requestedAccount].password;
-      var tag = document.querySelector('.auth-form-header__tag');
-      if (tag) tag.textContent = requestedAccount === 'admin' ? 'Administrator portal' : 'Parking manager portal';
-    }
-
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-      var role = getAccountType(form.elements.email.value);
-      rememberDemoUser(role);
-      ui.toast('Demo sign-in complete. Opening the ' + role + ' portal.');
-      window.setTimeout(function () { window.location.href = DEMO_ACCOUNTS[role].page; }, 350);
-    });
-
-    document.querySelectorAll('.social-login button').forEach(function (button) {
-      button.addEventListener('click', function () {
-        ui.toast('Social login is represented in this frontend demo. Use the demo credentials above.');
-      });
-    });
-  }
-
-  function initialiseRegistrationForm() {
-    var form = document.getElementById('registration-form');
-    if (!form) return;
-
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-      var firstName = form.elements.first_name.value.trim() || 'New';
-      window.localStorage.setItem('parkflow-demo-role', 'driver');
-      window.localStorage.setItem('parkflow-demo-driver-name', firstName);
-      ui.toast('Driver account created for this frontend demo.');
-      window.setTimeout(function () { window.location.href = 'driver.html'; }, 350);
-    });
-
-    var password = document.getElementById('register-password');
-    if (password) {
-      password.addEventListener('input', function () {
-        var note = password.closest('.form-field').querySelector('.password-strength small');
-        if (note && password.value.length >= 8) note.textContent = 'Password strength: ready for the demo.';
-      });
-    }
-  }
-
-  initialiseLoginForm();
-  initialiseRegistrationForm();
+  document.querySelectorAll('.input-group__action[aria-label="Show password"]').forEach(function (button) {
+    button.addEventListener('click', function () { var input = button.closest('.input-group').querySelector('input'); if (!input) return; var visible = input.type === 'text'; input.type = visible ? 'password' : 'text'; button.setAttribute('aria-label', visible ? 'Show password' : 'Hide password'); });
+  });
+  var password = document.getElementById('register-password');
+  if (password) password.addEventListener('input', function () { var hint = password.closest('.form-field').querySelector('.password-strength small'); if (!hint) return; var strong = password.value.length >= 8 && /\d/.test(password.value) && /[^\w\s]/.test(password.value); hint.textContent = strong ? 'Strong password.' : 'Use 8+ characters with a number and symbol.'; });
+  document.querySelectorAll('.social-login button').forEach(function (button) { button.addEventListener('click', function () { var message = document.querySelector('.auth-switch'); if (message) message.textContent = 'Use an email and password to sign in. Social and phone identity providers are not configured for this local installation.'; }); });
 })();

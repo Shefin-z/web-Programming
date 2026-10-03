@@ -195,10 +195,6 @@
       openModal(document.getElementById('add-driver-vehicle'));
       return;
     }
-    if (actionButton && actionButton.matches('.sidebar-profile')) {
-      showToast('Profile settings are ready in this demo.');
-      return;
-    }
     if (actionButton && actionButton.closest('.driver-map-controls')) {
       showToast(actionButton.getAttribute('aria-label') + ' applied to the map.');
       return;
@@ -210,19 +206,9 @@
       showToast('Parking location selected.');
       return;
     }
-    if (actionButton && /^(Change|Edit vehicle|Set as primary|View details|Conversation options|Get directions)$/i.test(actionButton.textContent.trim() || actionButton.getAttribute('aria-label') || '')) {
-      showToast((actionButton.textContent || actionButton.getAttribute('aria-label')).trim() + ' is ready in this demo.');
-      return;
-    }
     if (actionButton && actionButton.matches('.chat-composer [aria-label="Attach a file"]')) {
       showToast('File attachment is ready.');
       return;
-    }
-    if (actionButton && actionButton.type !== 'submit' && !actionButton.closest('.modal') && !actionButton.closest('.topbar-details')) {
-      var label = (actionButton.getAttribute('aria-label') || actionButton.textContent || '').trim();
-      if (/download|export|print|generate|approve|resolve|save|update|edit vehicle|set as primary/i.test(label)) {
-        showToast(label.replace(/\s+/g, ' ') + ' is ready in this demo.');
-      }
     }
   });
 
@@ -253,7 +239,7 @@
       submitFeedback(form, 'Support request sent. We will reply shortly.');
     } else if (form.matches('.topbar-search')) {
       event.preventDefault();
-      showToast('Search is ready for live data in the connected app.');
+      showToast('Use the portal search to view live matching records.');
     }
   });
 
@@ -306,7 +292,7 @@
       .replace(/[^\x20-\x7E]/g, ' ');
   }
 
-  function createDemoPdf(title, lines, filename) {
+  function createPdf(title, lines, filename) {
     var textLines = [title].concat(lines || []).map(escapePdfText);
     var stream = 'BT\n/F1 18 Tf\n52 790 Td\n(' + textLines[0] + ') Tj\n' +
       '/F1 11 Tf\n0 -28 Td\n' + textLines.slice(1).map(function (line) {
@@ -334,7 +320,7 @@
       (objects.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + offset + '\n%%EOF';
     var link = document.createElement('a');
     link.href = URL.createObjectURL(new Blob([pdf], { type: 'application/pdf' }));
-    link.download = filename || 'parkflow-demo.pdf';
+    link.download = filename || 'parkflow-report.pdf';
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -344,7 +330,7 @@
 
   window.ParkFlowUI = {
     closeModal: closeModal,
-    createPdf: createDemoPdf,
+    createPdf: createPdf,
     openModal: openModal,
     openSection: openDashboardSection,
     toast: showToast

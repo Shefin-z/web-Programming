@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#101927">
     <title>Manager Operations — ParkFlow</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css?v=2">
+    <link rel="stylesheet" href="dashboard.css?v=3">
     <link rel="stylesheet" href="manager.css">
   </head>
 
@@ -74,7 +74,7 @@
           </div>
         </nav>
         <div class="sidebar-footer">
-          <button class="sidebar-profile" type="button"><span class="sidebar-profile__avatar"><span class="avatar">MH</span><span class="live-dot"></span></span><span class="sidebar-profile__text"><strong>Mahmudul Hasan</strong><small>Morning shift manager</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-more"></use></svg></button>
+          <button class="sidebar-profile" type="button" data-action="manager-profile"><span class="sidebar-profile__avatar"><span class="avatar">MH</span><span class="live-dot"></span></span><span class="sidebar-profile__text"><strong>Mahmudul Hasan</strong><small>Morning shift manager</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-more"></use></svg></button>
         </div>
       </aside>
 
@@ -107,7 +107,7 @@
             <details class="topbar-details">
               <summary class="topbar-icon" aria-label="View notifications"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-bell"></use></svg><span class="topbar-icon__dot"></span></summary>
               <section class="topbar-popover" aria-label="Manager notifications">
-                <header class="topbar-popover__header"><h2>Notifications</h2><button type="button">Mark all read</button></header>
+                <header class="topbar-popover__header"><h2>Notifications</h2><button data-action="notifications-read" type="button">Mark all read</button></header>
                 <div class="notification-list">
                   <a class="notification-item is-unread" href="#verification"><span class="notification-item__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg></span><span class="notification-item__body"><strong>Driver waiting at Gate 1</strong><p>Reservation #PF-84291 requires check-in.</p><time>1 min ago</time></span><span class="notification-item__unread"></span></a>
                   <a class="notification-item is-unread" href="#violations"><span class="notification-item__icon notification-item__icon--warning"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-alert"></use></svg></span><span class="notification-item__body"><strong>New obstruction reported</strong><p>Space B-14 access lane.</p><time>8 min ago</time></span><span class="notification-item__unread"></span></a>
@@ -117,7 +117,7 @@
             </details>
             <details class="topbar-details">
               <summary class="topbar-profile"><span class="avatar avatar--sm">MH</span><span class="topbar-profile__text"><strong>Mahmudul Hasan</strong><small>Area Manager</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-arrow-down"></use></svg></summary>
-              <nav class="topbar-popover profile-popover" aria-label="Profile options"><a href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-user"></use></svg>My profile</a><a href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-settings"></use></svg>Shift settings</a><a href="admin.html"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-grid"></use></svg>Admin portal</a><hr><a href="index.html"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-log-out"></use></svg>Sign out</a></nav>
+              <nav class="topbar-popover profile-popover" aria-label="Profile options"><a href="#manager-profile" data-action="manager-profile"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-user"></use></svg>My profile</a><a href="#manager-profile" data-action="manager-profile"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-settings"></use></svg>Shift settings</a><a href="login.html?account=admin"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-grid"></use></svg>Admin portal</a><hr><a href="login.html?account=manager" data-action="signout"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-log-out"></use></svg>Sign out</a></nav>
             </details>
           </div>
         </header>
@@ -224,12 +224,12 @@
                 </div>
                 <div class="parking-floor__exit"><span>EXIT</span><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-arrow-up"></use></svg></div>
               </div>
-              <footer class="parking-map-footer"><p><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-info"></use></svg>Space statuses update automatically from sensors. Manual changes are recorded in the audit log.</p><a class="btn btn--primary btn--sm" href="#update-space"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-edit"></use></svg>Update selected space</a></footer>
+              <footer class="parking-map-footer"><p><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-info"></use></svg>Space statuses update automatically from sensors. Manual changes are recorded in the audit log.</p><a class="btn btn--primary btn--sm" href="#" data-action="open-space-update"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-edit"></use></svg>Update selected space</a></footer>
             </article>
           </section>
 
           <section class="manager-section" id="verification" aria-labelledby="verification-title">
-            <header class="manager-section-heading"><div><span>Secure access control</span><h2 id="verification-title">OTP verification queue</h2><p>Verify arrivals and departures using the driver's one-time code.</p></div><a class="btn btn--primary" href="#otp-checkin"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg>Enter OTP manually</a></header>
+            <header class="manager-section-heading"><div><span>Secure access control</span><h2 id="verification-title">OTP verification queue</h2><p>Verify arrivals and departures using the driver's one-time code.</p></div><a class="btn btn--primary" href="#" data-action="manual-otp" data-purpose="check_in"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg>Enter OTP manually</a></header>
             <div class="verification-grid">
               <article class="verification-card verification-card--urgent"><header><span class="verification-card__type"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-arrow-down"></use></svg>Check-in</span><span class="badge badge--warning badge--dot">Waiting 4m</span></header><div class="verification-card__driver"><span class="avatar avatar--lg">NM</span><span><h3>Nafis Mahmud</h3><p>DHA-METRO-GA-18-7264</p></span></div><dl><div><dt>Reservation</dt><dd>#PF-84291</dd></div><div><dt>Space</dt><dd>A-18</dd></div><div><dt>Time</dt><dd>10:30 AM</dd></div></dl><footer><a class="btn btn--primary btn--block" href="#otp-checkin">Verify check-in OTP</a></footer></article>
               <article class="verification-card"><header><span class="verification-card__type verification-card__type--out"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-arrow-up"></use></svg>Check-out</span><span class="badge badge--info badge--dot">Waiting 2m</span></header><div class="verification-card__driver"><span class="avatar avatar--lg">FA</span><span><h3>Farhana Akter</h3><p>DHA-METRO-KA-16-7352</p></span></div><dl><div><dt>Reservation</dt><dd>#PF-84288</dd></div><div><dt>Space</dt><dd>B-04</dd></div><div><dt>Due</dt><dd>৳0</dd></div></dl><footer><a class="btn btn--secondary btn--block" href="#otp-checkout">Verify check-out OTP</a></footer></article>
@@ -239,6 +239,10 @@
 
           <section class="manager-section" id="violations" aria-labelledby="manager-violations-title">
             <header class="manager-section-heading"><div><span>Compliance &amp; review</span><h2 id="manager-violations-title">Parking violations</h2><p>Investigate reports, apply actions, and track resolution.</p></div><div class="manager-section-heading__actions"><div class="segmented-control"><button class="is-active" type="button">Open 5</button><button type="button">Resolved 18</button></div><button class="btn btn--secondary" type="button"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-filter"></use></svg>Filter</button></div></header>
+            <article class="dashboard-panel">
+              <header class="panel-header"><div class="panel-header__copy"><h3>Driver parking issue reports</h3><p>Reports are assigned to this parking area's manager first. Review, resolve, or forward a case to the administrator.</p></div></header>
+              <div class="dashboard-table-wrap"><table class="dashboard-table driver-issue-table"><caption class="sr-only">Driver parking issue reports for this location</caption><thead><tr><th scope="col">Report</th><th scope="col">Driver</th><th scope="col">Issue</th><th scope="col">Reservation</th><th scope="col">Reported</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead><tbody><tr><td colspan="7">Loading driver reports…</td></tr></tbody></table></div>
+            </article>
             <article class="dashboard-panel">
               <div class="dashboard-table-wrap">
                 <table class="dashboard-table violation-table">
@@ -274,7 +278,7 @@
                   <div class="form-field"><label class="form-label" for="report-period">Reporting period</label><select class="select" id="report-period"><option>Current shift</option><option>Today</option><option>This week</option><option>Custom range</option></select></div>
                   <fieldset class="report-option-group"><legend>Include sections</legend><label class="check-control"><input type="checkbox" checked>Reservation summary</label><label class="check-control"><input type="checkbox" checked>Space utilization</label><label class="check-control"><input type="checkbox" checked>Violation activity</label><label class="check-control"><input type="checkbox" checked>Revenue reconciliation</label><label class="check-control"><input type="checkbox">Detailed audit log</label></fieldset>
                   <div class="form-field"><label class="form-label" for="report-note">Manager note <span class="form-label__optional">Optional</span></label><textarea class="textarea" id="report-note" placeholder="Add a handover or operational note…"></textarea></div>
-                  <a class="btn btn--primary btn--block" href="#reports"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-download"></use></svg>Generate PDF report</a>
+                  <a class="btn btn--primary btn--block" href="#reports" data-report-download><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-download"></use></svg>Generate PDF report</a>
                 </form>
               </aside>
             </div>
@@ -317,6 +321,7 @@
         <form>
           <div class="modal__body">
             <div class="otp-driver-summary"><span class="avatar avatar--lg">NM</span><span><strong>Nafis Mahmud</strong><small>DHA-METRO-GA-18-7264 · Space A-18</small></span><span class="badge badge--warning badge--dot">At gate</span></div>
+            <div class="form-field"><label class="form-label" for="checkin-reservation-code">Reservation code</label><input class="input" id="checkin-reservation-code" name="reservation-code" autocomplete="off" placeholder="PF-DEMO-1006" required></div>
             <div class="otp-entry">
               <span class="otp-entry__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-key"></use></svg></span>
               <h3>Enter 4-digit check-in OTP</h3>
@@ -341,7 +346,7 @@
         <form>
           <div class="modal__body">
             <div class="otp-driver-summary"><span class="avatar avatar--lg">FA</span><span><strong>Farhana Akter</strong><small>DHA-METRO-KA-16-7352 · Space B-04</small></span><span class="badge badge--info badge--dot">Exiting</span></div>
-            <div class="checkout-balance"><span><small>Parking duration</small><strong>1h 54m</strong></span><span><small>Amount paid</small><strong>৳160</strong></span><span><small>Balance due</small><strong class="text-success">৳0</strong></span></div>
+            <div class="form-field"><label class="form-label" for="checkout-reservation-code">Reservation code</label><input class="input" id="checkout-reservation-code" name="reservation-code" autocomplete="off" placeholder="PF-DEMO-1007" required></div><div class="checkout-balance"><span><small>Parking duration</small><strong>1h 54m</strong></span><span><small>Amount paid</small><strong>৳160</strong></span><span><small>Balance due</small><strong class="text-success">৳0</strong></span></div>
             <div class="otp-entry"><h3>Enter check-out OTP</h3><div class="otp-inputs"><label><span class="sr-only">OTP digit 1</span><input type="text" inputmode="numeric" maxlength="1" required></label><label><span class="sr-only">OTP digit 2</span><input type="text" inputmode="numeric" maxlength="1" required></label><label><span class="sr-only">OTP digit 3</span><input type="text" inputmode="numeric" maxlength="1" required></label><label><span class="sr-only">OTP digit 4</span><input type="text" inputmode="numeric" maxlength="1" required></label></div></div>
           </div>
           <footer class="modal__footer"><a class="btn btn--secondary" href="#verification">Cancel</a><button class="btn btn--success" type="submit"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-check"></use></svg>Complete check-out</button></footer>
@@ -354,7 +359,7 @@
         <header class="modal__header"><div class="modal__title-group"><h2 id="update-space-title">Update space A-06</h2><p>Current status: Blocked · Zone A</p></div><a class="modal__close" href="#spaces" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></a></header>
         <form>
           <div class="modal__body form">
-            <fieldset class="status-picker"><legend>New space status</legend><label class="status-option status-option--free"><input type="radio" name="space-status"><span><i></i><strong>Free</strong><small>Ready for reservation</small></span></label><label class="status-option status-option--occupied"><input type="radio" name="space-status"><span><i></i><strong>Occupied</strong><small>Vehicle currently parked</small></span></label><label class="status-option status-option--blocked"><input type="radio" name="space-status" checked><span><i></i><strong>Blocked</strong><small>Unavailable for use</small></span></label></fieldset>
+            <fieldset class="status-picker"><legend>New space status</legend><label class="status-option status-option--free"><input type="radio" name="space-status"><span><i></i><strong>Free</strong><small>Ready for reservation</small></span></label><label class="status-option status-option--occupied"><input type="radio" name="space-status"><span><i></i><strong>Occupied</strong><small>Vehicle currently parked</small></span></label><label class="status-option status-option--reserved"><input type="radio" name="space-status"><span><i></i><strong>Reserved</strong><small>Held for a driver</small></span></label><label class="status-option status-option--blocked"><input type="radio" name="space-status" checked><span><i></i><strong>Blocked</strong><small>Unavailable for use</small></span></label><label class="status-option status-option--blocked"><input type="radio" name="space-status"><span><i></i><strong>Maintenance</strong><small>Requires maintenance</small></span></label></fieldset>
             <div class="form-field"><label class="form-label" for="space-reason">Reason for change</label><select class="select" id="space-reason"><option>Cleaning in progress</option><option>Maintenance required</option><option>Safety concern</option><option>Manual sensor correction</option><option>Other</option></select></div>
             <div class="form-field"><label class="form-label" for="space-note">Operational note</label><textarea class="textarea" id="space-note" placeholder="Add details for the audit log…"></textarea></div>
           </div>
@@ -373,7 +378,22 @@
         <footer class="modal__footer"><a class="btn btn--secondary" href="#violations">Cancel</a><button class="btn btn--primary" type="button">Resolve violation</button></footer>
       </div>
     </section>
+    <section class="modal" id="manager-profile" role="dialog" aria-modal="true" aria-labelledby="manager-profile-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="manager-profile-title">My manager profile</h2><p>Update your contact details and review your active assignment.</p></div><a class="modal__close" href="#overview" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></a></header>
+        <form id="manager-profile-form"><div class="modal__body form"><div class="form-field"><label class="form-label" for="manager-profile-name">Full name</label><input class="input" id="manager-profile-name" name="full_name" required></div><div class="form-field"><label class="form-label" for="manager-profile-phone">Phone number</label><input class="input" id="manager-profile-phone" name="phone" inputmode="tel"></div><div class="form-field"><label class="form-label" for="manager-profile-email">Email address</label><input class="input" id="manager-profile-email" disabled></div><div class="form-field"><label class="form-label" for="manager-profile-assignment">Current assignment</label><input class="input" id="manager-profile-assignment" disabled></div></div><footer class="modal__footer"><a class="btn btn--secondary" href="#overview">Cancel</a><button class="btn btn--primary" type="submit">Save profile</button></footer></form>
+      </div>
+    </section>
+    <section class="modal" id="driver-issue-review" role="dialog" aria-modal="true" aria-labelledby="driver-issue-review-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="driver-issue-review-title">Review driver report</h2><p>Check the details, then keep it in review, resolve it, or forward it to the administrator.</p></div><a class="modal__close" href="#violations" aria-label="Close driver report review"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></a></header>
+        <form id="driver-issue-review-form"><div class="modal__body form"><div class="violation-evidence" id="driver-issue-details"></div><div class="form-field"><label class="form-label" for="driver-issue-decision">Manager decision</label><select class="select" id="driver-issue-decision"><option value="review">Keep under manager review</option><option value="resolve">Resolve this report</option><option value="forward">Forward to administrator</option></select></div><div class="form-field"><label class="form-label" for="driver-issue-note">Review note</label><textarea class="textarea" id="driver-issue-note" placeholder="Add the inspection result or reason for forwarding…" required></textarea></div></div><footer class="modal__footer"><a class="btn btn--secondary" href="#violations">Cancel</a><button class="btn btn--primary" type="submit">Save review</button></footer></form>
+      </div>
+    </section>
+
     <script src="app.js?v=4" defer></script>
-    <script src="frontend/manager-ui.js?v=2" defer></script>
+    <script src="frontend/manager-ui.js?v=3" defer></script>
+    <script src="frontend/api.js" defer></script>
+    <script src="frontend/backend-manager.js?v=6" defer></script>
   </body>
 </html>

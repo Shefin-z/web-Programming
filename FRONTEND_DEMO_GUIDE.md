@@ -1,9 +1,9 @@
-# ParkFlow: frontend-only project update guide
+# ParkFlow: UI and backend guide
 
-This version is intentionally a client-side demonstration. Every button gives
-visible feedback, changes the local UI, opens a modal, navigates to the
-relevant screen, or downloads a browser-generated PDF. No fetch/API call is
-made by the pages.
+The visible UI remains HTML/CSS/JavaScript, while authentication, profiles,
+vehicles, reservations, support, admin configuration, and manager operations
+now call the same-origin PHP/MySQL API. Client-side PDF downloads remain a
+browser feature.
 
 ## Code map for presentation
 
@@ -26,14 +26,15 @@ made by the pages.
 
 ## Fast demo flow
 
-1. Start `start-parkflow.bat`, then open `http://127.0.0.1:5500/`.
+1. Start Apache and MySQL in XAMPP, import `database/parkflow.sql`, then open
+   `http://localhost/web-Programming/` (or use `start-parkflow.bat`).
 2. Show the Guest home page: search and map pins work without sign-in.
 3. Log in using the Staff links to demonstrate the Admin and Manager portals.
 4. In the Driver portal, change the duration and location, reserve a space, then download a receipt PDF.
 5. In the Manager portal, select a space, update its status, then use OTP `8426` for the check-in demo.
 6. In the Admin portal, add a manager, approve a driver, and export the monthly report PDF.
 
-## Scope note
+## Backend note
 
-The old Python/SQLite files are kept in the project folder as unused source
-history. The pages and launcher no longer load or require the backend.
+The API routes are documented in `api/README.md`; the connectors that call
+them are in `frontend/backend-*.js`.

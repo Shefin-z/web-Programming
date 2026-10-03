@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#101927">
     <title>Admin Dashboard — ParkFlow</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css?v=2">
+    <link rel="stylesheet" href="dashboard.css?v=3">
     <link rel="stylesheet" href="admin.css?v=2">
   </head>
 
@@ -23,7 +23,6 @@
       <symbol id="i-tag" viewBox="0 0 24 24"><path d="m20 13-7 7L3 10V3h7l10 10Z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></symbol>
       <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.8 2.2 18a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4M12 17h.01"></path></symbol>
       <symbol id="i-report" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6M8 13h8M8 17h6"></path></symbol>
-      <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"></path></symbol>
       <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"></path></symbol>
       <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></symbol>
       <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></symbol>
@@ -69,7 +68,7 @@
             <ul class="sidebar-nav__list">
               <li><a class="sidebar-nav__link" href="#managers"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-users"></use></svg>Managers<span class="sidebar-nav__count">8</span></a></li>
               <li><a class="sidebar-nav__link" href="#locations"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-pin"></use></svg>Locations &amp; spaces</a></li>
-              <li><a class="sidebar-nav__link" href="#drivers"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-user-check"></use></svg>Driver approvals<span class="sidebar-nav__count sidebar-nav__count--danger">12</span></a></li>
+              <li><a class="sidebar-nav__link" href="#manager-approvals"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-user-check"></use></svg>Manager approvals<span class="sidebar-nav__count sidebar-nav__count--danger">12</span></a></li>
               <li><a class="sidebar-nav__link" href="#pricing"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-tag"></use></svg>Dynamic pricing</a></li>
               <li><a class="sidebar-nav__link" href="#violations"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg>Violation categories</a></li>
             </ul>
@@ -78,17 +77,16 @@
             <span class="sidebar-nav__label">Reports</span>
             <ul class="sidebar-nav__list">
               <li><a class="sidebar-nav__link" href="#reports"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-report"></use></svg>Revenue reports</a></li>
-              <li><a class="sidebar-nav__link" href="#settings"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-settings"></use></svg>System settings</a></li>
             </ul>
           </div>
         </nav>
 
         <div class="sidebar-footer">
-          <button class="sidebar-profile" type="button">
+          <a class="sidebar-profile" href="#profile" aria-label="Open my profile">
             <span class="sidebar-profile__avatar"><span class="avatar">RA</span><span class="live-dot"></span></span>
-            <span class="sidebar-profile__text"><strong>Raihan Ahmed</strong><small>Super Administrator</small></span>
+            <span class="sidebar-profile__text"><strong class="admin-name">Raihan Ahmed</strong><small>Super Administrator</small></span>
             <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-more"></use></svg>
-          </button>
+          </a>
         </div>
       </aside>
 
@@ -116,11 +114,10 @@
                     <ul class="sidebar-nav__list">
                       <li><a class="sidebar-nav__link" href="#managers"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-users"></use></svg>Managers</a></li>
                       <li><a class="sidebar-nav__link" href="#locations"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-pin"></use></svg>Locations &amp; spaces</a></li>
-                      <li><a class="sidebar-nav__link" href="#drivers"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-user-check"></use></svg>Driver approvals</a></li>
+                      <li><a class="sidebar-nav__link" href="#manager-approvals"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-user-check"></use></svg>Manager approvals</a></li>
                       <li><a class="sidebar-nav__link" href="#pricing"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-tag"></use></svg>Dynamic pricing</a></li>
                       <li><a class="sidebar-nav__link" href="#violations"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg>Violations</a></li>
                     <li><a class="sidebar-nav__link" href="#reports"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-report"></use></svg>Revenue reports</a></li>
-                    <li><a class="sidebar-nav__link" href="#settings"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-settings"></use></svg>System settings</a></li>
                     </ul>
                   </div>
                 </nav>
@@ -131,7 +128,7 @@
 
           <form class="topbar-search input-group search-input" role="search">
             <span class="input-group__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-search"></use></svg></span>
-            <label class="sr-only" for="admin-search">Search managers, drivers, locations, or reports</label>
+            <label class="sr-only" for="admin-search">Search managers, manager applications, locations, or reports</label>
             <input class="input" id="admin-search" type="search" placeholder="Search anything…">
           </form>
 
@@ -139,22 +136,21 @@
             <details class="topbar-details">
               <summary class="topbar-icon" aria-label="View notifications"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-bell"></use></svg><span class="topbar-icon__dot"></span></summary>
               <section class="topbar-popover" aria-label="Notifications">
-                <header class="topbar-popover__header"><h2>Notifications</h2><button type="button">Mark all read</button></header>
+                <header class="topbar-popover__header"><h2>Notifications</h2><button data-action="notifications-read" type="button">Mark all read</button></header>
                 <div class="notification-list">
-                  <a class="notification-item is-unread" href="#drivers"><span class="notification-item__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-user-check"></use></svg></span><span class="notification-item__body"><strong>12 driver accounts await approval</strong><p>Identity documents are ready for review.</p><time>4 min ago</time></span><span class="notification-item__unread"></span></a>
+                  <a class="notification-item is-unread" href="#manager-approvals"><span class="notification-item__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-user-check"></use></svg></span><span class="notification-item__body"><strong>12 manager applications await approval</strong><p>Identity and employment documents are ready for review.</p><time>4 min ago</time></span><span class="notification-item__unread"></span></a>
                   <a class="notification-item is-unread" href="#reports"><span class="notification-item__icon notification-item__icon--success"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-report"></use></svg></span><span class="notification-item__body"><strong>June report is ready</strong><p>Monthly revenue reconciliation completed.</p><time>31 min ago</time></span><span class="notification-item__unread"></span></a>
                   <a class="notification-item" href="#locations"><span class="notification-item__icon notification-item__icon--warning"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg></span><span class="notification-item__body"><strong>Occupancy threshold reached</strong><p>Gulshan Avenue is currently at 92%.</p><time>1 hr ago</time></span></a>
                 </div>
-                <footer class="topbar-popover__footer"><a href="#drivers">View all notifications</a></footer>
+                <footer class="topbar-popover__footer"><a href="#manager-approvals">View all notifications</a></footer>
               </section>
             </details>
 
             <details class="topbar-details">
-              <summary class="topbar-profile"><span class="avatar avatar--sm">RA</span><span class="topbar-profile__text"><strong>Raihan Ahmed</strong><small>Super Admin</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-arrow-down"></use></svg></summary>
+              <summary class="topbar-profile"><span class="avatar avatar--sm">RA</span><span class="topbar-profile__text"><strong class="admin-name">Raihan Ahmed</strong><small>Super Admin</small></span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-arrow-down"></use></svg></summary>
               <nav class="topbar-popover profile-popover" aria-label="Profile options">
-                <a href="#overview"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-users"></use></svg>My profile</a>
-                <a href="manager.html"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-car"></use></svg>Manager portal</a>
-                <a href="#settings"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-settings"></use></svg>Settings</a>
+                <a href="#profile"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-users"></use></svg>My profile</a>
+                <a href="login.html?account=manager"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-car"></use></svg>Manager sign in</a>
                 <hr>
                 <a href="index.html"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-log-out"></use></svg>Sign out</a>
               </nav>
@@ -163,6 +159,28 @@
         </header>
 
         <div class="dashboard-content app-views">
+          <section class="admin-section" id="profile" aria-labelledby="admin-profile-title">
+            <header class="section-toolbar">
+              <div>
+                <span class="section-toolbar__eyebrow">Account settings</span>
+                <h2 id="admin-profile-title">My profile</h2>
+                <p>Manage the details for your administrator account.</p>
+              </div>
+              <a class="btn btn--secondary" href="#overview">Back to dashboard</a>
+            </header>
+            <form class="dashboard-panel form" id="admin-profile-form">
+              <header class="panel-header"><div class="panel-header__copy"><h3>Personal information</h3><p>Your email address is used to sign in and cannot be changed here.</p></div></header>
+              <div class="panel-body">
+                <div class="form-row">
+                  <div class="form-field"><label class="form-label" for="admin-profile-name">Full name</label><input class="input" id="admin-profile-name" type="text" autocomplete="name" required></div>
+                  <div class="form-field"><label class="form-label" for="admin-profile-email">Email address</label><input class="input" id="admin-profile-email" type="email" autocomplete="email" readonly></div>
+                </div>
+                <div class="form-field"><label class="form-label" for="admin-profile-phone">Phone number</label><input class="input" id="admin-profile-phone" type="tel" autocomplete="tel" placeholder="+880 1XXX XXXXXX"></div>
+                <div class="section-toolbar__actions"><a class="btn btn--secondary" href="#overview">Cancel</a><button class="btn btn--primary" type="submit">Save profile</button></div>
+              </div>
+            </form>
+          </section>
+
           <section class="admin-section is-view-active" id="overview" aria-labelledby="admin-overview-title">
             <header class="page-header">
               <div class="page-header__copy">
@@ -173,7 +191,7 @@
               <div class="page-header__actions">
                 <span class="date-filter"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-calendar"></use></svg>Jul 20–26, 2026</span>
                 <a class="btn btn--secondary" href="#reports" data-report-download><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-download"></use></svg>Export report</a>
-                <a class="btn btn--primary" href="#add-location"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-plus"></use></svg>Add location</a>
+                <div class="section-toolbar__actions"><a class="btn btn--secondary" href="#add-space"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-plus"></use></svg>Add space</a><a class="btn btn--primary" href="#add-location"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-plus"></use></svg>Add location</a></div>
               </div>
             </header>
 
@@ -282,26 +300,6 @@
             </div>
           </section>
 
-          <section class="admin-section" id="settings" aria-labelledby="settings-title">
-            <header class="section-toolbar">
-              <div><span class="section-toolbar__eyebrow">Platform configuration</span><h2 id="settings-title">System settings</h2><p>Control notifications, reservation safeguards, and staff access preferences.</p></div>
-              <a class="btn btn--secondary" href="#overview">Back to dashboard</a>
-            </header>
-            <div class="dashboard-grid dashboard-grid--wide-aside">
-              <form class="dashboard-panel admin-settings-form" id="admin-settings-form">
-                <header class="panel-header"><div class="panel-header__copy"><h3>Operational preferences</h3><p>Changes apply to this frontend demonstration.</p></div><span class="admin-settings-form__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-settings"></use></svg></span></header>
-                <div class="panel-body admin-settings-list">
-                  <label><span><strong>Reservation alerts</strong><small>Notify managers about new or changed bookings.</small></span><span class="switch"><input name="reservationAlerts" type="checkbox" checked aria-label="Enable reservation alerts"></span></label>
-                  <label><span><strong>Driver approval review</strong><small>Require an admin decision before drivers become active.</small></span><span class="switch"><input name="driverApproval" type="checkbox" checked aria-label="Require driver approval"></span></label>
-                  <label><span><strong>Dynamic pricing</strong><small>Allow active pricing rules to update hourly rates.</small></span><span class="switch"><input name="dynamicPricing" type="checkbox" checked aria-label="Enable dynamic pricing"></span></label>
-                  <label><span><strong>Violation escalation</strong><small>Send an immediate alert for severe incidents.</small></span><span class="switch"><input name="violationAlerts" type="checkbox" aria-label="Enable violation escalation"></span></label>
-                </div>
-                <footer class="panel-footer"><small>Last reviewed today at 10:42 PM</small><button class="btn btn--primary" type="submit"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-check"></use></svg>Save settings</button></footer>
-              </form>
-              <aside class="dashboard-panel admin-insight-card admin-insight-card--secure"><span class="admin-insight-card__icon"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-users"></use></svg></span><span class="section-toolbar__eyebrow">Access control</span><h3>8 active managers</h3><p>Manager permissions and assigned parking locations are currently up to date.</p><a class="btn btn--outline btn--sm" href="#managers">Manage staff access</a></aside>
-            </div>
-          </section>
-
           <section class="admin-section" id="managers" aria-labelledby="managers-title">
             <header class="section-toolbar">
               <div><span class="section-toolbar__eyebrow">Team management</span><h2 id="managers-title">Parking managers</h2><p>Assign managers to locations and control their access.</p></div>
@@ -331,7 +329,7 @@
           <section class="admin-section" id="locations" aria-labelledby="locations-title">
             <header class="section-toolbar">
               <div><span class="section-toolbar__eyebrow">Network inventory</span><h2 id="locations-title">Parking locations &amp; spaces</h2><p>Monitor capacity, operating status, and manager assignments.</p></div>
-              <a class="btn btn--primary" href="#add-location"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-plus"></use></svg>Add location</a>
+              <div class="section-toolbar__actions"><a class="btn btn--secondary" href="#add-space"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-plus"></use></svg>Add space</a><a class="btn btn--primary" href="#add-location"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-plus"></use></svg>Add location</a></div>
             </header>
             <div class="admin-location-grid">
               <article class="admin-location-card">
@@ -358,20 +356,20 @@
             </div>
           </section>
 
-          <section class="admin-section" id="drivers" aria-labelledby="drivers-title">
+          <section class="admin-section" id="manager-approvals" aria-labelledby="manager-approvals-title">
             <header class="section-toolbar">
-              <div><span class="section-toolbar__eyebrow">Account verification</span><h2 id="drivers-title">Driver approvals</h2><p>Review submitted identity and vehicle documents before activation.</p></div>
+              <div><span class="section-toolbar__eyebrow">Account verification</span><h2 id="manager-approvals-title">Manager approvals</h2><p>Review submitted identity and employment documents before activating manager access.</p></div>
               <span class="badge badge--warning badge--dot badge--lg">12 awaiting review</span>
             </header>
             <article class="dashboard-panel">
               <div class="dashboard-table-wrap">
                 <table class="dashboard-table approval-table">
-                  <caption class="sr-only">Driver accounts awaiting approval</caption>
-                  <thead><tr><th scope="col">Applicant</th><th scope="col">Vehicle</th><th scope="col">Documents</th><th scope="col">Submitted</th><th scope="col">Risk check</th><th scope="col">Decision</th></tr></thead>
+                  <caption class="sr-only">Manager applications awaiting approval</caption>
+                  <thead><tr><th scope="col">Applicant</th><th scope="col">Requested role</th><th scope="col">Documents</th><th scope="col">Submitted</th><th scope="col">Background check</th><th scope="col">Decision</th></tr></thead>
                   <tbody>
-                    <tr><td><div class="table-identity"><span class="avatar">ZH</span><span class="table-identity__text"><strong>Zubair Hossain</strong><small>+880 1712 440982</small></span></div></td><td><strong>Toyota Axio 2021</strong><br><small>DHA-METRO-GA-32-7861</small></td><td><div class="document-chips"><button type="button">NID <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button><button type="button">License <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button></div></td><td>26 Jul, 9:42 AM</td><td><span class="badge badge--success badge--dot">Low risk</span></td><td><div class="approval-actions"><button class="btn btn--success btn--sm" type="button"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-check"></use></svg>Approve</button><button class="btn btn--secondary btn--sm" type="button">Review</button></div></td></tr>
-                    <tr><td><div class="table-identity"><span class="avatar">MQ</span><span class="table-identity__text"><strong>Mehedi Qureshi</strong><small>+880 1819 225610</small></span></div></td><td><strong>Honda Vezel 2020</strong><br><small>DHA-METRO-GHA-18-3045</small></td><td><div class="document-chips"><button type="button">NID <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button><button type="button">License <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button></div></td><td>26 Jul, 8:18 AM</td><td><span class="badge badge--warning badge--dot">Review</span></td><td><div class="approval-actions"><button class="btn btn--success btn--sm" type="button"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-check"></use></svg>Approve</button><button class="btn btn--secondary btn--sm" type="button">Review</button></div></td></tr>
-                    <tr><td><div class="table-identity"><span class="avatar">SN</span><span class="table-identity__text"><strong>Sharmin Nahar</strong><small>+880 1678 901322</small></span></div></td><td><strong>Nissan X-Trail 2022</strong><br><small>DHA-METRO-KHA-27-6290</small></td><td><div class="document-chips"><button type="button">NID <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button><button type="button">License <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button></div></td><td>25 Jul, 7:36 PM</td><td><span class="badge badge--success badge--dot">Low risk</span></td><td><div class="approval-actions"><button class="btn btn--success btn--sm" type="button"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-check"></use></svg>Approve</button><button class="btn btn--secondary btn--sm" type="button">Review</button></div></td></tr>
+                    <tr><td><div class="table-identity"><span class="avatar">ZH</span><span class="table-identity__text"><strong>Zubair Hossain</strong><small>+880 1712 440982</small></span></div></td><td><strong>Parking manager</strong><br><small>Gulshan City Center</small></td><td><div class="document-chips"><button type="button">NID <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button><button type="button">CV <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button></div></td><td>26 Jul, 9:42 AM</td><td><span class="badge badge--success badge--dot">Cleared</span></td><td><div class="approval-actions"><button class="btn btn--success btn--sm" type="button"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-check"></use></svg>Approve</button><button class="btn btn--secondary btn--sm" type="button">Review</button></div></td></tr>
+                    <tr><td><div class="table-identity"><span class="avatar">MQ</span><span class="table-identity__text"><strong>Mehedi Qureshi</strong><small>+880 1819 225610</small></span></div></td><td><strong>Floor manager</strong><br><small>Navana Tower Garage</small></td><td><div class="document-chips"><button type="button">NID <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button><button type="button">CV <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button></div></td><td>26 Jul, 8:18 AM</td><td><span class="badge badge--warning badge--dot">Review</span></td><td><div class="approval-actions"><button class="btn btn--success btn--sm" type="button"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-check"></use></svg>Approve</button><button class="btn btn--secondary btn--sm" type="button">Review</button></div></td></tr>
+                    <tr><td><div class="table-identity"><span class="avatar">SN</span><span class="table-identity__text"><strong>Sharmin Nahar</strong><small>+880 1678 901322</small></span></div></td><td><strong>Operations manager</strong><br><small>Lakeview Smart Parking</small></td><td><div class="document-chips"><button type="button">NID <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button><button type="button">CV <svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-eye"></use></svg></button></div></td><td>25 Jul, 7:36 PM</td><td><span class="badge badge--success badge--dot">Cleared</span></td><td><div class="approval-actions"><button class="btn btn--success btn--sm" type="button"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-check"></use></svg>Approve</button><button class="btn btn--secondary btn--sm" type="button">Review</button></div></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -410,7 +408,10 @@
                   <div class="pricing-clock"><span>Current time</span><strong>6:42 PM</strong><small>Peak rate active until 9:00 PM</small></div>
                   <div class="current-rate"><span>Current hourly rate</span><strong>৳100<small>/hour</small></strong><em>Base rate ৳80</em></div>
                   <dl class="rate-breakdown"><div><dt>Demand adjustment</dt><dd>+৳20</dd></div><div><dt>Service fee</dt><dd>৳8</dd></div><div><dt>Estimated 2 hours</dt><dd>৳208</dd></div></dl>
-                  <button class="btn btn--outline btn--block" type="button">Simulate another time</button>
+                  <form class="pricing-preview__controls">
+                    <label class="form-field" for="pricing-preview-time"><span class="form-label">Preview time</span><input class="input" id="pricing-preview-time" type="time" required></label>
+                    <button class="btn btn--outline" type="submit">Apply preview</button>
+                  </form>
                 </div>
               </aside>
             </div>
@@ -421,6 +422,10 @@
               <div><span class="section-toolbar__eyebrow">Compliance controls</span><h2 id="violations-title">Parking violation categories</h2><p>Define standardized incident types, severity, and default penalties.</p></div>
               <a class="btn btn--primary" href="#add-violation-category"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-plus"></use></svg>Add category</a>
             </header>
+            <article class="dashboard-panel">
+              <header class="panel-header"><div class="panel-header__copy"><h3>Manager-forwarded driver reports</h3><p>These cases were reviewed by the assigned parking-area manager and escalated for administrator action.</p></div></header>
+              <div class="dashboard-table-wrap"><table class="dashboard-table forwarded-issue-table"><caption class="sr-only">Manager-forwarded driver reports</caption><thead><tr><th scope="col">Case</th><th scope="col">Location</th><th scope="col">Driver</th><th scope="col">Category</th><th scope="col">Manager</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead><tbody><tr><td colspan="7">Loading forwarded reports…</td></tr></tbody></table></div>
+            </article>
             <div class="violation-category-grid">
               <article class="violation-category"><header><span class="violation-category__icon violation-category__icon--danger"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg></span><span class="badge badge--danger">Critical</span></header><h3>Unauthorized parking</h3><p>Vehicle parked without a valid reservation or after access expiry.</p><footer><span>Default penalty <strong>৳1,500</strong></span><button class="icon-btn" type="button" aria-label="Edit unauthorized parking category"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"></use></svg></button></footer></article>
               <article class="violation-category"><header><span class="violation-category__icon violation-category__icon--warning"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-car"></use></svg></span><span class="badge badge--warning">Major</span></header><h3>Wrong space usage</h3><p>Vehicle occupies a space different from the assigned reservation.</p><footer><span>Default penalty <strong>৳800</strong></span><button class="icon-btn" type="button" aria-label="Edit wrong space category"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-edit"></use></svg></button></footer></article>
@@ -473,6 +478,7 @@
           <div class="modal__body form">
             <div class="form-row"><div class="form-field"><label class="form-label" for="manager-first-name">First name</label><input class="input" id="manager-first-name" type="text" placeholder="First name" required></div><div class="form-field"><label class="form-label" for="manager-last-name">Last name</label><input class="input" id="manager-last-name" type="text" placeholder="Last name" required></div></div>
             <div class="form-field"><label class="form-label" for="manager-email">Work email</label><input class="input" id="manager-email" type="email" placeholder="manager@parkflow.example" required></div>
+            <div class="form-field"><label class="form-label" for="manager-password">Temporary password</label><input class="input" id="manager-password" type="password" minlength="8" placeholder="At least 8 characters" autocomplete="new-password" required></div>
             <div class="form-field"><label class="form-label" for="manager-phone">Phone number</label><input class="input" id="manager-phone" type="tel" placeholder="+880 1XXX XXXXXX" required></div>
             <div class="form-field"><label class="form-label" for="manager-location">Assigned location</label><select class="select" id="manager-location" required><option value="">Select a parking location</option><option>Gulshan City Center</option><option>Navana Tower Garage</option><option>Police Plaza Parking</option><option>Lakeview Smart Parking</option></select></div>
             <div class="form-row"><div class="form-field"><label class="form-label" for="manager-shift-start">Shift starts</label><input class="input" id="manager-shift-start" type="time" value="08:00"></div><div class="form-field"><label class="form-label" for="manager-shift-end">Shift ends</label><input class="input" id="manager-shift-end" type="time" value="16:00"></div></div>
@@ -483,11 +489,34 @@
       </div>
     </section>
 
+    <section class="modal" id="edit-manager" role="dialog" aria-modal="true" aria-labelledby="edit-manager-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="edit-manager-title">Edit parking manager</h2><p>Update the manager's contact details, location, and shift.</p></div><a class="modal__close" href="#managers" aria-label="Close edit manager form"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <form id="edit-manager-form">
+          <input id="edit-manager-id" type="hidden">
+          <div class="modal__body form">
+            <div class="form-field"><label class="form-label" for="edit-manager-name">Full name</label><input class="input" id="edit-manager-name" type="text" autocomplete="name" required></div>
+            <div class="form-field"><label class="form-label" for="edit-manager-phone">Phone number</label><input class="input" id="edit-manager-phone" type="tel" autocomplete="tel"></div>
+            <div class="form-field"><label class="form-label" for="edit-manager-location">Assigned location</label><select class="select" id="edit-manager-location" required><option value="">Select a parking location</option></select></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="edit-manager-shift-start">Shift starts</label><input class="input" id="edit-manager-shift-start" type="time" value="08:00" required></div><div class="form-field"><label class="form-label" for="edit-manager-shift-end">Shift ends</label><input class="input" id="edit-manager-shift-end" type="time" value="16:00" required></div></div>
+          </div>
+          <footer class="modal__footer"><a class="btn btn--secondary" href="#managers">Cancel</a><button class="btn btn--primary" type="submit">Save changes</button></footer>
+        </form>
+      </div>
+    </section>
+
     <section class="modal" id="remove-manager" role="dialog" aria-modal="true" aria-labelledby="remove-manager-title">
       <div class="modal__dialog modal__dialog--sm">
-        <header class="modal__header"><div class="modal__title-group"><h2 id="remove-manager-title">Remove manager?</h2><p>This account will lose all portal access immediately.</p></div><a class="modal__close" href="#managers" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
-        <div class="modal__body"><div class="destructive-confirm"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg></span><p>Reservations and reports will remain intact. Reassign the location before removing the manager.</p></div></div>
-        <footer class="modal__footer"><a class="btn btn--secondary" href="#managers">Keep account</a><button class="btn btn--danger" type="button">Remove manager</button></footer>
+        <header class="modal__header"><div class="modal__title-group"><h2 id="remove-manager-title">Suspend manager?</h2><p>This account will lose portal access immediately.</p></div><a class="modal__close" href="#managers" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <div class="modal__body"><div class="destructive-confirm"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg></span><p><strong class="remove-manager-name">This manager</strong> will be suspended. Reservations and reports will remain intact.</p></div></div>
+        <footer class="modal__footer"><a class="btn btn--secondary" href="#managers">Keep account</a><button class="btn btn--danger" data-action="manager-remove-confirm" type="button">Suspend manager</button></footer>
+      </div>
+    </section>
+
+    <section class="modal" id="add-space" role="dialog" aria-modal="true" aria-labelledby="add-space-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="add-space-title">Add parking space</h2><p>Add an individual space to an existing parking location.</p></div><a class="modal__close" href="#locations" aria-label="Close modal"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <form id="add-space-form"><div class="modal__body form"><div class="form-field"><label class="form-label" for="space-location">Parking location</label><select class="select" id="space-location" required><option value="">Select a parking location</option></select></div><div class="form-row"><div class="form-field"><label class="form-label" for="space-code">Space code</label><input class="input" id="space-code" placeholder="A-22" required></div><div class="form-field"><label class="form-label" for="space-type">Space type</label><select class="select" id="space-type"><option value="standard">Standard</option><option value="compact">Compact</option><option value="ev">EV charging</option><option value="accessible">Accessible</option></select></div></div><div class="form-field"><label class="form-label" for="space-status">Initial status</label><select class="select" id="space-status"><option value="available">Available</option><option value="reserved">Reserved</option><option value="blocked">Blocked</option><option value="maintenance">Maintenance</option></select></div></div><footer class="modal__footer"><a class="btn btn--secondary" href="#locations">Cancel</a><button class="btn btn--primary" type="submit">Add space</button></footer></form>
       </div>
     </section>
 
@@ -517,6 +546,31 @@
       </div>
     </section>
 
+    <section class="modal" id="edit-location" role="dialog" aria-modal="true" aria-labelledby="edit-location-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="edit-location-title">Edit parking location</h2><p>Update the facility details, capacity, pricing, and manager assignment.</p></div><a class="modal__close" href="#locations" aria-label="Close edit location form"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <form id="edit-location-form">
+          <input id="edit-location-id" type="hidden">
+          <div class="modal__body form">
+            <div class="form-field"><label class="form-label" for="edit-location-name">Location name</label><input class="input" id="edit-location-name" type="text" required></div>
+            <div class="form-field"><label class="form-label" for="edit-location-address">Street address</label><input class="input" id="edit-location-address" type="text" required></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="edit-location-area">Area</label><input class="input" id="edit-location-area" type="text" required></div><div class="form-field"><label class="form-label" for="edit-location-status">Status</label><select class="select" id="edit-location-status" required><option value="operational">Operational</option><option value="paused">Paused</option><option value="draft">Draft</option><option value="closed">Closed</option></select></div></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="edit-location-capacity">Total spaces</label><input class="input" id="edit-location-capacity" type="number" min="1" required></div><div class="form-field"><label class="form-label" for="edit-location-rate">Base rate (BDT/hr)</label><input class="input" id="edit-location-rate" type="number" min="1" step="0.01" required></div></div>
+            <div class="form-field"><label class="form-label" for="edit-location-manager">Assigned manager</label><select class="select" id="edit-location-manager"><option value="">Assign later</option></select></div>
+          </div>
+          <footer class="modal__footer"><a class="btn btn--secondary" href="#locations">Cancel</a><button class="btn btn--primary" type="submit">Save changes</button></footer>
+        </form>
+      </div>
+    </section>
+
+    <section class="modal" id="manager-approval-decision" role="dialog" aria-modal="true" aria-labelledby="manager-approval-decision-title">
+      <div class="modal__dialog modal__dialog--sm">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="manager-approval-decision-title">Review manager application</h2><p class="manager-approval-decision-copy">Confirm this decision.</p></div><a class="modal__close" href="#manager-approvals" aria-label="Close confirmation"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <div class="modal__body"><div class="destructive-confirm"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg></span><p class="manager-approval-decision-detail">The manager account status will be updated.</p></div></div>
+        <footer class="modal__footer"><a class="btn btn--secondary" href="#manager-approvals">Cancel</a><button class="btn btn--primary" data-action="manager-approval-confirm" type="button">Confirm decision</button></footer>
+      </div>
+    </section>
+
     <section class="modal" id="add-violation-category" role="dialog" aria-modal="true" aria-labelledby="add-violation-category-title">
       <div class="modal__dialog">
         <header class="modal__header"><div class="modal__title-group"><h2 id="add-violation-category-title">Add violation category</h2><p>Define a standardized incident and its default action.</p></div><a class="modal__close" href="#violations" aria-label="Close violation category form"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
@@ -531,7 +585,23 @@
         </form>
       </div>
     </section>
-    <script src="app.js?v=4" defer></script>
-    <script src="frontend/admin-ui.js?v=2" defer></script>
+    <section class="modal" id="edit-violation-category" role="dialog" aria-modal="true" aria-labelledby="edit-violation-category-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="edit-violation-category-title">Edit violation category</h2><p>Update the standard description, severity, and default penalty.</p></div><a class="modal__close" href="#violations" aria-label="Close edit violation category form"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <form id="edit-violation-category-form">
+          <input id="edit-violation-category-id" type="hidden">
+          <div class="modal__body form">
+            <div class="form-field"><label class="form-label" for="edit-violation-category-name">Category name</label><input class="input" id="edit-violation-category-name" type="text" required></div>
+            <div class="form-field"><label class="form-label" for="edit-violation-category-description">Description</label><textarea class="textarea" id="edit-violation-category-description" required></textarea></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="edit-violation-severity">Severity</label><select class="select" id="edit-violation-severity" required><option value="low">Minor</option><option value="medium">Moderate</option><option value="high">Major</option><option value="critical">Critical</option></select></div><div class="form-field"><label class="form-label" for="edit-violation-penalty">Default penalty (BDT)</label><input class="input" id="edit-violation-penalty" type="number" min="0" step="0.01" required></div></div>
+          </div>
+          <footer class="modal__footer"><a class="btn btn--secondary" href="#violations">Cancel</a><button class="btn btn--primary" type="submit">Save changes</button></footer>
+        </form>
+      </div>
+    </section>
+    <script src="app.js?v=5" defer></script>
+    <script src="frontend/admin-ui.js?v=4" defer></script>
+    <script src="frontend/api.js" defer></script>
+    <script src="frontend/backend-admin.js?v=13" defer></script>
   </body>
 </html>
