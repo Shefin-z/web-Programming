@@ -125,6 +125,8 @@
       var current = select.value; select.innerHTML = '<option value="">' + pair[1] + '</option>' + state.locations.map(function (location) { return '<option value="' + location.id + '">' + esc(location.name) + '</option>'; }).join('');
       select.value = current;
     });
+    var previewLocation = document.getElementById('pricing-preview-location');
+    if (previewLocation) { var selectedLocation = previewLocation.value; previewLocation.innerHTML = state.locations.map(function (location) { return '<option value="' + location.id + '">' + esc(location.name) + '</option>'; }).join(''); if (state.locations.some(function (location) { return String(location.id) === String(selectedLocation); })) previewLocation.value = selectedLocation; else if (state.locations[0]) previewLocation.value = state.locations[0].id; }
     ['new-location-manager', 'edit-location-manager'].forEach(function (id) {
       var manager = document.getElementById(id); if (!manager) return;
       var current = manager.value; manager.innerHTML = '<option value="">Assign later</option>' + state.managers.filter(function (row) { return row.account_status === 'active'; }).map(function (row) { return '<option value="' + row.id + '">' + esc(row.full_name) + '</option>'; }).join(''); manager.value = current;
@@ -158,6 +160,18 @@
   }
   function updateRatePreview(now) {
     var active = state.rules.filter(function (row) { return Number(row.is_active); }); var minute = now.getHours() * 60 + now.getMinutes(); var toMinute = function (value) { var pieces = String(value || '00:00').slice(0, 5).split(':'); return Number(pieces[0]) * 60 + Number(pieces[1]); }; var rule = active.filter(function (row) { var start = toMinute(row.start_time), end = toMinute(row.end_time); return start <= end ? minute >= start && minute <= end : minute >= start || minute <= end; })[0]; var location = rule && state.locations.filter(function (row) { return String(row.id) === String(rule.location_id); })[0]; if (!location) location = state.locations[0]; var base = Number(location && location.base_hourly_rate || 0); var adjustment = Number(rule && rule.adjustment_value || 0); var rate = base * (1 + adjustment / 100); var clock = document.querySelector('.pricing-clock strong'); if (clock) clock.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); var sub = document.querySelector('.pricing-clock small'); if (sub) sub.textContent = rule ? rule.name + ' is active for this preview.' : 'Base rate applies at this time.'; var heading = document.querySelector('.pricing-preview .panel-header__copy p'); if (heading) heading.textContent = location ? location.name : 'No locations'; var mainRate = document.querySelector('.current-rate strong'); if (mainRate) mainRate.innerHTML = esc(money(rate)) + '<small>/hour</small>'; var baseRate = document.querySelector('.current-rate em'); if (baseRate) baseRate.textContent = 'Base rate ' + money(base); var breakdown = document.querySelectorAll('.rate-breakdown dd'); if (breakdown.length >= 3) { breakdown[0].textContent = (adjustment >= 0 ? '+' : '') + money(base * adjustment / 100); breakdown[1].textContent = money(0); breakdown[2].textContent = money(rate * 2); }
+  }
+  function updateRatePreview(now) {
+    var select = document.getElementById('pricing-preview-location'), location = state.locations.filter(function (row) { return String(row.id) === String(select && select.value); })[0] || state.locations[0], active = state.rules.filter(function (row) { return Number(row.is_active); }), minute = now.getHours() * 60 + now.getMinutes();
+    var toMinute = function (value) { var pieces = String(value || '00:00').slice(0, 5).split(':'); return Number(pieces[0]) * 60 + Number(pieces[1]); };
+    var rule = active.filter(function (row) { var start = toMinute(row.start_time), end = toMinute(row.end_time), inWindow = start <= end ? minute >= start && minute <= end : minute >= start || minute <= end, appliesToLocation = !row.location_id || (location && String(row.location_id) === String(location.id)); return inWindow && appliesToLocation; })[0];
+    var base = Number(location && location.base_hourly_rate || 0), adjustment = Number(rule && rule.adjustment_value || 0), rate = base * (1 + adjustment / 100), clock = document.querySelector('.pricing-clock strong');
+    if (clock) clock.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    var sub = document.querySelector('.pricing-clock small'); if (sub) sub.textContent = rule ? rule.name + ' is active for this preview.' : 'Base rate applies at this time.';
+    var heading = document.querySelector('.pricing-preview .panel-header__copy p'); if (heading) heading.textContent = location ? location.name : 'No locations';
+    var mainRate = document.querySelector('.current-rate strong'); if (mainRate) mainRate.innerHTML = esc(money(rate)) + '<small>/hour</small>';
+    var baseRate = document.querySelector('.current-rate em'); if (baseRate) baseRate.textContent = 'Base rate ' + money(base);
+    var breakdown = document.querySelectorAll('.rate-breakdown dd'); if (breakdown.length >= 3) { breakdown[0].textContent = (adjustment >= 0 ? '+' : '') + money(base * adjustment / 100); breakdown[1].textContent = money(0); breakdown[2].textContent = money(rate * 2); }
   }
   function renderCategories(rows) {
     state.categories = rows; var grid = document.querySelector('.violation-category-grid'); if (!grid) return;
@@ -238,6 +252,7 @@
   document.querySelectorAll('[data-overview-analytics-period]').forEach(function (button) { button.addEventListener('click', function (event) { event.preventDefault(); loadOverviewAnalytics(Number(button.dataset.overviewAnalyticsPeriod)); }); });
   document.querySelectorAll('#reports button').forEach(function (button) { if (/print/i.test(button.textContent)) button.addEventListener('click', function (event) { event.preventDefault(); event.stopImmediatePropagation(); window.print(); }, true); });
   var previewForm = document.querySelector('.pricing-preview__controls'); if (previewForm) previewForm.addEventListener('submit', function (event) { event.preventDefault(); event.stopImmediatePropagation(); var value = document.getElementById('pricing-preview-time').value; if (!value) return; var when = new Date(); var parts = value.split(':'); when.setHours(Number(parts[0]), Number(parts[1]), 0, 0); updateRatePreview(when); ui.toast('Rate preview updated.'); }, true);
+  var previewLocationSelect = document.getElementById('pricing-preview-location'); if (previewLocationSelect) previewLocationSelect.addEventListener('change', function () { updateRatePreview(new Date()); });
   document.querySelectorAll('.profile-popover a[href="index.html"]').forEach(function (link) { link.addEventListener('click', function (event) { event.preventDefault(); api.logout().finally(function () { window.location.href = 'index.html'; }); }, true); });
   guard().then(load).then(loadNotifications).catch(function (error) { if (error && error.message !== 'Sign in required.') ui.toast(error.message, 'warning'); });
 })();
