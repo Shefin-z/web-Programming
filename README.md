@@ -42,6 +42,14 @@ each portal to the API using the same-origin PHP session.
 download helpers. See `FRONTEND_DEMO_GUIDE.md` for the feature-to-code map to
 use during the project update.
 
+## Live administrator analytics
+
+The administrator dashboard's revenue chart uses paid reservations from MySQL
+for the selected 7-day, 30-day, or 12-month period. Its comparison line uses
+the immediately preceding equivalent period, and space utilization is computed
+from the current parking-space statuses. These values change as reservations,
+payments, and space statuses change in the database.
+
 ## Database for XAMPP
 
 An import-ready MySQL/MariaDB database is now available at
