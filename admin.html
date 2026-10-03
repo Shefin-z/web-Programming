@@ -8,7 +8,7 @@
     <title>Admin Dashboard — ParkFlow</title>
     <link rel="stylesheet" href="style.css?v=2">
     <link rel="stylesheet" href="dashboard.css?v=3">
-    <link rel="stylesheet" href="admin.css?v=2">
+    <link rel="stylesheet" href="admin.css?v=3">
   </head>
 
   <body class="dashboard-page admin-portal">
@@ -407,10 +407,16 @@
                 <div class="panel-body">
                   <div class="pricing-clock"><span>Current time</span><strong>6:42 PM</strong><small>Peak rate active until 9:00 PM</small></div>
                   <div class="current-rate"><span>Current hourly rate</span><strong>৳100<small>/hour</small></strong><em>Base rate ৳80</em></div>
-                  <dl class="rate-breakdown"><div><dt>Demand adjustment</dt><dd>+৳20</dd></div><div><dt>Service fee</dt><dd>৳8</dd></div><div><dt>Estimated 2 hours</dt><dd>৳208</dd></div></dl>
+                  <dl class="rate-breakdown">
+                    <div><dt>Base parking (<span id="pricing-preview-hours-label">2</span> hours)</dt><dd id="pricing-preview-base-parking">৳160</dd></div>
+                    <div><dt>Demand adjustment</dt><dd id="pricing-preview-demand-adjustment">+৳40</dd></div>
+                    <div><dt>Service fee</dt><dd id="pricing-preview-service-fee">৳8</dd></div>
+                    <div><dt>Estimated total</dt><dd id="pricing-preview-total">৳208</dd></div>
+                  </dl>
                   <form class="pricing-preview__controls">
                     <label class="form-field" for="pricing-preview-location"><span class="form-label">Preview location</span><select class="select" id="pricing-preview-location" required><option value="">Loading locations…</option></select></label>
                     <label class="form-field" for="pricing-preview-time"><span class="form-label">Preview time</span><input class="input" id="pricing-preview-time" type="time" required></label>
+                    <label class="form-field" for="pricing-preview-duration"><span class="form-label">Parking duration</span><select class="select" id="pricing-preview-duration"><option value="1">1 hour</option><option value="2" selected>2 hours</option><option value="3">3 hours</option><option value="4">4 hours</option><option value="6">6 hours</option><option value="8">8 hours</option><option value="12">12 hours</option><option value="24">24 hours</option></select></label>
                     <button class="btn btn--outline" type="submit">Apply preview</button>
                   </form>
                 </div>
@@ -611,6 +617,6 @@
     <script src="app.js?v=5" defer></script>
     <script src="frontend/admin-ui.js?v=4" defer></script>
     <script src="frontend/api.js" defer></script>
-    <script src="frontend/backend-admin.js?v=16" defer></script>
+    <script src="frontend/backend-admin.js?v=17" defer></script>
   </body>
 </html>

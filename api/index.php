@@ -199,6 +199,17 @@ try {
         if($name===''||$address===''||$area===''||$rate<=0||$capacity<1||!in_array($status,['draft','operational','paused','closed'],true))fail('Complete all location fields with valid values.',422);
         $pdo->beginTransaction();try{$stmt=$pdo->prepare('UPDATE parking_locations SET name=?,address=?,area=?,base_hourly_rate=?,total_capacity=?,status=? WHERE id=?');$stmt->execute([$name,$address,$area,$rate,$capacity,$status,$id]);if(!$stmt->rowCount()){ $exists=$pdo->prepare('SELECT id FROM parking_locations WHERE id=?');$exists->execute([$id]);if(!$exists->fetch())fail('Location not found.',404);}$pdo->prepare('DELETE FROM manager_location_assignments WHERE location_id=?')->execute([$id]);if($managerId){$pdo->prepare('UPDATE manager_location_assignments SET is_primary=0 WHERE manager_user_id=?')->execute([$managerId]);$pdo->prepare('INSERT INTO manager_location_assignments(manager_user_id,location_id,is_primary) VALUES(?,?,1)')->execute([$managerId,$id]);}$pdo->commit();}catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}audit((int)$admin['id'],'update','parking_location',$id,$name);json_response(['ok'=>true]);
     }
+    if ($route === 'admin/pricing-preview' && $method === 'GET') {
+        require_login(['admin']);
+        $locationId=(int)($_GET['location_id']??0);$starts=trim((string)($_GET['starts_at']??''));$hours=(int)($_GET['duration_hours']??0);
+        if($locationId<1||$hours<1||$hours>24||strtotime($starts)===false)fail('Choose a location, valid preview time, and duration from 1 to 24 hours.',422);
+        $location=$pdo->prepare("SELECT id,name,base_hourly_rate FROM parking_locations WHERE id=? AND status='operational' LIMIT 1");$location->execute([$locationId]);$location=$location->fetch();
+        if(!$location)fail('The selected parking location is not operational.',404);
+        $when=(new DateTimeImmutable($starts))->format('Y-m-d H:i:s');$time=(new DateTimeImmutable($when))->format('H:i:s');$day=(int)(new DateTimeImmutable($when))->format('N');$base=(float)$location['base_hourly_rate'];$rate=dynamic_hourly_rate($pdo,$locationId,$when,$base);
+        $rules=$pdo->prepare("SELECT name,adjustment_type,adjustment_value FROM dynamic_pricing_rules WHERE is_active=1 AND (location_id=? OR location_id IS NULL) AND (day_of_week IS NULL OR day_of_week=?) AND ((start_time<=end_time AND ? >= start_time AND ? < end_time) OR (start_time>end_time AND (? >= start_time OR ? < end_time))) ORDER BY id ASC");$rules->execute([$locationId,$day,$time,$time,$time,$time]);$applied=$rules->fetchAll();
+        $fee=8.00;$baseParking=round($base*$hours,2);$parkingSubtotal=round($rate*$hours,2);$total=round($parkingSubtotal+$fee,2);
+        json_response(['ok'=>true,'location'=>['id'=>(int)$location['id'],'name'=>$location['name']],'base_hourly_rate'=>$base,'hourly_rate'=>$rate,'duration_hours'=>$hours,'base_parking'=>$baseParking,'demand_adjustment'=>round($parkingSubtotal-$baseParking,2),'parking_subtotal'=>$parkingSubtotal,'service_fee'=>$fee,'total_amount'=>$total,'applied_rules'=>$applied]);
+    }
     if ($route === 'admin/pricing-rules' && $method === 'POST') {
         $admin=require_login(['admin']); require_csrf(); $data=input(); $name=value($data,'name',120); $start=value($data,'start_time',8); $end=value($data,'end_time',8); $locationId=(int)($data['location_id']??0); $adjust=(float)($data['adjustment_value']??0);
         if($name===''||$start===''||$end===''||$adjust===0.0)fail('Pricing rule name, times, and adjustment are required.',422);

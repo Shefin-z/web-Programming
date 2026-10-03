@@ -504,16 +504,18 @@
   }
 
   .pricing-preview__controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: end;
     gap: var(--space-3);
   }
 
   .pricing-preview__controls .form-field {
-    flex: 1;
+    min-width: 0;
   }
 
   .pricing-preview__controls .btn {
+    grid-column: 1 / -1;
     min-height: 2.75rem;
     white-space: nowrap;
   }
@@ -925,6 +927,10 @@
     .pricing-rule__meta {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pricing-preview__controls {
+      grid-template-columns: 1fr;
     }
 
     .report-document__header {
