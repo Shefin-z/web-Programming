@@ -1,75 +1,193 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Sign in to your ParkFlow driver account to reserve and manage parking.">
-    <meta name="theme-color" content="#101927">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Sign in to your ParkFlow driver account to reserve and manage parking."
+    />
+    <meta name="theme-color" content="#101927" />
     <title>Driver Sign In — ParkFlow</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="auth.css" />
   </head>
 
   <body class="auth-page">
     <a class="skip-link" href="#login-form">Skip to sign in</a>
     <main class="auth-layout">
       <section class="auth-showcase" aria-labelledby="login-showcase-title">
-        <a class="auth-brand" href="index.html" aria-label="ParkFlow home"><span>P</span><strong>Park<span>Flow</span></strong></a>
+        <a class="auth-brand" href="index.html" aria-label="ParkFlow home"
+          ><span>P</span><strong>Park<span>Flow</span></strong></a
+        >
         <div class="auth-showcase__content">
-          <span class="auth-showcase__eyebrow"><i></i>Live parking across Dhaka</span>
-          <h1 id="login-showcase-title">Your next parking space is already waiting.</h1>
-          <p>Sign in to reserve faster, access secure entry codes, and keep every receipt in one place.</p>
-          <div class="auth-preview" aria-label="Upcoming parking reservation preview">
-            <header><span><small>UPCOMING RESERVATION</small><strong>Gulshan City Center</strong></span><span class="badge badge--success badge--dot">Confirmed</span></header>
-            <div class="auth-preview__map"><span class="auth-preview__road"></span><span class="auth-preview__pin">P</span><span class="auth-preview__route"></span><span class="auth-preview__car">●</span></div>
-            <footer><div><small>SPACE</small><strong>A-18</strong></div><div><small>ARRIVAL</small><strong>10:30 AM</strong></div><div><small>ENTRY OTP</small><strong>8426</strong></div></footer>
+          <span class="auth-showcase__eyebrow"
+            ><i></i>Live parking across Dhaka</span
+          >
+          <h1 id="login-showcase-title">
+            Your next parking space is already waiting.
+          </h1>
+          <p>
+            Sign in to reserve faster, access secure entry codes, and keep every
+            receipt in one place.
+          </p>
+          <div
+            class="auth-preview"
+            aria-label="Upcoming parking reservation preview"
+          >
+            <header>
+              <span
+                ><small>UPCOMING RESERVATION</small
+                ><strong>Gulshan City Center</strong></span
+              ><span class="badge badge--success badge--dot">Confirmed</span>
+            </header>
+            <div class="auth-preview__map">
+              <span class="auth-preview__road"></span
+              ><span class="auth-preview__pin">P</span
+              ><span class="auth-preview__route"></span
+              ><span class="auth-preview__car">●</span>
+            </div>
+            <footer>
+              <div><small>SPACE</small><strong>A-18</strong></div>
+              <div><small>ARRIVAL</small><strong>10:30 AM</strong></div>
+              <div><small>ENTRY OTP</small><strong>8426</strong></div>
+            </footer>
           </div>
-          <dl class="auth-stats"><div><dt>Verified spaces</dt><dd>1,284</dd></div><div><dt>Active drivers</dt><dd>12K+</dd></div><div><dt>Average rating</dt><dd>4.9 ★</dd></div></dl>
+          <dl class="auth-stats">
+            <div>
+              <dt>Verified spaces</dt>
+              <dd>1,284</dd>
+            </div>
+            <div>
+              <dt>Active drivers</dt>
+              <dd>12K+</dd>
+            </div>
+            <div>
+              <dt>Average rating</dt>
+              <dd>4.9 ★</dd>
+            </div>
+          </dl>
         </div>
-        <footer class="auth-showcase__footer"><span>© 2026 ParkFlow</span><a href="index.html#support">Need help?</a></footer>
+        <footer class="auth-showcase__footer">
+          <span>© 2026 ParkFlow</span
+          ><a href="index.html#support">Need help?</a>
+        </footer>
       </section>
 
       <section class="auth-form-panel">
         <div class="auth-form-wrap">
           <header class="auth-form-header">
-            <a class="auth-brand auth-brand--mobile" href="index.html" aria-label="ParkFlow home"><span>P</span><strong>Park<span>Flow</span></strong></a>
+            <a
+              class="auth-brand auth-brand--mobile"
+              href="index.html"
+              aria-label="ParkFlow home"
+              ><span>P</span><strong>Park<span>Flow</span></strong></a
+            >
             <span class="auth-form-header__tag">Driver portal</span>
             <h2>Welcome back</h2>
             <p>Sign in to manage your parking and reservations.</p>
           </header>
 
-          <form class="auth-form" id="login-form" action="driver.html" method="get">
+          <form
+            class="auth-form"
+            id="login-form"
+            action="driver.html"
+            method="get"
+          >
             <div class="form-field">
               <label class="form-label" for="login-email">Email address</label>
               <div class="input-group">
                 <span class="input-group__icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                  >
+                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                    <path d="m3 7 9 6 9-6"></path>
+                  </svg>
                 </span>
-                <input class="input input--lg" id="login-email" name="email" type="email" value="nafis@example.com" autocomplete="email" required>
+                <input
+                  class="input input--lg"
+                  id="login-email"
+                  name="email"
+                  type="email"
+                  value="nafis@example.com"
+                  autocomplete="email"
+                  required
+                />
               </div>
             </div>
 
             <div class="form-field">
-              <div class="auth-label-row"><label class="form-label" for="login-password">Password</label><a href="index.html#support">Forgot password?</a></div>
+              <div class="auth-label-row">
+                <label class="form-label" for="login-password">Password</label
+                ><a href="index.html#support">Forgot password?</a>
+              </div>
               <div class="input-group input-group--suffix">
-                <input class="input input--lg" id="login-password" name="password" type="password" value="ParkFlow2026" autocomplete="current-password" required>
-                <button class="input-group__action" type="button" aria-label="Show password">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
+                <input
+                  class="input input--lg"
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  value="ParkFlow2026"
+                  autocomplete="current-password"
+                  required
+                />
+                <button
+                  class="input-group__action"
+                  type="button"
+                  aria-label="Show password"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"
+                    ></path>
+                    <circle cx="12" cy="12" r="2.5"></circle>
+                  </svg>
                 </button>
               </div>
             </div>
 
-            <label class="check-control"><input type="checkbox" checked>Keep me signed in on this device</label>
-            <button class="btn btn--primary btn--lg btn--block" type="submit">Sign in to ParkFlow <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+            <label class="check-control"
+              ><input type="checkbox" checked />Keep me signed in on this
+              device</label
+            >
+            <button class="btn btn--primary btn--lg btn--block" type="submit">
+              Sign in to ParkFlow
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6"></path>
+              </svg>
+            </button>
 
             <div class="auth-divider"><span>or continue with</span></div>
             <div class="social-login">
-              <button class="btn btn--secondary" type="button"><span class="social-login__google">G</span>Google</button>
-              <button class="btn btn--secondary" type="button"><span class="social-login__phone">☎</span>Phone OTP</button>
+              <button class="btn btn--secondary" type="button">
+                <span class="social-login__google">G</span>Google
+              </button>
+              <button class="btn btn--secondary" type="button">
+                <span class="social-login__phone">☎</span>Phone OTP
+              </button>
             </div>
           </form>
 
-          <p class="auth-switch">New to ParkFlow? <a href="register.html">Create a free account</a></p>
+          <p class="auth-switch">
+            New to ParkFlow? <a href="register.html">Create a free account</a>
+          </p>
 
           <aside class="portal-switcher">
             <span>Staff access</span>

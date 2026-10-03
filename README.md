@@ -15,11 +15,11 @@ http://localhost/web-Programming/
 
 ## Demo portal routing
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Driver | `nafis@example.com` | `ParkFlow2026` |
-| Manager | `manager@parkflow.local` | `Manager2026!` |
-| Administrator | `admin@parkflow.local` | `Admin2026!` |
+| Role          | Email                    | Password       |
+| ------------- | ------------------------ | -------------- |
+| Driver        | `nafis@example.com`      | `ParkFlow2026` |
+| Manager       | `manager@parkflow.local` | `Manager2026!` |
+| Administrator | `admin@parkflow.local`   | `Admin2026!`   |
 
 The login screen authenticates against MySQL and routes from the account role.
 The Staff access links prefill the manager and administrator demo accounts.
@@ -27,13 +27,13 @@ New driver account registration creates the user and primary vehicle in MySQL.
 
 ## Application structure
 
-| Stakeholder | Page | Interaction file |
-| --- | --- | --- |
-| Guest | `index.html` | `frontend/guest-ui.js` |
-| Driver | `driver.html` | `frontend/driver-ui.js` |
-| Parking Manager | `manager.html` | `frontend/manager-ui.js` |
-| Administrator | `admin.html` | `frontend/admin-ui.js` |
-| Login / registration | `login.html`, `register.html` | `frontend/auth-ui.js` |
+| Stakeholder          | Page                          | Interaction file         |
+| -------------------- | ----------------------------- | ------------------------ |
+| Guest                | `index.html`                  | `frontend/guest-ui.js`   |
+| Driver               | `driver.html`                 | `frontend/driver-ui.js`  |
+| Parking Manager      | `manager.html`                | `frontend/manager-ui.js` |
+| Administrator        | `admin.html`                  | `frontend/admin-ui.js`   |
+| Login / registration | `login.html`, `register.html` | `frontend/auth-ui.js`    |
 
 The PHP API lives in [`api/`](api/README.md). `frontend/backend-*.js` connects
 each portal to the API using the same-origin PHP session.

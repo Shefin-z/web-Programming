@@ -23,11 +23,11 @@ The added active manager is `sara.manager@parkflow.local` with password `Manager
 
 ## Demo accounts
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Administrator | `admin@parkflow.local` | `Admin2026!` |
-| Manager | `manager@parkflow.local` | `Manager2026!` |
-| Driver | `nafis@example.com` | `ParkFlow2026` |
+| Role          | Email                    | Password       |
+| ------------- | ------------------------ | -------------- |
+| Administrator | `admin@parkflow.local`   | `Admin2026!`   |
+| Manager       | `manager@parkflow.local` | `Manager2026!` |
+| Driver        | `nafis@example.com`      | `ParkFlow2026` |
 
 Passwords are stored as bcrypt hashes. The seeded check-in OTP for reservation `PF-84291` is `8426`; its SHA-256 hash is stored, not the raw value.
 

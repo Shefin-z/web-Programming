@@ -12,12 +12,12 @@ The standard XAMPP setup uses MySQL user `root` with an empty password. If yours
 
 ## Main routes
 
-| Area | Routes |
-| --- | --- |
-| Authentication | `auth/me`, `auth/login`, `auth/register`, `auth/logout` |
-| Public | `public/locations`, `public/support` |
-| Administrator | `admin/dashboard`, `admin/managers`, `admin/locations`, `admin/pricing-rules`, `admin/violation-categories` |
-| Manager | `manager/dashboard`, `manager/reservations`, `manager/spaces`, `manager/check-in`, `manager/check-out`, `manager/violations`, `manager/messages` |
-| Driver | `driver/profile`, `driver/vehicles`, `driver/locations`, `driver/spaces`, `driver/reservations`, `driver/issues`, `driver/messages` |
+| Area           | Routes                                                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Authentication | `auth/me`, `auth/login`, `auth/register`, `auth/logout`                                                                                          |
+| Public         | `public/locations`, `public/support`                                                                                                             |
+| Administrator  | `admin/dashboard`, `admin/managers`, `admin/locations`, `admin/pricing-rules`, `admin/violation-categories`                                      |
+| Manager        | `manager/dashboard`, `manager/reservations`, `manager/spaces`, `manager/check-in`, `manager/check-out`, `manager/violations`, `manager/messages` |
+| Driver         | `driver/profile`, `driver/vehicles`, `driver/locations`, `driver/spaces`, `driver/reservations`, `driver/issues`, `driver/messages`              |
 
 The frontend adapters in `frontend/backend-*.js` call these routes and redirect unauthenticated or unauthorized roles back to the appropriate sign-in page.
