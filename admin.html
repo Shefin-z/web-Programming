@@ -220,7 +220,7 @@
 
             <div class="dashboard-grid" id="analytics-summary">
               <article class="dashboard-panel">
-                <header class="panel-header"><div class="panel-header__copy"><h2>Revenue performance</h2><p>Gross revenue and reservation value</p></div><div class="segmented-control" aria-label="Revenue chart period"><button type="button">7D</button><button class="is-active" type="button">30D</button><button type="button">12M</button></div></header>
+                <header class="panel-header"><div class="panel-header__copy"><h2>Revenue performance</h2><p>Paid revenue for the selected period</p></div><div class="segmented-control" aria-label="Revenue chart period"><button data-overview-analytics-period="7" type="button">7D</button><button class="is-active" data-overview-analytics-period="30" type="button">30D</button><button data-overview-analytics-period="365" type="button">12M</button></div></header>
                 <div class="panel-body">
                   <div class="admin-chart-summary"><div><span>Gross revenue</span><strong>৳7,842,600</strong><small class="text-success">↑ 16.8% this month</small></div><ul class="admin-chart-key" role="list"><li><i></i>Revenue</li><li><i></i>Previous period</li></ul></div>
                   <div class="chart-shell">
@@ -242,7 +242,7 @@
               </article>
 
               <article class="dashboard-panel">
-                <header class="panel-header"><div class="panel-header__copy"><h2>Space utilization</h2><p>Current network status</p></div><button class="btn btn--ghost btn--sm" type="button">Details</button></header>
+                <header class="panel-header"><div class="panel-header__copy"><h2>Space utilization</h2><p>Current network status</p></div><a class="btn btn--ghost btn--sm" href="#analytics">Details</a></header>
                 <div class="panel-body">
                   <div class="donut-wrap">
                     <div class="donut-chart admin-utilization-donut"><span class="donut-chart__value"><strong>76%</strong><span>occupied</span></span></div>
@@ -610,6 +610,6 @@
     <script src="app.js?v=5" defer></script>
     <script src="frontend/admin-ui.js?v=4" defer></script>
     <script src="frontend/api.js" defer></script>
-    <script src="frontend/backend-admin.js?v=14" defer></script>
+    <script src="frontend/backend-admin.js?v=15" defer></script>
   </body>
 </html>

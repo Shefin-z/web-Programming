@@ -133,7 +133,10 @@ try {
         $byLocation=$pdo->prepare("SELECT l.id,l.name,(SELECT COUNT(*) FROM reservations r WHERE r.location_id=l.id AND r.starts_at>=?) AS reservations,COALESCE((SELECT SUM(p.amount) FROM payments p JOIN reservations r ON r.id=p.reservation_id WHERE r.location_id=l.id AND r.starts_at>=? AND p.status='paid'),0) AS revenue,(SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=l.id) AS spaces,(SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=l.id AND ps.status='occupied') AS occupied FROM parking_locations l ORDER BY revenue DESC,l.name");
         $byLocation->execute([$from,$from]);
         $trend=$pdo->prepare("SELECT DATE(r.starts_at) AS day,COUNT(DISTINCT r.id) AS reservations,COALESCE(SUM(p.amount),0) AS revenue FROM reservations r LEFT JOIN payments p ON p.reservation_id=r.id AND p.status='paid' WHERE r.starts_at>=? GROUP BY DATE(r.starts_at) ORDER BY day"); $trend->execute([$from]);
-        json_response(['ok'=>true,'days'=>$days,'period_start'=>$from,'period_end'=>date('Y-m-d'),'locations'=>$byLocation->fetchAll(),'trend'=>$trend->fetchAll()]);
+        $previousFrom=date('Y-m-d 00:00:00',strtotime('-'.(($days * 2) - 1).' days'));
+        $previousUntil=date('Y-m-d 00:00:00',strtotime('-'.$days.' days'));
+        $previousTrend=$pdo->prepare("SELECT DATE(r.starts_at) AS day,COUNT(DISTINCT r.id) AS reservations,COALESCE(SUM(p.amount),0) AS revenue FROM reservations r LEFT JOIN payments p ON p.reservation_id=r.id AND p.status='paid' WHERE r.starts_at>=? AND r.starts_at<? GROUP BY DATE(r.starts_at) ORDER BY day"); $previousTrend->execute([$previousFrom,$previousUntil]);
+        json_response(['ok'=>true,'days'=>$days,'period_start'=>$from,'period_end'=>date('Y-m-d'),'locations'=>$byLocation->fetchAll(),'trend'=>$trend->fetchAll(),'previous_trend'=>$previousTrend->fetchAll()]);
     }
     if ($route === 'admin/managers' && $method === 'GET') {
         require_login(['admin']);
