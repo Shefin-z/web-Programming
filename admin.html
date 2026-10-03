@@ -1555,6 +1555,10 @@
                   ><svg fill="none" stroke="currentColor" stroke-width="1.8">
                     <use href="#i-plus"></use></svg
                   >Add space</a
+                ><a class="btn btn--secondary" href="#add-zone"
+                  ><svg fill="none" stroke="currentColor" stroke-width="1.8">
+                    <use href="#i-plus"></use></svg
+                  >Add zone</a
                 ><a class="btn btn--primary" href="#add-location"
                   ><svg fill="none" stroke="currentColor" stroke-width="1.8">
                     <use href="#i-plus"></use></svg
@@ -2746,8 +2750,8 @@
       <div class="modal__dialog">
         <header class="modal__header">
           <div class="modal__title-group">
-            <h2 id="add-space-title">Add parking space</h2>
-            <p>Add an individual space to an existing parking location.</p>
+            <h2 id="add-space-title">Add parking spaces</h2>
+            <p>Add multiple spaces to the same parking location at once.</p>
           </div>
           <a class="modal__close" href="#locations" aria-label="Close modal"
             ><svg fill="none" stroke="currentColor" stroke-width="2">
@@ -2763,15 +2767,25 @@
                 <option value="">Select a parking location</option>
               </select>
             </div>
+            <div class="form-field">
+              <label class="form-label" for="space-zone">Parking zone</label
+              ><select class="select" id="space-zone" required>
+                <option value="">Select a parking zone</option>
+              </select>
+            </div>
             <div class="form-row">
               <div class="form-field">
-                <label class="form-label" for="space-code">Space code</label
-                ><input
-                  class="input"
-                  id="space-code"
-                  placeholder="A-22"
+                <label class="form-label" for="space-codes">Space codes</label
+                ><textarea
+                  class="textarea"
+                  id="space-codes"
+                  rows="4"
+                  placeholder="A-22, A-23, A-24"
                   required
-                />
+                ></textarea>
+                <p class="helper-text">
+                  Enter codes separated by commas or one code per line.
+                </p>
               </div>
               <div class="form-field">
                 <label class="form-label" for="space-type">Space type</label
@@ -2795,7 +2809,75 @@
           </div>
           <footer class="modal__footer">
             <a class="btn btn--secondary" href="#locations">Cancel</a
-            ><button class="btn btn--primary" type="submit">Add space</button>
+            ><button class="btn btn--primary" type="submit">Add spaces</button>
+          </footer>
+        </form>
+      </div>
+    </section>
+
+    <section
+      class="modal"
+      id="add-zone"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="add-zone-title"
+    >
+      <div class="modal__dialog">
+        <header class="modal__header">
+          <div class="modal__title-group">
+            <h2 id="add-zone-title">Add parking zone</h2>
+            <p>Create an area where parking spaces can be grouped.</p>
+          </div>
+          <a class="modal__close" href="#locations" aria-label="Close modal"
+            ><svg fill="none" stroke="currentColor" stroke-width="2">
+              <use href="#i-close"></use></svg
+          ></a>
+        </header>
+        <form id="add-zone-form">
+          <div class="modal__body form">
+            <div class="form-field">
+              <label class="form-label" for="zone-location"
+                >Parking location</label
+              ><select class="select" id="zone-location" required>
+                <option value="">Select a parking location</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label" for="zone-name">Zone name</label
+                ><input
+                  class="input"
+                  id="zone-name"
+                  placeholder="Zone B"
+                  required
+                />
+              </div>
+              <div class="form-field">
+                <label class="form-label" for="zone-code">Zone code</label
+                ><input
+                  class="input"
+                  id="zone-code"
+                  placeholder="B"
+                  maxlength="20"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="zone-floor"
+                >Floor or area label</label
+              ><input
+                class="input"
+                id="zone-floor"
+                placeholder="Ground floor or EV Deck"
+              />
+            </div>
+          </div>
+          <footer class="modal__footer">
+            <a class="btn btn--secondary" href="#locations">Cancel</a
+            ><button class="btn btn--primary" type="submit">
+              Create zone
+            </button>
           </footer>
         </form>
       </div>
@@ -3511,6 +3593,6 @@
     <script src="app.js?v=5" defer></script>
     <script src="frontend/admin-ui.js?v=4" defer></script>
     <script src="frontend/api.js" defer></script>
-    <script src="frontend/backend-admin.js?v=21" defer></script>
+    <script src="frontend/backend-admin.js?v=22" defer></script>
   </body>
 </html>

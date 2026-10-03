@@ -595,13 +595,14 @@
     fillSelects();
   }
   function fillSelects() {
-    [
-      ["manager-location", "Select a parking location"],
-      ["edit-manager-location", "Select a parking location"],
-      ["pricing-rule-location", "All locations"],
-      ["edit-pricing-rule-location", "All locations"],
-      ["space-location", "Select a parking location"],
-    ].forEach(function (pair) {
+      [
+        ["manager-location", "Select a parking location"],
+        ["edit-manager-location", "Select a parking location"],
+        ["pricing-rule-location", "All locations"],
+        ["edit-pricing-rule-location", "All locations"],
+        ["space-location", "Select a parking location"],
+        ["zone-location", "Select a parking location"],
+      ].forEach(function (pair) {
       var select = document.getElementById(pair[0]);
       if (!select) return;
       var current = select.value;
@@ -622,6 +623,10 @@
           .join("");
       select.value = current;
     });
+    var spaceLocation = document.getElementById("space-location");
+    if (spaceLocation && spaceLocation.value) loadSpaceZones(spaceLocation.value);
+    var zoneLocation = document.getElementById("zone-location");
+    if (zoneLocation && zoneLocation.value) loadSpaceZones(zoneLocation.value);
     var previewLocation = document.getElementById("pricing-preview-location");
     if (previewLocation) {
       var selectedLocation = previewLocation.value,
@@ -672,6 +677,51 @@
       manager.value = current;
     });
   }
+  function loadSpaceZones(locationId) {
+    var targets = ["space-zone"];
+    return api
+      .request("admin/locations/" + locationId + "/zones")
+      .then(function (data) {
+        targets.forEach(function (id) {
+          var select = document.getElementById(id);
+          if (!select) return;
+          var current = select.value;
+          select.innerHTML =
+            '<option value="">Select a parking zone</option>' +
+            (data.zones || [])
+              .map(function (zone) {
+                return (
+                  '<option value="' +
+                  zone.id +
+                  '">' +
+                  esc(zone.name || "Zone " + zone.code) +
+                  " · " +
+                  esc(zone.code) +
+                  " (" +
+                  Number(zone.spaces_total || 0) +
+                  " spaces)</option>"
+                );
+              })
+              .join("");
+          select.value = current;
+        });
+      });
+  }
+  document.addEventListener(
+    "change",
+    function (event) {
+      if (
+        event.target.id === "space-location" ||
+        event.target.id === "zone-location"
+      ) {
+        if (!event.target.value) return;
+        loadSpaceZones(event.target.value).catch(function (error) {
+          ui.toast(error.message, "warning");
+        });
+      }
+    },
+    true,
+  );
   function renderLocations(rows) {
     state.locations = rows;
     var grid = document.querySelector(".admin-location-grid");
@@ -1327,6 +1377,28 @@
         event.preventDefault();
         event.stopImmediatePropagation();
         if (!form.checkValidity()) return form.reportValidity();
+        var spaceCodes = document
+          .getElementById("space-codes")
+          .value.split(/[\n,]+/)
+          .map(function (code) {
+            return code.trim();
+          })
+          .filter(Boolean);
+        var uniqueSpaceCodes = spaceCodes.filter(function (code, index, values) {
+          return (
+            values.findIndex(function (value) {
+              return value.toUpperCase() === code.toUpperCase();
+            }) === index
+          );
+        });
+        if (uniqueSpaceCodes.length !== spaceCodes.length) {
+          return ui.toast("Each space code must be unique.", "warning");
+        }
+        var submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = "Adding spaces…";
+        }
         api
           .request(
             "admin/locations/" +
@@ -1335,16 +1407,59 @@
             {
               method: "POST",
               body: {
-                space_code: document.getElementById("space-code").value.trim(),
+                space_codes: uniqueSpaceCodes,
+                zone_id: document.getElementById("space-zone").value,
                 space_type: document.getElementById("space-type").value,
                 status: document.getElementById("space-status").value,
               },
             },
           )
-          .then(function () {
+          .then(function (data) {
             form.reset();
             close("add-space");
-            return refresh("Parking space added.");
+            return refresh(
+              (data.count || uniqueSpaceCodes.length) +
+                " parking space" +
+                ((data.count || uniqueSpaceCodes.length) === 1 ? "" : "s") +
+                " added.",
+            );
+          })
+          .catch(function (error) {
+            ui.toast(error.message, "warning");
+          })
+          .finally(function () {
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.textContent = "Add spaces";
+            }
+          });
+      } else if (form.id === "add-zone-form") {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (!form.checkValidity()) return form.reportValidity();
+        api
+          .request(
+            "admin/locations/" +
+              document.getElementById("zone-location").value +
+              "/zones",
+            {
+              method: "POST",
+              body: {
+                name: document.getElementById("zone-name").value.trim(),
+                code: document
+                  .getElementById("zone-code")
+                  .value.trim()
+                  .toUpperCase(),
+                floor_label: document
+                  .getElementById("zone-floor")
+                  .value.trim(),
+              },
+            },
+          )
+          .then(function () {
+            form.reset();
+            close("add-zone");
+            return refresh("Parking zone created.");
           })
           .catch(function (error) {
             ui.toast(error.message, "warning");

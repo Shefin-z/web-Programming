@@ -8,6 +8,7 @@
     profile: null,
     vehicles: [],
     locations: [],
+    zones: [],
     reservations: [],
     spaces: [],
     selectedSpace: null,
@@ -59,6 +60,9 @@
   };
   var locationSelect = function () {
     return document.getElementById("reservation-location");
+  };
+  var zoneSelect = function () {
+    return document.getElementById("reservation-zone");
   };
   var reservationForm = function () {
     return document.querySelector(".reservation-form");
@@ -286,6 +290,55 @@
       "<p>No free spaces are currently available at this location.</p>";
     updateReservationSummary();
   }
+  function renderZones(rows) {
+    state.zones = rows;
+    var select = zoneSelect();
+    if (!select) return;
+    var current = select.value;
+    select.innerHTML =
+      '<option value="">Select a parking zone</option>' +
+      rows
+        .map(function (zone) {
+          var title = zone.name || "Zone " + zone.code;
+          if (zone.floor_label) title += " · " + zone.floor_label;
+          return (
+            '<option value="' +
+            zone.id +
+            '">' +
+            esc(title) +
+            " — " +
+            Number(zone.available_spaces || 0) +
+            " free</option>"
+          );
+        })
+        .join("");
+    var selected = rows.filter(function (zone) {
+      return String(zone.id) === String(current);
+    })[0];
+    selected = selected || rows[0];
+    select.value = selected ? selected.id : "";
+    var label = document.querySelector(
+      ".slot-picker__header > div:first-child > strong",
+    );
+    if (label) {
+      label.textContent = selected
+        ? selected.name +
+          (selected.floor_label ? " · " + selected.floor_label : "")
+        : "Select a parking zone";
+    }
+  }
+  function loadZones() {
+    var select = locationSelect();
+    if (!select || !select.value) {
+      renderZones([]);
+      return Promise.resolve();
+    }
+    return api
+      .request("driver/zones?location_id=" + select.value)
+      .then(function (result) {
+        renderZones(result.zones);
+      });
+  }
   function renderActiveBooking(row) {
     document
       .querySelectorAll("[data-active-booking-card]")
@@ -317,7 +370,8 @@
           otp = card.querySelector(".booking-otp strong"),
           otpLabel = card.querySelector(".booking-otp__label"),
           otpHint = card.querySelector(".booking-otp small"),
-          otpButton = card.querySelector('[data-action="refresh-otp"]');
+          otpButton = card.querySelector('[data-action="refresh-otp"]'),
+          cancelButton = card.querySelector('[data-action="cancel-booking"]');
         if (otp)
           otp.innerHTML =
             "<span>•</span><span>•</span><span>•</span><span>•</span>";
@@ -333,6 +387,7 @@
           otpButton.textContent = checkout
             ? "Get check-out OTP"
             : "Get a new OTP";
+        if (cancelButton) cancelButton.hidden = checkout;
         var countdown = card.querySelector(".arrival-countdown strong");
         if (countdown)
           countdown.textContent = String(row.status).replace(/_/g, " ");
@@ -666,10 +721,15 @@
     if (rows[0]) loadMessages(rows[0]);
   }
   function loadSpaces() {
-    var select = locationSelect();
+    var select = locationSelect(),
+      zone = zoneSelect();
     if (!select || !select.value) return Promise.resolve();
+    var query =
+      "driver/spaces?location_id=" +
+      encodeURIComponent(select.value) +
+      (zone && zone.value ? "&zone_id=" + encodeURIComponent(zone.value) : "");
     return api
-      .request("driver/spaces?location_id=" + select.value)
+      .request(query)
       .then(function (result) {
         renderSpaces(result.spaces);
       });
@@ -824,7 +884,7 @@
       renderConversations(
         mergeConversationContacts(data[5].conversations, data[6].managers),
       );
-      return loadSpaces();
+      return loadZones().then(loadSpaces);
     });
   }
   function refreshAvailability() {
@@ -832,7 +892,9 @@
       .request("driver/locations")
       .then(function (data) {
         renderLocations(data.locations);
-        return state.selectedSpace ? null : loadSpaces();
+        return state.selectedSpace
+          ? null
+          : loadZones().then(loadSpaces);
       })
       .catch(function () {
         /* Availability refresh will retry on the next interval. */
@@ -888,6 +950,12 @@
     "change",
     function (event) {
       if (event.target === locationSelect())
+        loadZones()
+          .then(loadSpaces)
+          .catch(function (error) {
+            ui.toast(error.message, "warning");
+          });
+      if (event.target === zoneSelect())
         loadSpaces().catch(function (error) {
           ui.toast(error.message, "warning");
         });
@@ -997,9 +1065,11 @@
         if (id && locationSelect()) {
           locationSelect().value = id;
           show("reservation");
-          loadSpaces().catch(function (error) {
-            ui.toast(error.message, "warning");
-          });
+          loadZones()
+            .then(loadSpaces)
+            .catch(function (error) {
+              ui.toast(error.message, "warning");
+            });
         }
       } else if (action === "vehicle-edit") {
         event.preventDefault();
@@ -1112,6 +1182,33 @@
           );
         })[0];
         if (active) showReceipt(active);
+      } else if (action === "cancel-booking") {
+        event.preventDefault();
+        var card = button.closest("[data-active-booking-card]"),
+          reservationId = card && card.dataset.reservationId;
+        if (!reservationId) return;
+        if (
+          !window.confirm(
+            "Cancel this booking? The parking space will become free again.",
+          )
+        )
+          return;
+        button.disabled = true;
+        api
+          .request("driver/reservations/" + reservationId + "/cancel", {
+            method: "POST",
+            body: {},
+          })
+          .then(function () {
+            return load();
+          })
+          .then(function () {
+            ui.toast("Booking cancelled. The space is free again.");
+          })
+          .catch(function (error) {
+            button.disabled = false;
+            ui.toast(error.message, "warning");
+          });
       } else if (action === "refresh-otp") {
         event.preventDefault();
         var card = button.closest("[data-active-booking-card]"),

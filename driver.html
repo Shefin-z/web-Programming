@@ -631,6 +631,13 @@
                     type="button"
                   >
                     Open booking
+                  </button><button
+                    class="btn btn--danger"
+                    data-action="cancel-booking"
+                    type="button"
+                    hidden
+                  >
+                    Cancel booking
                   </button>
                 </div>
               </footer>
@@ -915,6 +922,13 @@
                     type="button"
                   >
                     Open booking
+                  </button><button
+                    class="btn btn--danger"
+                    data-action="cancel-booking"
+                    type="button"
+                    hidden
+                  >
+                    Cancel booking
                   </button>
                 </div>
               </footer>
@@ -1380,6 +1394,12 @@
                           id="reservation-location"
                         ></select></span
                     ></label>
+                    <label class="form-field"
+                      ><span class="form-label">Parking zone</span
+                      ><select class="select" id="reservation-zone" required>
+                        <option value="">Select a parking zone</option>
+                      </select></label
+                    >
                     <div class="form-row">
                       <label class="form-field"
                         ><span class="form-label">Parking date</span
@@ -2784,6 +2804,6 @@
     <script src="app.js?v=5" defer></script>
     <script src="frontend/driver-ui.js?v=8" defer></script>
     <script src="frontend/api.js" defer></script>
-    <script src="frontend/backend-driver.js?v=11" defer></script>
+    <script src="frontend/backend-driver.js?v=13" defer></script>
   </body>
 </html>

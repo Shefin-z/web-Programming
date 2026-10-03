@@ -294,15 +294,16 @@
   }
 
   .parking-lane {
-    display: grid;
-    min-width: 56rem;
-    grid-template-columns: 2rem repeat(8, minmax(5.5rem, 1fr));
+    display: flex;
+    min-width: max-content;
     gap: var(--space-3);
     align-items: stretch;
   }
 
   .parking-row-label {
     display: grid;
+    flex: 0 0 2rem;
+    min-height: 8.5rem;
     place-items: center;
     border-radius: var(--radius-sm);
     color: var(--color-slate-500);
@@ -314,7 +315,10 @@
   .parking-space {
     position: relative;
     display: grid;
-    min-height: 7rem;
+    flex: 0 0 9.75rem;
+    width: 9.75rem;
+    height: 8.5rem;
+    min-height: 8.5rem;
     place-items: center;
     align-content: center;
     gap: var(--space-1);
@@ -393,6 +397,11 @@
         rgba(102, 116, 135, 0.08) 8px 16px
       ),
       var(--parking-blocked-bg);
+  }
+
+  .parking-space--maintenance {
+    --space-color: var(--parking-blocked);
+    --space-bg: var(--parking-blocked-bg);
   }
 
   .parking-space.is-selected {
@@ -957,6 +966,9 @@
     --status-color: var(--parking-occupied);
   }
   .status-option--blocked {
+    --status-color: var(--parking-blocked);
+  }
+  .status-option--maintenance {
     --status-color: var(--parking-blocked);
   }
 

@@ -68,6 +68,15 @@
       "</span>"
     );
   };
+  var spaceStatusLabel = function (status) {
+    return {
+      available: "Free",
+      reserved: "Booked",
+      occupied: "Occupied",
+      blocked: "Blocked",
+      maintenance: "Maintenance",
+    }[status] || String(status || "Unknown").replace(/_/g, " ");
+  };
   function renderProfile(profile) {
     state.profile = profile || {};
     document
@@ -346,7 +355,14 @@
     }
   }
   function renderSpaces(rows) {
+    var selectedId = state.selectedSpace && state.selectedSpace.id;
     state.spaces = rows;
+    if (selectedId) {
+      state.selectedSpace =
+        rows.filter(function (row) {
+          return String(row.id) === String(selectedId);
+        })[0] || state.selectedSpace;
+    }
     var floor = document.querySelector(".parking-floor");
     if (!floor) return;
     var zones = {};
@@ -354,6 +370,25 @@
       (zones[row.zone_code] || (zones[row.zone_code] = [])).push(row);
     });
     var codes = Object.keys(zones);
+    var tabs = document.querySelector(".parking-zone-tabs");
+    if (tabs) {
+      tabs.innerHTML = codes
+        .map(function (code, index) {
+          var label = code === "EV" ? "EV Deck" : "Zone " + code;
+          return (
+            '<button class="' +
+            (index === 0 ? "is-active" : "") +
+            '" type="button" role="tab" aria-selected="' +
+            (index === 0 ? "true" : "false") +
+            '">' +
+            esc(label) +
+            " <span>" +
+            zones[code].length +
+            " spaces</span></button>"
+          );
+        })
+        .join("");
+    }
     floor.innerHTML =
       codes
         .map(function (code) {
@@ -363,10 +398,7 @@
             "</span>" +
             zones[code]
               .map(function (row) {
-                var display =
-                  row.status === "available"
-                    ? "Free"
-                    : row.status.replace(/_/g, " ");
+                var display = spaceStatusLabel(row.status);
                 return (
                   '<button class="parking-space parking-space--' +
                   (row.status === "available" ? "free" : esc(row.status)) +
@@ -399,10 +431,10 @@
       legend.innerHTML =
         "<li>Free <strong>" +
         counts.available +
+        "</strong></li><li>Booked <strong>" +
+        counts.reserved +
         "</strong></li><li>Occupied <strong>" +
         counts.occupied +
-        "</strong></li><li>Reserved <strong>" +
-        counts.reserved +
         "</strong></li><li>Blocked / maintenance <strong>" +
         (counts.blocked + counts.maintenance) +
         "</strong></li>";
@@ -755,6 +787,23 @@
       if (message) ui.toast(message);
     });
   }
+  function syncSpaces(showMessage) {
+    return Promise.all([
+      api.request("manager/dashboard"),
+      api.request("manager/spaces"),
+    ])
+      .then(function (data) {
+        renderDashboard(data[0]);
+        renderSpaces(data[1].spaces);
+        if (showMessage) ui.toast("Parking spaces refreshed.");
+      })
+      .catch(function (error) {
+        if (showMessage) ui.toast(error.message, "warning");
+      });
+  }
+  window.setInterval(function () {
+    if (document.visibilityState !== "hidden") syncSpaces(false);
+  }, 15000);
 
   document.addEventListener(
     "click",
@@ -820,6 +869,12 @@
         if (!state.selectedSpace)
           return ui.toast("Select a live space before updating it.", "warning");
         openSpaceUpdate();
+        return;
+      }
+      if (action === "refresh-spaces") {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        syncSpaces(true);
         return;
       }
       if (action === "manager-profile") {
@@ -976,27 +1031,19 @@
     if (!modal || !state.selectedSpace) return;
     var title = document.getElementById("update-space-title"),
       description = modal.querySelector(".modal__title-group p"),
-      current =
-        state.selectedSpace.status === "available"
-          ? "free"
-          : state.selectedSpace.status;
+      current = state.selectedSpace.status;
     if (title)
       title.textContent = "Update space " + state.selectedSpace.space_code;
     if (description)
       description.textContent =
         "Current status: " +
-        current.replace(/_/g, " ") +
+        spaceStatusLabel(current) +
         " · Zone " +
         state.selectedSpace.zone_code;
     Array.prototype.forEach.call(
       modal.querySelectorAll('input[name="space-status"]'),
       function (input) {
-        input.checked =
-          input
-            .closest("label")
-            .querySelector("strong")
-            .textContent.trim()
-            .toLowerCase() === current;
+        input.checked = input.closest("label").dataset.status === current;
       },
     );
     ui.openModal(modal);
@@ -1025,13 +1072,7 @@
         if (!state.selectedSpace)
           return ui.toast("Select a live space first.", "warning");
         var chosen = form.querySelector('input[name="space-status"]:checked');
-        var status = chosen
-          ? chosen
-              .closest("label")
-              .querySelector("strong")
-              .textContent.trim()
-              .toLowerCase()
-          : "";
+        var status = chosen ? chosen.closest("label").dataset.status : "";
         api
           .request("manager/spaces/" + state.selectedSpace.id, {
             method: "PATCH",
@@ -1256,16 +1297,7 @@
         var option = Array.prototype.find.call(
           document.querySelectorAll('#update-space input[name="space-status"]'),
           function (input) {
-            return (
-              input
-                .closest("label")
-                .querySelector("strong")
-                .textContent.trim()
-                .toLowerCase() ===
-              (state.selectedSpace.status === "available"
-                ? "free"
-                : state.selectedSpace.status)
-            );
+            return input.closest("label").dataset.status === state.selectedSpace.status;
           },
         );
         if (option) option.checked = true;

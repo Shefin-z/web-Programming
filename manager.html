@@ -11,7 +11,7 @@
     <title>Manager Operations — ParkFlow</title>
     <link rel="stylesheet" href="style.css?v=2" />
     <link rel="stylesheet" href="dashboard.css?v=3" />
-    <link rel="stylesheet" href="manager.css" />
+    <link rel="stylesheet" href="manager.css?v=2" />
   </head>
 
   <body class="dashboard-page manager-portal">
@@ -975,10 +975,14 @@
               <div class="manager-section-heading__actions">
                 <span class="sensor-sync"
                   ><span class="live-dot"></span>Sensors synced 32s ago</span
-                ><button class="btn btn--secondary" type="button">
+                ><button
+                  class="btn btn--secondary"
+                  data-action="refresh-spaces"
+                  type="button"
+                >
                   <svg fill="none" stroke="currentColor" stroke-width="1.8">
                     <use href="#m-filter"></use></svg
-                  >Filter spaces
+                  >Refresh spaces
                 </button>
               </div>
             </header>
@@ -2065,27 +2069,37 @@
           <div class="modal__body form">
             <fieldset class="status-picker">
               <legend>New space status</legend>
-              <label class="status-option status-option--free"
+              <label
+                class="status-option status-option--free"
+                data-status="available"
                 ><input type="radio" name="space-status" /><span
                   ><i></i><strong>Free</strong
                   ><small>Ready for reservation</small></span
                 ></label
-              ><label class="status-option status-option--occupied"
+              ><label
+                class="status-option status-option--occupied"
+                data-status="occupied"
                 ><input type="radio" name="space-status" /><span
                   ><i></i><strong>Occupied</strong
                   ><small>Vehicle currently parked</small></span
                 ></label
-              ><label class="status-option status-option--reserved"
+              ><label
+                class="status-option status-option--reserved"
+                data-status="reserved"
                 ><input type="radio" name="space-status" /><span
-                  ><i></i><strong>Reserved</strong
+                  ><i></i><strong>Booked</strong
                   ><small>Held for a driver</small></span
                 ></label
-              ><label class="status-option status-option--blocked"
+              ><label
+                class="status-option status-option--blocked"
+                data-status="blocked"
                 ><input type="radio" name="space-status" checked /><span
                   ><i></i><strong>Blocked</strong
                   ><small>Unavailable for use</small></span
                 ></label
-              ><label class="status-option status-option--blocked"
+              ><label
+                class="status-option status-option--maintenance"
+                data-status="maintenance"
                 ><input type="radio" name="space-status" /><span
                   ><i></i><strong>Maintenance</strong
                   ><small>Requires maintenance</small></span
@@ -2354,6 +2368,6 @@
     <script src="app.js?v=4" defer></script>
     <script src="frontend/manager-ui.js?v=3" defer></script>
     <script src="frontend/api.js" defer></script>
-    <script src="frontend/backend-manager.js?v=7" defer></script>
+    <script src="frontend/backend-manager.js?v=8" defer></script>
   </body>
 </html>

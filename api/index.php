@@ -639,6 +639,50 @@ try {
         json_response(["ok" => true, "id" => $id], 201);
     }
     if (
+        preg_match('#^admin/locations/(\d+)/zones$#', $route, $match) &&
+        $method === "GET"
+    ) {
+        require_login(["admin"]);
+        $locationId = (int) $match[1];
+        $stmt = $pdo->prepare(
+            "SELECT z.id,z.name,z.code,z.floor_label,z.description,COUNT(ps.id) AS spaces_total,SUM(ps.status='available') AS available_spaces FROM parking_zones z LEFT JOIN parking_spaces ps ON ps.zone_id=z.id WHERE z.location_id=? GROUP BY z.id ORDER BY z.code,z.id",
+        );
+        $stmt->execute([$locationId]);
+        json_response(["ok" => true, "zones" => $stmt->fetchAll()]);
+    }
+    if (
+        preg_match('#^admin/locations/(\d+)/zones$#', $route, $match) &&
+        $method === "POST"
+    ) {
+        $admin = require_login(["admin"]);
+        require_csrf();
+        $locationId = (int) $match[1];
+        $data = input();
+        $name = value($data, "name", 100);
+        $code = strtoupper(value($data, "code", 20));
+        $floor = value($data, "floor_label", 50);
+        if ($name === "" || $code === "") {
+            fail("Zone name and zone code are required.", 422);
+        }
+        if (!first_id("SELECT id FROM parking_locations WHERE id=?", [$locationId])) {
+            fail("Parking location not found.", 404);
+        }
+        try {
+            $stmt = $pdo->prepare(
+                "INSERT INTO parking_zones(location_id,name,code,floor_label) VALUES(?,?,?,?)",
+            );
+            $stmt->execute([$locationId, $name, $code, $floor ?: null]);
+            $zoneId = (int) $pdo->lastInsertId();
+        } catch (PDOException $e) {
+            if ($e->getCode() === "23000") {
+                fail("That zone code already exists in this location.", 409);
+            }
+            throw $e;
+        }
+        audit((int) $admin["id"], "create", "parking_zone", $zoneId, $name);
+        json_response(["ok" => true, "id" => $zoneId], 201);
+    }
+    if (
         preg_match('#^admin/locations/(\d+)/spaces$#', $route, $match) &&
         $method === "POST"
     ) {
@@ -646,11 +690,40 @@ try {
         require_csrf();
         $locationId = (int) $match[1];
         $data = input();
-        $code = strtoupper(value($data, "space_code", 30));
+        $codes = [];
+        if (array_key_exists("space_codes", $data)) {
+            if (!is_array($data["space_codes"])) {
+                fail("Space codes must be sent as a list.", 422);
+            }
+            foreach ($data["space_codes"] as $rawCode) {
+                $code = strtoupper(trim((string) $rawCode));
+                if ($code !== "") {
+                    $codes[] = $code;
+                }
+            }
+        } else {
+            $code = strtoupper(value($data, "space_code", 30));
+            if ($code !== "") {
+                $codes[] = $code;
+            }
+        }
         $type = strtolower(value($data, "space_type", 20) ?: "standard");
         $status = strtolower(value($data, "status", 20) ?: "available");
+        $normalizedCodes = [];
+        foreach ($codes as $code) {
+            if (mb_strlen($code) > 20) {
+                fail("Each space code must be 20 characters or fewer.", 422);
+            }
+            $key = strtoupper($code);
+            if (isset($normalizedCodes[$key])) {
+                fail("Each space code must be unique.", 422);
+            }
+            $normalizedCodes[$key] = $code;
+        }
+        $codes = array_values($normalizedCodes);
         if (
-            $code === "" ||
+            !$codes ||
+            count($codes) > 500 ||
             !in_array(
                 $type,
                 ["standard", "compact", "ev", "accessible"],
@@ -663,14 +736,20 @@ try {
             )
         ) {
             fail(
-                "Enter a unique space code, valid type, and valid status.",
+                "Enter 1 to 500 unique space codes, a valid type, and valid status.",
                 422,
             );
         }
-        $zoneId = first_id(
-            "SELECT id FROM parking_zones WHERE location_id=? ORDER BY id LIMIT 1",
-            [$locationId],
-        );
+        $requestedZoneId = (int) ($data["zone_id"] ?? 0);
+        $zoneId = $requestedZoneId
+            ? first_id(
+                "SELECT id FROM parking_zones WHERE id=? AND location_id=?",
+                [$requestedZoneId, $locationId],
+            )
+            : first_id(
+                "SELECT id FROM parking_zones WHERE location_id=? ORDER BY id LIMIT 1",
+                [$locationId],
+            );
         if (!$zoneId) {
             fail("Location not found.", 404);
         }
@@ -679,15 +758,18 @@ try {
             $stmt = $pdo->prepare(
                 "INSERT INTO parking_spaces(zone_id,space_code,space_type,status,has_ev_charger,sensor_identifier,last_sensor_sync_at) VALUES(?,?,?,?,?,?,NOW())",
             );
-            $stmt->execute([
-                $zoneId,
-                $code,
-                $type,
-                $status,
-                $type === "ev" ? 1 : 0,
-                "MANUAL-" . $locationId . "-" . $code,
-            ]);
-            $spaceId = (int) $pdo->lastInsertId();
+            $spaceIds = [];
+            foreach ($codes as $code) {
+                $stmt->execute([
+                    $zoneId,
+                    $code,
+                    $type,
+                    $status,
+                    $type === "ev" ? 1 : 0,
+                    "MANUAL-" . $locationId . "-" . $code,
+                ]);
+                $spaceIds[] = (int) $pdo->lastInsertId();
+            }
             $count = $pdo->prepare(
                 "SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=?",
             );
@@ -710,8 +792,23 @@ try {
             }
             throw $e;
         }
-        audit((int) $admin["id"], "create", "parking_space", $spaceId, $code);
-        json_response(["ok" => true, "id" => $spaceId], 201);
+        foreach ($spaceIds as $index => $spaceId) {
+            audit(
+                (int) $admin["id"],
+                "create",
+                "parking_space",
+                $spaceId,
+                $codes[$index],
+            );
+        }
+        json_response(
+            [
+                "ok" => true,
+                "ids" => $spaceIds,
+                "count" => count($spaceIds),
+            ],
+            201,
+        );
     }
     if (
         preg_match('#^admin/locations/(\d+)$#', $route, $match) &&
@@ -1146,7 +1243,7 @@ try {
             fail("No parking location is assigned to this manager.", 422);
         }
         $stmt = $pdo->prepare(
-            "SELECT (SELECT COUNT(*) FROM reservations WHERE location_id=? AND DATE(starts_at)=CURDATE()) reservations_today, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='occupied') occupied, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='available') free_spaces, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=?) spaces, (SELECT COUNT(*) FROM reservations WHERE location_id=? AND status IN ('waiting_check_in','active')) awaiting_verification, (SELECT COUNT(*) FROM violations v JOIN parking_spaces ps ON ps.id=v.space_id JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND v.status IN ('open','under_review')) open_violations",
+            "SELECT (SELECT COUNT(*) FROM reservations WHERE location_id=? AND DATE(starts_at)=CURDATE()) reservations_today, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='occupied') occupied, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='available') free_spaces, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=?) spaces, (SELECT COUNT(*) FROM reservations WHERE location_id=? AND status IN ('confirmed','waiting_check_in','active')) awaiting_verification, (SELECT COUNT(*) FROM violations v JOIN parking_spaces ps ON ps.id=v.space_id JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND v.status IN ('open','under_review')) open_violations",
         );
         $stmt->execute([
             $locationId,
@@ -1211,7 +1308,7 @@ try {
             [(int) $manager["id"]],
         );
         $stmt = $pdo->prepare(
-            "SELECT r.id,r.reservation_code,r.status,r.starts_at,r.ends_at,u.id AS driver_user_id,u.full_name,v.registration_number,ps.space_code,CASE WHEN r.status='active' THEN 'check_out' ELSE 'check_in' END AS purpose FROM reservations r JOIN users u ON u.id=r.driver_user_id JOIN vehicles v ON v.id=r.vehicle_id LEFT JOIN parking_spaces ps ON ps.id=r.space_id WHERE r.location_id=? AND r.status IN ('waiting_check_in','active') ORDER BY r.starts_at",
+            "SELECT r.id,r.reservation_code,r.status,r.starts_at,r.ends_at,u.id AS driver_user_id,u.full_name,v.registration_number,ps.space_code,CASE WHEN r.status='active' THEN 'check_out' ELSE 'check_in' END AS purpose FROM reservations r JOIN users u ON u.id=r.driver_user_id JOIN vehicles v ON v.id=r.vehicle_id LEFT JOIN parking_spaces ps ON ps.id=r.space_id WHERE r.location_id=? AND r.status IN ('confirmed','waiting_check_in','active') ORDER BY r.starts_at",
         );
         $stmt->execute([$locationId]);
         json_response(["ok" => true, "queue" => $stmt->fetchAll()]);
@@ -1342,6 +1439,18 @@ try {
         $reservation = $stmt->fetch();
         if (!$reservation) {
             fail("Reservation not found in your assigned location.", 404);
+        }
+        $allowedStatuses =
+            $purpose === "check_in"
+                ? ["confirmed", "waiting_check_in"]
+                : ["active"];
+        if (!in_array($reservation["status"], $allowedStatuses, true)) {
+            fail(
+                $purpose === "check_in"
+                    ? "This reservation is not ready for check-in."
+                    : "This reservation is not currently active for check-out.",
+                422,
+            );
         }
         $otpStmt = $pdo->prepare(
             "SELECT id,otp_hash FROM access_otps WHERE reservation_id=? AND purpose=? AND used_at IS NULL AND expires_at>=NOW() ORDER BY id DESC LIMIT 1",
@@ -1744,16 +1853,35 @@ try {
         );
         json_response(["ok" => true, "locations" => $stmt->fetchAll()]);
     }
-    if ($route === "driver/spaces" && $method === "GET") {
+    if ($route === "driver/zones" && $method === "GET") {
         require_login(["driver"]);
         $locationId = (int) ($_GET["location_id"] ?? 0);
         if ($locationId < 1) {
             fail("A parking location is required.", 422);
         }
         $stmt = $pdo->prepare(
-            "SELECT ps.id,ps.space_code,ps.space_type,ps.status FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='available' ORDER BY ps.space_code",
+            "SELECT z.id,z.code,z.name,z.floor_label,COUNT(ps.id) AS spaces_total,SUM(ps.status='available') AS available_spaces FROM parking_zones z LEFT JOIN parking_spaces ps ON ps.zone_id=z.id WHERE z.location_id=? GROUP BY z.id ORDER BY z.code,z.id",
         );
         $stmt->execute([$locationId]);
+        json_response(["ok" => true, "zones" => $stmt->fetchAll()]);
+    }
+    if ($route === "driver/spaces" && $method === "GET") {
+        require_login(["driver"]);
+        $locationId = (int) ($_GET["location_id"] ?? 0);
+        if ($locationId < 1) {
+            fail("A parking location is required.", 422);
+        }
+        $zoneId = (int) ($_GET["zone_id"] ?? 0);
+        $sql =
+            "SELECT ps.id,ps.space_code,ps.space_type,ps.status,z.id AS zone_id,z.code AS zone_code,z.name AS zone_name,z.floor_label FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='available'";
+        $params = [$locationId];
+        if ($zoneId > 0) {
+            $sql .= " AND z.id=?";
+            $params[] = $zoneId;
+        }
+        $sql .= " ORDER BY z.code,ps.space_code";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
         json_response(["ok" => true, "spaces" => $stmt->fetchAll()]);
     }
     if ($route === "driver/quote" && $method === "GET") {
@@ -1946,6 +2074,68 @@ try {
             ],
             201,
         );
+    }
+    if (
+        preg_match('#^driver/reservations/(\d+)/cancel$#', $route, $match) &&
+        $method === "POST"
+    ) {
+        $driver = require_login(["driver"]);
+        require_csrf();
+        $reservationId = (int) $match[1];
+        $stmt = $pdo->prepare(
+            "SELECT id,space_id,status FROM reservations WHERE id=? AND driver_user_id=? FOR UPDATE",
+        );
+        $pdo->beginTransaction();
+        try {
+            $stmt->execute([$reservationId, (int) $driver["id"]]);
+            $reservation = $stmt->fetch();
+            if (!$reservation) {
+                fail("Reservation not found for your account.", 404);
+            }
+            if (
+                !in_array(
+                    $reservation["status"],
+                    ["confirmed", "waiting_check_in"],
+                    true,
+                )
+            ) {
+                fail(
+                    "Only an upcoming reservation can be cancelled. Ask the manager to check out an active booking.",
+                    422,
+                );
+            }
+            $pdo->prepare(
+                "UPDATE reservations SET status='cancelled' WHERE id=?",
+            )->execute([$reservationId]);
+            if ($reservation["space_id"]) {
+                $pdo->prepare(
+                    "UPDATE parking_spaces SET status='available' WHERE id=? AND status='reserved'",
+                )->execute([(int) $reservation["space_id"]]);
+                $pdo->prepare(
+                    "INSERT INTO parking_space_status_history(space_id,status,changed_by_user_id,note) VALUES(?, 'available', ?, 'Driver cancelled the reservation.')",
+                )->execute([
+                    (int) $reservation["space_id"],
+                    (int) $driver["id"],
+                ]);
+            }
+            $pdo->prepare(
+                "INSERT INTO reservation_status_history(reservation_id,status,changed_by_user_id,note) VALUES(?, 'cancelled', ?, 'Driver cancelled the reservation.')",
+            )->execute([$reservationId, (int) $driver["id"]]);
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+        audit(
+            (int) $driver["id"],
+            "cancel",
+            "reservation",
+            $reservationId,
+            "Driver cancelled the reservation.",
+        );
+        json_response(["ok" => true, "status" => "cancelled"]);
     }
     if (
         preg_match(
