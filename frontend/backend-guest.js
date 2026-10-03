@@ -1,21 +1,161 @@
 (function () {
-  'use strict';
-  var api = window.ParkFlowAPI, ui = window.ParkFlowUI;
+  "use strict";
+  var api = window.ParkFlowAPI,
+    ui = window.ParkFlowUI;
   if (!api || !ui) return;
-  var locations = [], allLocations = [];
-  function esc(value) { var node = document.createElement('span'); node.textContent = value == null ? '' : String(value); return node.innerHTML; }
+  var locations = [],
+    allLocations = [];
+  function esc(value) {
+    var node = document.createElement("span");
+    node.textContent = value == null ? "" : String(value);
+    return node.innerHTML;
+  }
   function render(rows) {
-    locations = rows; var result = document.getElementById('all-locations'); if (!result) return;
-    var meta = result.querySelector('.location-results__meta'); var more = result.querySelector('.location-results__more');
-    Array.prototype.slice.call(result.querySelectorAll('.location-card')).forEach(function (card) { card.remove(); });
-    rows.forEach(function (row) { var free = Number(row.available_spaces || 0); var card = document.createElement('article'); card.className = 'location-card'; card.dataset.id = row.id; card.dataset.rate = row.base_hourly_rate; card.innerHTML = '<div class="location-card__visual"><span class="garage-art" aria-hidden="true"><i>P</i></span></div><div class="location-card__body"><header class="location-card__header"><div><h3>' + esc(row.name) + '</h3><p>' + esc(row.address) + '</p></div><span class="location-card__rating">★ ' + esc(row.rating || 'New') + '</span></header><ul class="location-card__features" role="list"><li>' + esc(row.area || 'Dhaka') + '</li><li>' + (free ? free + ' spaces available' : 'Currently full') + '</li></ul><footer class="location-card__footer"><div class="location-card__availability"><span class="badge badge--' + (free ? 'free' : 'warning') + ' badge--dot">' + free + ' spaces</span><small>Live availability</small><button class="location-card__details" data-action="details" type="button">View details</button></div><div class="location-card__booking"><p><strong>BDT ' + Number(row.base_hourly_rate).toLocaleString() + '</strong><span>/hour</span></p><a class="btn btn--primary btn--sm" href="login.html">Reserve</a></div></footer></div>';
+    locations = rows;
+    var result = document.getElementById("all-locations");
+    if (!result) return;
+    var meta = result.querySelector(".location-results__meta");
+    var more = result.querySelector(".location-results__more");
+    Array.prototype.slice
+      .call(result.querySelectorAll(".location-card"))
+      .forEach(function (card) {
+        card.remove();
+      });
+    rows.forEach(function (row) {
+      var free = Number(row.available_spaces || 0);
+      var card = document.createElement("article");
+      card.className = "location-card";
+      card.dataset.id = row.id;
+      card.dataset.rate = row.base_hourly_rate;
+      card.innerHTML =
+        '<div class="location-card__visual"><span class="garage-art" aria-hidden="true"><i>P</i></span></div><div class="location-card__body"><header class="location-card__header"><div><h3>' +
+        esc(row.name) +
+        "</h3><p>" +
+        esc(row.address) +
+        '</p></div><span class="location-card__rating">★ ' +
+        esc(row.rating || "New") +
+        '</span></header><ul class="location-card__features" role="list"><li>' +
+        esc(row.area || "Dhaka") +
+        "</li><li>" +
+        (free ? free + " spaces available" : "Currently full") +
+        '</li></ul><footer class="location-card__footer"><div class="location-card__availability"><span class="badge badge--' +
+        (free ? "free" : "warning") +
+        ' badge--dot">' +
+        free +
+        ' spaces</span><small>Live availability</small><button class="location-card__details" data-action="details" type="button">View details</button></div><div class="location-card__booking"><p><strong>BDT ' +
+        Number(row.base_hourly_rate).toLocaleString() +
+        '</strong><span>/hour</span></p><a class="btn btn--primary btn--sm" href="login.html">Reserve</a></div></footer></div>';
       result.insertBefore(card, more || null);
     });
-    if (meta) { var count = meta.querySelector('p strong'); if (count) count.textContent = rows.length + ' parking location' + (rows.length === 1 ? '' : 's'); }
+    if (meta) {
+      var count = meta.querySelector("p strong");
+      if (count)
+        count.textContent =
+          rows.length + " parking location" + (rows.length === 1 ? "" : "s");
+    }
   }
-  function filter() { var form = document.querySelector('.location-filters'); if (!form) return; var query = (form.querySelector('[name="query"]')?.value || '').trim().toLowerCase(); var price = (form.querySelector('[name="price"]')?.value || '').match(/(\d+)/); var maximum = price ? Number(price[1]) : 0; var rows = allLocations.filter(function (row) { return (!query || (row.name + ' ' + row.address + ' ' + row.area).toLowerCase().indexOf(query) >= 0) && (!maximum || Number(row.base_hourly_rate) < maximum); }); render(rows); ui.toast(rows.length + ' live location' + (rows.length === 1 ? '' : 's') + ' found.'); }
-  function details(id) { var row = locations.filter(function (item) { return String(item.id) === String(id); })[0]; var modal = document.getElementById('guest-location-details'); if (!row || !modal) return; var title = modal.querySelector('h2'); if (title) title.textContent = row.name; var values = [row.address, 'BDT ' + Number(row.base_hourly_rate).toLocaleString() + '/hr', (row.available_spaces || 0) + ' spaces free']; var targets = modal.querySelectorAll('.guest-location-details__address, .guest-location-details__rate, .guest-location-details__availability'); targets.forEach(function (target, index) { target.textContent = values[index]; }); ui.openModal(modal); }
-  api.request('public/locations').then(function (data) { allLocations = data.locations; render(data.locations); }).catch(function (error) { ui.toast(error.message, 'warning'); });
-  document.addEventListener('submit', function (event) { var form = event.target; if (form.matches('.support-form')) { event.preventDefault(); event.stopImmediatePropagation(); if (!form.checkValidity()) return form.reportValidity(); api.request('public/support', { method: 'POST', body: { name: form.elements.name.value, email: form.elements.email.value, subject: form.elements.topic.value, message: form.elements.message.value } }).then(function (data) { form.reset(); ui.toast('Support request ' + data.ticket_code + ' was sent.'); }).catch(function (error) { ui.toast(error.message, 'warning'); }); } else if (form.matches('.location-filters, #find-parking')) { event.preventDefault(); event.stopImmediatePropagation(); filter(); document.getElementById('locations')?.scrollIntoView({ behavior: 'smooth' }); } }, true);
-  document.addEventListener('click', function (event) { var button = event.target.closest('[data-action="details"]'); if (button) { event.preventDefault(); details(button.closest('.location-card').dataset.id); } }, true);
+  function filter() {
+    var form = document.querySelector(".location-filters");
+    if (!form) return;
+    var query = (form.querySelector('[name="query"]')?.value || "")
+      .trim()
+      .toLowerCase();
+    var price = (form.querySelector('[name="price"]')?.value || "").match(
+      /(\d+)/,
+    );
+    var maximum = price ? Number(price[1]) : 0;
+    var rows = allLocations.filter(function (row) {
+      return (
+        (!query ||
+          (row.name + " " + row.address + " " + row.area)
+            .toLowerCase()
+            .indexOf(query) >= 0) &&
+        (!maximum || Number(row.base_hourly_rate) < maximum)
+      );
+    });
+    render(rows);
+    ui.toast(
+      rows.length +
+        " live location" +
+        (rows.length === 1 ? "" : "s") +
+        " found.",
+    );
+  }
+  function details(id) {
+    var row = locations.filter(function (item) {
+      return String(item.id) === String(id);
+    })[0];
+    var modal = document.getElementById("guest-location-details");
+    if (!row || !modal) return;
+    var title = modal.querySelector("h2");
+    if (title) title.textContent = row.name;
+    var values = [
+      row.address,
+      "BDT " + Number(row.base_hourly_rate).toLocaleString() + "/hr",
+      (row.available_spaces || 0) + " spaces free",
+    ];
+    var targets = modal.querySelectorAll(
+      ".guest-location-details__address, .guest-location-details__rate, .guest-location-details__availability",
+    );
+    targets.forEach(function (target, index) {
+      target.textContent = values[index];
+    });
+    ui.openModal(modal);
+  }
+  api
+    .request("public/locations")
+    .then(function (data) {
+      allLocations = data.locations;
+      render(data.locations);
+    })
+    .catch(function (error) {
+      ui.toast(error.message, "warning");
+    });
+  document.addEventListener(
+    "submit",
+    function (event) {
+      var form = event.target;
+      if (form.matches(".support-form")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (!form.checkValidity()) return form.reportValidity();
+        api
+          .request("public/support", {
+            method: "POST",
+            body: {
+              name: form.elements.name.value,
+              email: form.elements.email.value,
+              subject: form.elements.topic.value,
+              message: form.elements.message.value,
+            },
+          })
+          .then(function (data) {
+            form.reset();
+            ui.toast("Support request " + data.ticket_code + " was sent.");
+          })
+          .catch(function (error) {
+            ui.toast(error.message, "warning");
+          });
+      } else if (form.matches(".location-filters, #find-parking")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        filter();
+        document
+          .getElementById("locations")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }
+    },
+    true,
+  );
+  document.addEventListener(
+    "click",
+    function (event) {
+      var button = event.target.closest('[data-action="details"]');
+      if (button) {
+        event.preventDefault();
+        details(button.closest(".location-card").dataset.id);
+      }
+    },
+    true,
+  );
 })();

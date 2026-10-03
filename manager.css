@@ -157,14 +157,30 @@
     font-size: var(--font-size-lg);
   }
 
-  .bar--38 { --bar-value: 38%; }
-  .bar--52 { --bar-value: 52%; }
-  .bar--66 { --bar-value: 66%; }
-  .bar--74 { --bar-value: 74%; }
-  .bar--82 { --bar-value: 82%; }
-  .bar--84 { --bar-value: 84%; }
-  .bar--88 { --bar-value: 88%; }
-  .bar--91 { --bar-value: 91%; }
+  .bar--38 {
+    --bar-value: 38%;
+  }
+  .bar--52 {
+    --bar-value: 52%;
+  }
+  .bar--66 {
+    --bar-value: 66%;
+  }
+  .bar--74 {
+    --bar-value: 74%;
+  }
+  .bar--82 {
+    --bar-value: 82%;
+  }
+  .bar--84 {
+    --bar-value: 84%;
+  }
+  .bar--88 {
+    --bar-value: 88%;
+  }
+  .bar--91 {
+    --bar-value: 91%;
+  }
 
   .space-code {
     display: inline-grid;
@@ -247,10 +263,18 @@
     border-radius: 50%;
   }
 
-  .space-legend__free { background: var(--parking-free); }
-  .space-legend__occupied { background: var(--parking-occupied); }
-  .space-legend__reserved { background: var(--parking-reserved); }
-  .space-legend__blocked { background: var(--parking-blocked); }
+  .space-legend__free {
+    background: var(--parking-free);
+  }
+  .space-legend__occupied {
+    background: var(--parking-occupied);
+  }
+  .space-legend__reserved {
+    background: var(--parking-reserved);
+  }
+  .space-legend__blocked {
+    background: var(--parking-blocked);
+  }
 
   .space-legend strong {
     color: var(--color-text);
@@ -316,13 +340,18 @@
     opacity: 0.35;
   }
 
-  .parking-space::before { left: 0.65rem; }
-  .parking-space::after { right: 0.65rem; }
+  .parking-space::before {
+    left: 0.65rem;
+  }
+  .parking-space::after {
+    right: 0.65rem;
+  }
 
   .parking-space:hover,
   .parking-space:focus-visible {
     z-index: 2;
-    box-shadow: 0 12px 24px color-mix(in srgb, var(--space-color) 18%, transparent);
+    box-shadow: 0 12px 24px
+      color-mix(in srgb, var(--space-color) 18%, transparent);
     transform: translateY(-3px);
   }
 
@@ -358,7 +387,11 @@
   .parking-space--blocked {
     --space-color: var(--parking-blocked);
     --space-bg:
-      repeating-linear-gradient(135deg, transparent 0 8px, rgba(102, 116, 135, 0.08) 8px 16px),
+      repeating-linear-gradient(
+        135deg,
+        transparent 0 8px,
+        rgba(102, 116, 135, 0.08) 8px 16px
+      ),
       var(--parking-blocked-bg);
   }
 
@@ -407,8 +440,13 @@
     transform: translateY(-50%);
   }
 
-  .parking-floor__entrance { left: 0.3rem; }
-  .parking-floor__exit { right: 0.3rem; background: var(--color-primary-600); }
+  .parking-floor__entrance {
+    left: 0.3rem;
+  }
+  .parking-floor__exit {
+    right: 0.3rem;
+    background: var(--color-primary-600);
+  }
 
   .parking-floor__entrance svg,
   .parking-floor__exit svg {
@@ -588,7 +626,11 @@
     padding: var(--space-5);
     color: #ffffff;
     background:
-      radial-gradient(circle at 0 0, rgba(47, 143, 255, 0.2), transparent 16rem),
+      radial-gradient(
+        circle at 0 0,
+        rgba(47, 143, 255, 0.2),
+        transparent 16rem
+      ),
       var(--color-slate-950);
   }
 
@@ -829,7 +871,9 @@
 
   .otp-inputs input:focus {
     border-color: var(--color-primary-500);
-    box-shadow: 0 0 0 4px var(--color-focus), var(--shadow-sm);
+    box-shadow:
+      0 0 0 4px var(--color-focus),
+      var(--shadow-sm);
   }
 
   .otp-entry__hint {
@@ -906,14 +950,21 @@
     font-size: 0.55rem;
   }
 
-  .status-option--free { --status-color: var(--parking-free); }
-  .status-option--occupied { --status-color: var(--parking-occupied); }
-  .status-option--blocked { --status-color: var(--parking-blocked); }
+  .status-option--free {
+    --status-color: var(--parking-free);
+  }
+  .status-option--occupied {
+    --status-color: var(--parking-occupied);
+  }
+  .status-option--blocked {
+    --status-color: var(--parking-blocked);
+  }
 
   .status-option input:checked + span {
     border-color: var(--status-color);
     background: color-mix(in srgb, var(--status-color) 8%, transparent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--status-color) 12%, transparent);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--status-color) 12%, transparent);
   }
 
   .violation-review-dialog {

@@ -133,9 +133,12 @@
     --parking-pending-bg: var(--color-warning-50);
 
     /* Typography */
-    --font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
-      Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --font-sans:
+      Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji";
+    --font-mono:
+      "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
     --font-size-2xs: 0.6875rem;
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
@@ -191,17 +194,13 @@
     /* Elevation */
     --shadow-xs: 0 1px 2px rgba(16, 25, 39, 0.05);
     --shadow-sm:
-      0 1px 3px rgba(16, 25, 39, 0.08),
-      0 1px 2px rgba(16, 25, 39, 0.04);
+      0 1px 3px rgba(16, 25, 39, 0.08), 0 1px 2px rgba(16, 25, 39, 0.04);
     --shadow-md:
-      0 8px 24px rgba(16, 25, 39, 0.08),
-      0 2px 6px rgba(16, 25, 39, 0.04);
+      0 8px 24px rgba(16, 25, 39, 0.08), 0 2px 6px rgba(16, 25, 39, 0.04);
     --shadow-lg:
-      0 20px 46px rgba(16, 25, 39, 0.12),
-      0 6px 14px rgba(16, 25, 39, 0.05);
+      0 20px 46px rgba(16, 25, 39, 0.12), 0 6px 14px rgba(16, 25, 39, 0.05);
     --shadow-xl:
-      0 28px 72px rgba(8, 17, 31, 0.18),
-      0 8px 22px rgba(8, 17, 31, 0.08);
+      0 28px 72px rgba(8, 17, 31, 0.18), 0 8px 22px rgba(8, 17, 31, 0.08);
     --shadow-primary: 0 12px 26px rgba(29, 111, 242, 0.25);
     --shadow-success: 0 10px 22px rgba(18, 183, 106, 0.2);
     --shadow-danger: 0 10px 22px rgba(240, 68, 56, 0.2);
@@ -387,8 +386,16 @@
     overflow-x: hidden;
     color: var(--color-text);
     background:
-      radial-gradient(circle at 10% 0%, rgba(47, 143, 255, 0.09), transparent 30rem),
-      radial-gradient(circle at 95% 20%, rgba(124, 58, 237, 0.06), transparent 26rem),
+      radial-gradient(
+        circle at 10% 0%,
+        rgba(47, 143, 255, 0.09),
+        transparent 30rem
+      ),
+      radial-gradient(
+        circle at 95% 20%,
+        rgba(124, 58, 237, 0.06),
+        transparent 26rem
+      ),
       var(--color-canvas);
     font-family: var(--font-sans);
     font-size: var(--font-size-md);
@@ -495,7 +502,15 @@
     background: var(--color-primary-200);
   }
 
-  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  :where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    summary,
+    [tabindex]
+  ):focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 2px;
   }
@@ -597,7 +612,11 @@
   }
 
   .card--interactive:hover {
-    border-color: color-mix(in srgb, var(--color-primary-400) 45%, var(--color-border));
+    border-color: color-mix(
+      in srgb,
+      var(--color-primary-400) 45%,
+      var(--color-border)
+    );
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
   }
@@ -654,7 +673,12 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.2), transparent 75%);
+    background: linear-gradient(
+      115deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.2),
+      transparent 75%
+    );
     content: "";
     opacity: 0;
     transform: translateX(-100%);
@@ -690,13 +714,21 @@
   .btn--primary {
     color: #ffffff;
     border-color: var(--color-primary-600);
-    background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-500),
+      var(--color-primary-700)
+    );
     box-shadow: var(--shadow-primary);
   }
 
   .btn--primary:hover {
     border-color: var(--color-primary-700);
-    background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-800));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-600),
+      var(--color-primary-800)
+    );
     box-shadow: 0 14px 30px rgba(29, 111, 242, 0.3);
     color: #ffffff;
   }
@@ -718,7 +750,11 @@
   .btn--dark {
     color: #ffffff;
     border-color: var(--color-slate-900);
-    background: linear-gradient(135deg, var(--color-slate-800), var(--color-slate-950));
+    background: linear-gradient(
+      135deg,
+      var(--color-slate-800),
+      var(--color-slate-950)
+    );
     box-shadow: 0 10px 24px rgba(8, 17, 31, 0.24);
   }
 
@@ -730,14 +766,22 @@
   .btn--success {
     color: #ffffff;
     border-color: var(--color-success-600);
-    background: linear-gradient(135deg, var(--color-success-500), var(--color-success-700));
+    background: linear-gradient(
+      135deg,
+      var(--color-success-500),
+      var(--color-success-700)
+    );
     box-shadow: var(--shadow-success);
   }
 
   .btn--danger {
     color: #ffffff;
     border-color: var(--color-danger-600);
-    background: linear-gradient(135deg, var(--color-danger-500), var(--color-danger-700));
+    background: linear-gradient(
+      135deg,
+      var(--color-danger-500),
+      var(--color-danger-700)
+    );
     box-shadow: var(--shadow-danger);
   }
 
@@ -933,7 +977,9 @@
   .select:focus,
   .textarea:focus {
     border-color: var(--color-primary-500);
-    box-shadow: 0 0 0 4px var(--color-focus), var(--shadow-xs);
+    box-shadow:
+      0 0 0 4px var(--color-focus),
+      var(--shadow-xs);
   }
 
   .input:disabled,
@@ -985,7 +1031,9 @@
       calc(100% - 1rem) 50%,
       calc(100% - 0.72rem) 50%;
     background-repeat: no-repeat;
-    background-size: 0.32rem 0.32rem, 0.32rem 0.32rem;
+    background-size:
+      0.32rem 0.32rem,
+      0.32rem 0.32rem;
   }
 
   .input-group {
@@ -1489,20 +1537,36 @@
     width: var(--progress, 0%);
     height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-700));
+    background: linear-gradient(
+      90deg,
+      var(--color-primary-500),
+      var(--color-primary-700)
+    );
     transition: width var(--duration-slow) var(--ease-emphasized);
   }
 
   .progress--success .progress__bar {
-    background: linear-gradient(90deg, var(--color-success-500), var(--color-success-700));
+    background: linear-gradient(
+      90deg,
+      var(--color-success-500),
+      var(--color-success-700)
+    );
   }
 
   .progress--warning .progress__bar {
-    background: linear-gradient(90deg, var(--color-warning-300), var(--color-warning-600));
+    background: linear-gradient(
+      90deg,
+      var(--color-warning-300),
+      var(--color-warning-600)
+    );
   }
 
   .progress--danger .progress__bar {
-    background: linear-gradient(90deg, var(--color-danger-300), var(--color-danger-600));
+    background: linear-gradient(
+      90deg,
+      var(--color-danger-300),
+      var(--color-danger-600)
+    );
   }
 
   /* Avatars */
@@ -1517,7 +1581,11 @@
     border: 2px solid var(--color-surface-solid);
     border-radius: 50%;
     color: var(--color-primary-800);
-    background: linear-gradient(135deg, var(--color-primary-100), var(--color-violet-100));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-100),
+      var(--color-violet-100)
+    );
     box-shadow: var(--shadow-xs);
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-bold);
@@ -1654,8 +1722,14 @@
   }
 
   @keyframes app-section-focus {
-    0%, 100% { box-shadow: none; }
-    35% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary-500) 18%, transparent); }
+    0%,
+    100% {
+      box-shadow: none;
+    }
+    35% {
+      box-shadow: 0 0 0 4px
+        color-mix(in srgb, var(--color-primary-500) 18%, transparent);
+    }
   }
 
   .app-toast {
@@ -1664,17 +1738,19 @@
     right: max(1rem, env(safe-area-inset-right));
     bottom: max(1rem, env(safe-area-inset-bottom));
     max-width: min(24rem, calc(100vw - 2rem));
-    padding: .8rem 1rem;
-    border: 1px solid rgba(255,255,255,.18);
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: var(--radius-lg);
     color: #fff;
-    background: rgba(15, 23, 42, .92);
+    background: rgba(15, 23, 42, 0.92);
     box-shadow: var(--shadow-lg);
     backdrop-filter: blur(16px);
     opacity: 0;
     transform: translateY(1rem);
     pointer-events: none;
-    transition: opacity .2s ease, transform .2s ease;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
   }
 
   .app-toast.is-visible {
@@ -1682,7 +1758,9 @@
     transform: translateY(0);
   }
 
-  .app-toast--warning { background: rgba(146, 64, 14, .94); }
+  .app-toast--warning {
+    background: rgba(146, 64, 14, 0.94);
+  }
 
   .modal.is-open,
   .modal:target {

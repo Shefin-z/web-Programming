@@ -7,13 +7,13 @@ browser feature.
 
 ## Code map for presentation
 
-| Stakeholder | Main page | Source file | Demonstrable functions |
-| --- | --- | --- | --- |
-| Guest | `index.html` | `frontend/guest-ui.js` | Parking search, location filters, map pins, support request |
-| Driver | `driver.html` | `frontend/driver-ui.js` | Live availability search, time-slot reservation summary, reservation confirmation, issue report, vehicle add, receipt/history PDF, manager chat |
-| Parking Manager | `manager.html` | `frontend/manager-ui.js` | Reservation search, space selection/status change, OTP check-in/out, violation resolution, area-report PDF, driver chat |
-| Administrator | `admin.html` | `frontend/admin-ui.js` | Add/remove manager, add location, driver approval, dynamic-price toggles/rules, violation categories, monthly-revenue PDF |
-| Login and registration | `login.html`, `register.html` | `frontend/auth-ui.js` | Role-aware demo routing and driver account registration |
+| Stakeholder            | Main page                     | Source file              | Demonstrable functions                                                                                                                          |
+| ---------------------- | ----------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Guest                  | `index.html`                  | `frontend/guest-ui.js`   | Parking search, location filters, map pins, support request                                                                                     |
+| Driver                 | `driver.html`                 | `frontend/driver-ui.js`  | Live availability search, time-slot reservation summary, reservation confirmation, issue report, vehicle add, receipt/history PDF, manager chat |
+| Parking Manager        | `manager.html`                | `frontend/manager-ui.js` | Reservation search, space selection/status change, OTP check-in/out, violation resolution, area-report PDF, driver chat                         |
+| Administrator          | `admin.html`                  | `frontend/admin-ui.js`   | Add/remove manager, add location, driver approval, dynamic-price toggles/rules, violation categories, monthly-revenue PDF                       |
+| Login and registration | `login.html`, `register.html` | `frontend/auth-ui.js`    | Role-aware demo routing and driver account registration                                                                                         |
 
 ## Shared code
 
