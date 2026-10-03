@@ -6,7 +6,7 @@
     <meta name="description" content="ParkFlow parking manager portal for reservations, space operations, OTP verification, violations, reports, and driver support.">
     <meta name="theme-color" content="#101927">
     <title>Manager Operations — ParkFlow</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <link rel="stylesheet" href="dashboard.css?v=3">
     <link rel="stylesheet" href="manager.css">
   </head>
@@ -391,9 +391,17 @@
       </div>
     </section>
 
+    <section class="modal" id="manager-reservation-details" role="dialog" aria-modal="true" aria-labelledby="manager-reservation-details-title">
+      <div class="modal__dialog reservation-details-dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="manager-reservation-details-title">Reservation details</h2><p id="manager-reservation-details-subtitle">Loading live booking details…</p></div><a class="modal__close" href="#reservations" aria-label="Close reservation details"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#m-close"></use></svg></a></header>
+        <div class="modal__body"><div class="reservation-details-status"><strong id="manager-reservation-details-code">Reservation</strong><span id="manager-reservation-details-status"></span></div><dl class="reservation-detail-grid" id="manager-reservation-details-list"></dl></div>
+        <footer class="modal__footer"><a class="btn btn--primary" href="#reservations">Close</a></footer>
+      </div>
+    </section>
+
     <script src="app.js?v=4" defer></script>
     <script src="frontend/manager-ui.js?v=3" defer></script>
     <script src="frontend/api.js" defer></script>
-    <script src="frontend/backend-manager.js?v=6" defer></script>
+    <script src="frontend/backend-manager.js?v=7" defer></script>
   </body>
 </html>

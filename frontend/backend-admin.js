@@ -12,6 +12,33 @@
   var dateTime = function (value) { var date = new Date(String(value).replace(' ', 'T')); return isNaN(date) ? '—' : date.toLocaleString(); };
   var badge = function (value) { var text = String(value || 'unknown').replace(/_/g, ' '); var cls = /active|operational|completed|approved|confirmed/i.test(text) ? 'success' : /pending|waiting|review|paused|overstayed/i.test(text) ? 'warning' : /cancelled|rejected|suspended|closed/i.test(text) ? 'danger' : 'info'; return '<span class="badge badge--' + cls + ' badge--dot">' + esc(text) + '</span>'; };
 
+  function detailItem(label, value, note, wide) { return '<div' + (wide ? ' class="reservation-detail-grid__wide"' : '') + '><dt>' + esc(label) + '</dt><dd>' + esc(value || '—') + (note ? '<small>' + esc(note) + '</small>' : '') + '</dd></div>'; }
+  function openReservationDetails(id) {
+    api.request('admin/reservations/' + id).then(function (data) {
+      var reservation = data.reservation || {}, modal = document.getElementById('admin-reservation-details');
+      if (!modal) return;
+      var title = document.getElementById('admin-reservation-details-title'), subtitle = document.getElementById('admin-reservation-details-subtitle'), code = document.getElementById('admin-reservation-details-code'), status = document.getElementById('admin-reservation-details-status'), list = document.getElementById('admin-reservation-details-list');
+      if (title) title.textContent = 'Reservation #' + (reservation.reservation_code || '—');
+      if (subtitle) subtitle.textContent = (reservation.location_name || 'Parking location') + ' · Live database record';
+      if (code) code.textContent = 'Created ' + dateTime(reservation.created_at);
+      if (status) status.innerHTML = badge(reservation.status);
+      if (list) list.innerHTML = [
+        detailItem('Reservation window', dateTime(reservation.starts_at) + ' – ' + dateTime(reservation.ends_at)),
+        detailItem('Parking space', reservation.space_code || 'Not assigned', reservation.zone_code ? 'Zone ' + reservation.zone_code : ''),
+        detailItem('Driver', reservation.driver_name, [reservation.driver_email, reservation.driver_phone].filter(Boolean).join(' · ')),
+        detailItem('Vehicle', reservation.registration_number, [reservation.make_model, reservation.color, reservation.vehicle_type].filter(Boolean).join(' · ')),
+        detailItem('Parking location', reservation.location_name, reservation.location_address),
+        detailItem('Payment', String(reservation.payment_status || 'Not recorded').replace(/_/g, ' '), [reservation.payment_method, reservation.payment_reference].filter(Boolean).join(' · ')),
+        detailItem('Amount paid', money(reservation.payment_amount || reservation.total_amount), 'Reservation total ' + money(reservation.total_amount)),
+        detailItem('Rate breakdown', money(reservation.hourly_rate) + '/hour', 'Service fee ' + money(reservation.service_fee) + ' · Discount ' + money(reservation.discount_amount)),
+        detailItem('Actual check-in', dateTime(reservation.actual_check_in_at)),
+        detailItem('Actual check-out', dateTime(reservation.actual_check_out_at)),
+        detailItem('Driver note', reservation.notes || 'No note supplied.', '', true)
+      ].join('');
+      ui.openModal(modal);
+    }).catch(function (error) { ui.toast(error.message, 'warning'); });
+  }
+
   function guard() {
     return api.me().then(function (result) {
       if (!result.user || result.user.role !== 'admin') { window.location.href = 'login.html?account=admin'; throw new Error('Sign in required.'); }
@@ -145,6 +172,7 @@
     var action = button.dataset.action;
     if (button.hasAttribute('data-report-download')) { event.preventDefault(); event.stopImmediatePropagation(); var report = state.analytics || { locations: [] }; var lines = (report.locations || []).map(function (row) { return row.name + ': ' + row.reservations + ' reservations, ' + money(row.revenue); }); ui.createPdf('ParkFlow Revenue Report', lines, 'parkflow-revenue-report.pdf'); return; }
     if (!action) return; event.preventDefault(); event.stopImmediatePropagation();
+    if (action === 'reservation-details') { var reservationRow = button.closest('tr'); if (reservationRow && reservationRow.dataset.reservationId) openReservationDetails(reservationRow.dataset.reservationId); return; }
     if (action === 'manager-remove') { openManagerRemoval(button.closest('tr').dataset.managerId); }
     else if (action === 'manager-remove-confirm') { var managerId = state.managerPendingRemoval; if (!managerId) return; api.request('admin/managers/' + managerId, { method: 'DELETE', body: {} }).then(function () { state.managerPendingRemoval = null; close('remove-manager'); return refresh('Manager access suspended.'); }).catch(function (error) { ui.toast(error.message, 'warning'); }); }
     else if (action === 'application-approve' || action === 'application-reject') { openManagerApprovalDecision(button.closest('tr').dataset.applicationId, action === 'application-approve' ? 'approve' : 'reject'); }

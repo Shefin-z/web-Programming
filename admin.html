@@ -6,7 +6,7 @@
     <meta name="description" content="ParkFlow administrator portal for parking operations, pricing, approvals, analytics, and reports.">
     <meta name="theme-color" content="#101927">
     <title>Admin Dashboard — ParkFlow</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <link rel="stylesheet" href="dashboard.css?v=3">
     <link rel="stylesheet" href="admin.css?v=2">
   </head>
@@ -599,9 +599,17 @@
         </form>
       </div>
     </section>
+
+    <section class="modal" id="admin-reservation-details" role="dialog" aria-modal="true" aria-labelledby="admin-reservation-details-title">
+      <div class="modal__dialog reservation-details-dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="admin-reservation-details-title">Reservation details</h2><p id="admin-reservation-details-subtitle">Loading live booking details…</p></div><a class="modal__close" href="#overview" aria-label="Close reservation details"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <div class="modal__body"><div class="reservation-details-status"><strong id="admin-reservation-details-code">Reservation</strong><span id="admin-reservation-details-status"></span></div><dl class="reservation-detail-grid" id="admin-reservation-details-list"></dl></div>
+        <footer class="modal__footer"><a class="btn btn--primary" href="#overview">Close</a></footer>
+      </div>
+    </section>
     <script src="app.js?v=5" defer></script>
     <script src="frontend/admin-ui.js?v=4" defer></script>
     <script src="frontend/api.js" defer></script>
-    <script src="frontend/backend-admin.js?v=13" defer></script>
+    <script src="frontend/backend-admin.js?v=14" defer></script>
   </body>
 </html>

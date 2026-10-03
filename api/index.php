@@ -119,6 +119,13 @@ try {
         $utilization=$pdo->query("SELECT status,COUNT(*) AS total FROM parking_spaces GROUP BY status")->fetchAll();
         json_response(['ok'=>true,'metrics'=>$metrics,'recent_reservations'=>$recent,'utilization'=>$utilization]);
     }
+    if (preg_match('#^admin/reservations/(\d+)$#', $route, $match) && $method === 'GET') {
+        require_login(['admin']);
+        $stmt=$pdo->prepare("SELECT r.id,r.reservation_code,r.status,r.starts_at,r.ends_at,r.actual_check_in_at,r.actual_check_out_at,r.hourly_rate,r.service_fee,r.discount_amount,r.total_amount,r.notes,r.created_at,r.updated_at,u.full_name AS driver_name,u.email AS driver_email,u.phone AS driver_phone,v.registration_number,v.make_model,v.vehicle_type,v.color,l.name AS location_name,l.address AS location_address,ps.space_code,z.code AS zone_code,p.payment_reference,p.amount AS payment_amount,p.method AS payment_method,p.status AS payment_status,p.paid_at FROM reservations r JOIN users u ON u.id=r.driver_user_id JOIN vehicles v ON v.id=r.vehicle_id JOIN parking_locations l ON l.id=r.location_id LEFT JOIN parking_spaces ps ON ps.id=r.space_id LEFT JOIN parking_zones z ON z.id=ps.zone_id LEFT JOIN payments p ON p.id=(SELECT id FROM payments WHERE reservation_id=r.id ORDER BY id DESC LIMIT 1) WHERE r.id=? LIMIT 1");
+        $stmt->execute([(int)$match[1]]); $reservation=$stmt->fetch();
+        if (!$reservation) fail('Reservation not found.',404);
+        json_response(['ok'=>true,'reservation'=>$reservation]);
+    }
     if ($route === 'admin/analytics' && $method === 'GET') {
         require_login(['admin']);
         $days=(int)($_GET['days']??30); if(!in_array($days,[7,30,365],true))$days=30;
@@ -232,6 +239,13 @@ try {
     }
     if ($route === 'manager/reservations' && $method === 'GET') {
         $manager=require_login(['manager']);$locationId=first_id('SELECT location_id FROM manager_location_assignments WHERE manager_user_id=? ORDER BY is_primary DESC,id ASC LIMIT 1',[(int)$manager['id']]);$stmt=$pdo->prepare("SELECT r.id,r.reservation_code,r.starts_at,r.ends_at,r.status,r.total_amount,u.full_name,v.registration_number,ps.space_code FROM reservations r JOIN users u ON u.id=r.driver_user_id JOIN vehicles v ON v.id=r.vehicle_id LEFT JOIN parking_spaces ps ON ps.id=r.space_id WHERE r.location_id=? ORDER BY r.starts_at DESC LIMIT 100");$stmt->execute([$locationId]);json_response(['ok'=>true,'reservations'=>$stmt->fetchAll()]);
+    }
+    if (preg_match('#^manager/reservations/(\d+)$#', $route, $match) && $method === 'GET') {
+        $manager=require_login(['manager']);
+        $stmt=$pdo->prepare("SELECT r.id,r.reservation_code,r.status,r.starts_at,r.ends_at,r.actual_check_in_at,r.actual_check_out_at,r.hourly_rate,r.service_fee,r.discount_amount,r.total_amount,r.notes,r.created_at,r.updated_at,u.full_name AS driver_name,u.email AS driver_email,u.phone AS driver_phone,v.registration_number,v.make_model,v.vehicle_type,v.color,l.name AS location_name,l.address AS location_address,ps.space_code,z.code AS zone_code,p.payment_reference,p.amount AS payment_amount,p.method AS payment_method,p.status AS payment_status,p.paid_at FROM reservations r JOIN users u ON u.id=r.driver_user_id JOIN vehicles v ON v.id=r.vehicle_id JOIN parking_locations l ON l.id=r.location_id LEFT JOIN parking_spaces ps ON ps.id=r.space_id LEFT JOIN parking_zones z ON z.id=ps.zone_id LEFT JOIN payments p ON p.id=(SELECT id FROM payments WHERE reservation_id=r.id ORDER BY id DESC LIMIT 1) JOIN manager_location_assignments a ON a.location_id=r.location_id WHERE r.id=? AND a.manager_user_id=? LIMIT 1");
+        $stmt->execute([(int)$match[1],(int)$manager['id']]); $reservation=$stmt->fetch();
+        if (!$reservation) fail('Reservation not found in your assigned location.',404);
+        json_response(['ok'=>true,'reservation'=>$reservation]);
     }
     if ($route === 'manager/spaces' && $method === 'GET') {
         $manager=require_login(['manager']);$locationId=first_id('SELECT location_id FROM manager_location_assignments WHERE manager_user_id=? ORDER BY is_primary DESC,id ASC LIMIT 1',[(int)$manager['id']]);$stmt=$pdo->prepare('SELECT ps.id,ps.space_code,ps.space_type,ps.status,ps.has_ev_charger,z.name AS zone_name,z.code AS zone_code FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? ORDER BY z.code,ps.space_code');$stmt->execute([$locationId]);json_response(['ok'=>true,'spaces'=>$stmt->fetchAll()]);

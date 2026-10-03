@@ -11,6 +11,34 @@
   var badge = function (value) { var text = String(value || 'unknown').replace(/_/g, ' '); var style = /active|completed|available|paid/i.test(text) ? 'success' : /waiting|reserved|open|under review|overstayed/i.test(text) ? 'warning' : /blocked|cancelled|failed/i.test(text) ? 'danger' : 'info'; return '<span class="badge badge--' + style + ' badge--dot">' + esc(text) + '</span>'; };
   function renderProfile(profile) { state.profile = profile || {}; document.querySelectorAll('.topbar-profile strong, .sidebar-profile strong').forEach(function (item) { item.textContent = state.profile.full_name || item.textContent; }); var name = document.getElementById('manager-profile-name'), phone = document.getElementById('manager-profile-phone'), email = document.getElementById('manager-profile-email'), assignment = document.getElementById('manager-profile-assignment'); if (name) name.value = state.profile.full_name || ''; if (phone) phone.value = state.profile.phone || ''; if (email) email.value = state.profile.email || ''; if (assignment) assignment.value = (state.profile.location_name || 'No location assigned') + (state.profile.shift_name ? ' · ' + state.profile.shift_name : ''); }
   function guard() { return api.me().then(function (data) { if (!data.user || data.user.role !== 'manager') { window.location.href = 'login.html?account=manager'; throw new Error('Sign in required.'); } return api.request('manager/profile'); }).then(function (data) { renderProfile(data.profile); }); }
+  var dateTime = function (value) { var d = new Date(String(value || '').replace(' ', 'T')); return isNaN(d) ? '—' : d.toLocaleString(); };
+  function detailItem(label, value, note, wide) { return '<div' + (wide ? ' class="reservation-detail-grid__wide"' : '') + '><dt>' + esc(label) + '</dt><dd>' + esc(value || '—') + (note ? '<small>' + esc(note) + '</small>' : '') + '</dd></div>'; }
+  function openReservationDetails(id) {
+    api.request('manager/reservations/' + id).then(function (data) {
+      var reservation = data.reservation || {}, modal = document.getElementById('manager-reservation-details');
+      if (!modal) return;
+      var title = document.getElementById('manager-reservation-details-title'), subtitle = document.getElementById('manager-reservation-details-subtitle'), code = document.getElementById('manager-reservation-details-code'), status = document.getElementById('manager-reservation-details-status'), list = document.getElementById('manager-reservation-details-list');
+      if (title) title.textContent = 'Reservation #' + (reservation.reservation_code || '—');
+      if (subtitle) subtitle.textContent = (reservation.location_name || 'Assigned location') + ' · Live booking details';
+      if (code) code.textContent = 'Created ' + dateTime(reservation.created_at);
+      if (status) status.innerHTML = badge(reservation.status);
+      if (list) list.innerHTML = [
+        detailItem('Reservation window', dateTime(reservation.starts_at) + ' – ' + dateTime(reservation.ends_at)),
+        detailItem('Parking space', reservation.space_code || 'Not assigned', reservation.zone_code ? 'Zone ' + reservation.zone_code : ''),
+        detailItem('Driver', reservation.driver_name, [reservation.driver_email, reservation.driver_phone].filter(Boolean).join(' · ')),
+        detailItem('Vehicle', reservation.registration_number, [reservation.make_model, reservation.color, reservation.vehicle_type].filter(Boolean).join(' · ')),
+        detailItem('Parking location', reservation.location_name, reservation.location_address),
+        detailItem('Payment', String(reservation.payment_status || 'Not recorded').replace(/_/g, ' '), [reservation.payment_method, reservation.payment_reference].filter(Boolean).join(' · ')),
+        detailItem('Reservation total', money(reservation.total_amount), 'Paid ' + money(reservation.payment_amount || reservation.total_amount)),
+        detailItem('Rate breakdown', money(reservation.hourly_rate) + '/hour', 'Service fee ' + money(reservation.service_fee) + ' · Discount ' + money(reservation.discount_amount)),
+        detailItem('Actual check-in', dateTime(reservation.actual_check_in_at)),
+        detailItem('Actual check-out', dateTime(reservation.actual_check_out_at)),
+        detailItem('Driver note', reservation.notes || 'No note supplied.', '', true)
+      ].join('');
+      ui.openModal(modal);
+    }).catch(function (error) { ui.toast(error.message, 'warning'); });
+  }
+
   function renderDashboard(data) {
     state.metrics = data.metrics || {}; var metrics = state.metrics;
     document.querySelectorAll('#overview .kpi-card').forEach(function (card) { var label = card.querySelector('.kpi-card__value span'), output = card.querySelector('.kpi-card__value strong'); if (!label || !output) return; var key = label.textContent.toLowerCase(); if (key.indexOf('free') >= 0) output.textContent = metrics.free_spaces || 0; else if (key.indexOf('reservation') >= 0) output.textContent = metrics.reservations_today || 0; else if (key.indexOf('awaiting') >= 0) output.textContent = metrics.awaiting_verification || 0; else if (key.indexOf('violation') >= 0) output.textContent = metrics.open_violations || 0; });
@@ -62,6 +90,7 @@
     var target = event.target.closest('[data-action], [data-report-download]'); if (!target) return; var action = target.dataset.action;
     if (target.hasAttribute('data-report-download')) { event.preventDefault(); event.stopImmediatePropagation(); var report = state.report || {}, summary = report.summary || {}; ui.createPdf('ParkFlow Area Operations Report', ['Location: ' + ((report.location || {}).name || 'Assigned location'), 'Reservations: ' + (summary.reservations || 0), 'Revenue processed: ' + money(summary.revenue), 'Violations: ' + ((report.violations || {}).total || 0), 'Open violations: ' + ((report.violations || {}).open_total || 0)], 'parkflow-area-operations-report.pdf'); return; }
     if (!action) return;
+    if (action === 'reservation-details') { event.preventDefault(); event.stopImmediatePropagation(); var reservationRow = target.closest('tr'); if (reservationRow && reservationRow.dataset.reservationId) openReservationDetails(reservationRow.dataset.reservationId); return; }
     if (action === 'queue-reservation') { event.preventDefault(); event.stopImmediatePropagation(); var id = target.closest('[data-queue-id], tr')?.dataset.queueId || target.closest('tr')?.dataset.reservationId; var reservation = state.queue.filter(function (row) { return String(row.id) === String(id); })[0] || state.reservations.filter(function (row) { return String(row.id) === String(id); })[0]; prepareOtp(reservation, target.dataset.purpose); return; }
     if (action === 'manual-otp') { event.preventDefault(); event.stopImmediatePropagation(); prepareOtp(null, target.dataset.purpose || 'check_in'); return; }
     if (action === 'open-space-update') { event.preventDefault(); event.stopImmediatePropagation(); if (!state.selectedSpace) return ui.toast('Select a live space before updating it.', 'warning'); openSpaceUpdate(); return; }
