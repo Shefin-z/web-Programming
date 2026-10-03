@@ -498,6 +498,21 @@
     color: var(--color-text);
   }
 
+  .pricing-rule__controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .pricing-rule__actions,
+  .category-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
   .pricing-preview .panel-body {
     display: grid;
     gap: var(--space-4);
@@ -920,8 +935,10 @@
       grid-template-columns: auto minmax(0, 1fr);
     }
 
-    .pricing-rule > .switch {
+    .pricing-rule__controls {
       grid-column: 2;
+      justify-content: flex-start;
+      align-items: flex-start;
     }
 
     .pricing-rule__meta {

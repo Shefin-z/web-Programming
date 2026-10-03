@@ -8,7 +8,7 @@
     <title>Admin Dashboard — ParkFlow</title>
     <link rel="stylesheet" href="style.css?v=2">
     <link rel="stylesheet" href="dashboard.css?v=3">
-    <link rel="stylesheet" href="admin.css?v=3">
+    <link rel="stylesheet" href="admin.css?v=5">
   </head>
 
   <body class="dashboard-page admin-portal">
@@ -545,10 +545,27 @@
             <div class="form-field"><label class="form-label" for="pricing-rule-name">Rule name</label><input class="input" id="pricing-rule-name" type="text" placeholder="e.g. Evening peak hours" required></div>
             <div class="form-field"><label class="form-label" for="pricing-rule-location">Parking location</label><select class="select" id="pricing-rule-location"><option>All locations</option><option>Gulshan City Center</option><option>Navana Tower Garage</option><option>Police Plaza Parking</option><option>Lakeview Smart Parking</option></select></div>
             <div class="form-row"><div class="form-field"><label class="form-label" for="pricing-start-time">Starts</label><input class="input" id="pricing-start-time" type="time" value="17:00"></div><div class="form-field"><label class="form-label" for="pricing-end-time">Ends</label><input class="input" id="pricing-end-time" type="time" value="21:00"></div></div>
-            <div class="form-row"><div class="form-field"><label class="form-label" for="pricing-base-rate">Base rate (৳/hr)</label><input class="input" id="pricing-base-rate" type="number" min="0" value="80"></div><div class="form-field"><label class="form-label" for="pricing-multiplier">Demand multiplier</label><select class="select" id="pricing-multiplier"><option>1.10×</option><option selected>1.25×</option><option>1.40×</option><option>1.50×</option></select></div></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="pricing-adjustment-type">Adjustment type</label><select class="select" id="pricing-adjustment-type"><option value="percentage">Percentage change</option><option value="fixed_amount">Fixed BDT per hour</option></select></div><div class="form-field"><label class="form-label" for="pricing-adjustment">Demand adjustment</label><input class="input" id="pricing-adjustment" type="number" min="-90" max="300" step="0.01" value="25" required><small>Use a positive value for an increase or a negative value for a discount.</small></div></div>
             <label class="switch"><input type="checkbox" checked>Activate immediately after saving</label>
           </div>
           <footer class="modal__footer"><a class="btn btn--secondary" href="#pricing">Cancel</a><button class="btn btn--primary" type="submit">Create pricing rule</button></footer>
+        </form>
+      </div>
+    </section>
+
+    <section class="modal" id="edit-pricing-rule" role="dialog" aria-modal="true" aria-labelledby="edit-pricing-rule-title">
+      <div class="modal__dialog">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="edit-pricing-rule-title">Edit pricing rule</h2><p>Change the location, active hours, or rate adjustment.</p></div><a class="modal__close" href="#pricing" aria-label="Close pricing rule editor"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <form id="edit-pricing-rule-form">
+          <input id="edit-pricing-rule-id" type="hidden">
+          <div class="modal__body form">
+            <div class="form-field"><label class="form-label" for="edit-pricing-rule-name">Rule name</label><input class="input" id="edit-pricing-rule-name" type="text" required></div>
+            <div class="form-field"><label class="form-label" for="edit-pricing-rule-location">Parking location</label><select class="select" id="edit-pricing-rule-location"><option value="">All locations</option></select></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="edit-pricing-start-time">Starts</label><input class="input" id="edit-pricing-start-time" type="time" required></div><div class="form-field"><label class="form-label" for="edit-pricing-end-time">Ends</label><input class="input" id="edit-pricing-end-time" type="time" required></div></div>
+            <div class="form-row"><div class="form-field"><label class="form-label" for="edit-pricing-adjustment-type">Adjustment type</label><select class="select" id="edit-pricing-adjustment-type"><option value="percentage">Percentage change</option><option value="fixed_amount">Fixed BDT per hour</option></select></div><div class="form-field"><label class="form-label" for="edit-pricing-adjustment">Demand adjustment</label><input class="input" id="edit-pricing-adjustment" type="number" min="-90" max="300" step="0.01" required></div></div>
+            <label class="check-control"><input id="edit-pricing-active" type="checkbox">Keep this rule active</label>
+          </div>
+          <footer class="modal__footer"><a class="btn btn--secondary" href="#pricing">Cancel</a><button class="btn btn--primary" type="submit">Save rule</button></footer>
         </form>
       </div>
     </section>
@@ -607,6 +624,14 @@
       </div>
     </section>
 
+    <section class="modal" id="admin-delete-confirm" role="dialog" aria-modal="true" aria-labelledby="admin-delete-confirm-title">
+      <div class="modal__dialog modal__dialog--sm">
+        <header class="modal__header"><div class="modal__title-group"><h2 id="admin-delete-confirm-title">Confirm change</h2><p id="admin-delete-confirm-copy">This update takes effect immediately.</p></div><a class="modal__close" href="#overview" aria-label="Close confirmation"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
+        <div class="modal__body"><div class="destructive-confirm"><span><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg></span><p id="admin-delete-confirm-detail">Existing reservations and history will not be changed.</p></div></div>
+        <footer class="modal__footer"><button class="btn btn--secondary" data-action="admin-delete-cancel" type="button">Cancel</button><button class="btn btn--danger" data-action="admin-delete-confirm" type="button">Confirm</button></footer>
+      </div>
+    </section>
+
     <section class="modal" id="admin-reservation-details" role="dialog" aria-modal="true" aria-labelledby="admin-reservation-details-title">
       <div class="modal__dialog reservation-details-dialog">
         <header class="modal__header"><div class="modal__title-group"><h2 id="admin-reservation-details-title">Reservation details</h2><p id="admin-reservation-details-subtitle">Loading live booking details…</p></div><a class="modal__close" href="#overview" aria-label="Close reservation details"><svg fill="none" stroke="currentColor" stroke-width="2"><use href="#i-close"></use></svg></a></header>
@@ -617,6 +642,6 @@
     <script src="app.js?v=5" defer></script>
     <script src="frontend/admin-ui.js?v=4" defer></script>
     <script src="frontend/api.js" defer></script>
-    <script src="frontend/backend-admin.js?v=17" defer></script>
+    <script src="frontend/backend-admin.js?v=21" defer></script>
   </body>
 </html>

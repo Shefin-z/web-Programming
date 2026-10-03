@@ -165,6 +165,12 @@ try {
         $stmt=$pdo->prepare("UPDATE users SET account_status='suspended' WHERE id=? AND role_id=(SELECT id FROM roles WHERE name='manager')"); $stmt->execute([$id]);
         if(!$stmt->rowCount()) fail('Manager not found.',404); audit((int)$admin['id'],'suspend','manager',$id,'Manager access removed.'); json_response(['ok'=>true]);
     }
+    if (preg_match('#^admin/managers/(\d+)/activate$#',$route,$match) && $method === 'POST') {
+        $admin=require_login(['admin']); require_csrf(); $id=(int)$match[1];
+        $stmt=$pdo->prepare("UPDATE users SET account_status='active' WHERE id=? AND role_id=(SELECT id FROM roles WHERE name='manager') AND account_status='suspended'"); $stmt->execute([$id]);
+        if(!$stmt->rowCount()) fail('Only a suspended manager account can be reactivated.',422);
+        audit((int)$admin['id'],'reactivate','manager',$id,'Manager access restored.'); json_response(['ok'=>true,'status'=>'active']);
+    }
     if (preg_match('#^admin/managers/(\d+)$#',$route,$match) && $method === 'PUT') {
         $admin=require_login(['admin']); require_csrf(); $id=(int)$match[1]; $data=input();
         $name=value($data,'name',120); $phone=value($data,'phone',30); $locationId=(int)($data['location_id']??0); $start=value($data,'shift_start',8); $end=value($data,'shift_end',8);
@@ -189,15 +195,42 @@ try {
     if ($route === 'admin/locations' && $method === 'POST') {
         $admin=require_login(['admin']); require_csrf(); $data=input(); $name=value($data,'name',150); $address=value($data,'address',255); $area=value($data,'area',100); $rate=(float)($data['rate']??0); $capacity=(int)($data['capacity']??0); $managerId=(int)($data['manager_user_id']??0);
         if($name===''||$address===''||$area===''||$rate<=0||$capacity<1||$capacity>1000) fail('Name, address, a positive rate, and a capacity from 1 to 1000 are required.',422);
-        $pdo->beginTransaction(); try { $stmt=$pdo->prepare('INSERT INTO parking_locations(name,address,area,base_hourly_rate,total_capacity) VALUES(?,?,?,?,?)');$stmt->execute([$name,$address,$area,$rate,$capacity]);$id=(int)$pdo->lastInsertId();$pdo->prepare('INSERT INTO parking_zones(location_id,name,code,floor_label) VALUES(?,?,?,?)')->execute([$id,'Main Zone','M','Ground']);$zoneId=(int)$pdo->lastInsertId();$space=$pdo->prepare('INSERT INTO parking_spaces(zone_id,space_code,space_type,status,sensor_identifier,last_sensor_sync_at) VALUES(?,?,?,\'available\',?,NOW())');for($i=1;$i<=$capacity;$i++){$code='M-'.str_pad((string)$i,3,'0',STR_PAD_LEFT);$space->execute([$zoneId,$code,'standard','AUTO-'.$id.'-'.$code]);} if($managerId){$pdo->prepare('UPDATE manager_location_assignments SET is_primary=0 WHERE manager_user_id=?')->execute([$managerId]);$pdo->prepare('INSERT INTO manager_location_assignments(manager_user_id,location_id,is_primary) VALUES(?,?,1)')->execute([$managerId,$id]);}$pdo->commit();audit((int)$admin['id'],'create','parking_location',$id,$name); } catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;} json_response(['ok'=>true,'id'=>$id],201);
+        $pdo->beginTransaction();
+        try {
+            $stmt=$pdo->prepare('INSERT INTO parking_locations(name,address,area,base_hourly_rate,total_capacity) VALUES(?,?,?,?,0)');
+            $stmt->execute([$name,$address,$area,$rate]);
+            $id=(int)$pdo->lastInsertId();
+            synchronize_location_capacity($pdo,$id,$capacity);
+            if($managerId){
+                $pdo->prepare('UPDATE manager_location_assignments SET is_primary=0 WHERE manager_user_id=?')->execute([$managerId]);
+                $pdo->prepare('INSERT INTO manager_location_assignments(manager_user_id,location_id,is_primary) VALUES(?,?,1)')->execute([$managerId,$id]);
+                ensure_manager_primary_assignment($pdo,$managerId);
+            }
+            $pdo->commit(); audit((int)$admin['id'],'create','parking_location',$id,$name);
+        } catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
+        json_response(['ok'=>true,'id'=>$id],201);
     }
     if (preg_match('#^admin/locations/(\d+)/spaces$#',$route,$match) && $method === 'POST') {
-        $admin=require_login(['admin']);require_csrf();$locationId=(int)$match[1];$data=input();$code=strtoupper(value($data,'space_code',30));$type=strtolower(value($data,'space_type',20)?:'standard');$status=strtolower(value($data,'status',20)?:'available');if($code===''||!in_array($type,['standard','compact','ev','accessible'],true)||!in_array($status,['available','occupied','reserved','maintenance','blocked'],true))fail('Enter a unique space code, valid type, and valid status.',422);$zoneId=first_id('SELECT id FROM parking_zones WHERE location_id=? ORDER BY id LIMIT 1',[$locationId]);if(!$zoneId)fail('Location not found.',404);try{$stmt=$pdo->prepare('INSERT INTO parking_spaces(zone_id,space_code,space_type,status,has_ev_charger,sensor_identifier,last_sensor_sync_at) VALUES(?,?,?,?,?,?,NOW())');$stmt->execute([$zoneId,$code,$type,$status,$type==='ev'?1:0,'MANUAL-'.$locationId.'-'.$code]);}catch(PDOException $e){if($e->getCode()==='23000')fail('That space code already exists in this location.',409);throw $e;}audit((int)$admin['id'],'create','parking_space',(int)$pdo->lastInsertId(),$code);json_response(['ok'=>true,'id'=>(int)$pdo->lastInsertId()],201);
+        $admin=require_login(['admin']);require_csrf();$locationId=(int)$match[1];$data=input();$code=strtoupper(value($data,'space_code',30));$type=strtolower(value($data,'space_type',20)?:'standard');$status=strtolower(value($data,'status',20)?:'available');if($code===''||!in_array($type,['standard','compact','ev','accessible'],true)||!in_array($status,['available','occupied','reserved','maintenance','blocked'],true))fail('Enter a unique space code, valid type, and valid status.',422);$zoneId=first_id('SELECT id FROM parking_zones WHERE location_id=? ORDER BY id LIMIT 1',[$locationId]);if(!$zoneId)fail('Location not found.',404);
+        try{$pdo->beginTransaction();$stmt=$pdo->prepare('INSERT INTO parking_spaces(zone_id,space_code,space_type,status,has_ev_charger,sensor_identifier,last_sensor_sync_at) VALUES(?,?,?,?,?,?,NOW())');$stmt->execute([$zoneId,$code,$type,$status,$type==='ev'?1:0,'MANUAL-'.$locationId.'-'.$code]);$spaceId=(int)$pdo->lastInsertId();$count=$pdo->prepare('SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=?');$count->execute([$locationId]);$pdo->prepare('UPDATE parking_locations SET total_capacity=? WHERE id=?')->execute([(int)$count->fetchColumn(),$locationId]);$pdo->commit();}catch(PDOException $e){if($pdo->inTransaction())$pdo->rollBack();if($e->getCode()==='23000')fail('That space code already exists in this location.',409);throw $e;}catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}audit((int)$admin['id'],'create','parking_space',$spaceId,$code);json_response(['ok'=>true,'id'=>$spaceId],201);
     }
     if (preg_match('#^admin/locations/(\d+)$#',$route,$match) && $method === 'PUT') {
-        $admin=require_login(['admin']);require_csrf();$id=(int)$match[1];$data=input();$name=value($data,'name',150);$address=value($data,'address',255);$area=value($data,'area',100);$rate=(float)($data['rate']??0);$capacity=(int)($data['capacity']??0);$status=value($data,'status',20);$managerId=(int)($data['manager_user_id']??0);
+        $admin=require_login(['admin']);require_csrf();$id=(int)$match[1];$data=input();$name=value($data,'name',150);$address=value($data,'address',255);$area=value($data,'area',100);$rate=(float)($data['rate']??0);$capacity=(int)($data['capacity']??0);$status=value($data,'status',20);$hasManagerAssignment=array_key_exists('manager_user_id',$data);$managerId=(int)($data['manager_user_id']??0);
         if($name===''||$address===''||$area===''||$rate<=0||$capacity<1||!in_array($status,['draft','operational','paused','closed'],true))fail('Complete all location fields with valid values.',422);
-        $pdo->beginTransaction();try{$stmt=$pdo->prepare('UPDATE parking_locations SET name=?,address=?,area=?,base_hourly_rate=?,total_capacity=?,status=? WHERE id=?');$stmt->execute([$name,$address,$area,$rate,$capacity,$status,$id]);if(!$stmt->rowCount()){ $exists=$pdo->prepare('SELECT id FROM parking_locations WHERE id=?');$exists->execute([$id]);if(!$exists->fetch())fail('Location not found.',404);}$pdo->prepare('DELETE FROM manager_location_assignments WHERE location_id=?')->execute([$id]);if($managerId){$pdo->prepare('UPDATE manager_location_assignments SET is_primary=0 WHERE manager_user_id=?')->execute([$managerId]);$pdo->prepare('INSERT INTO manager_location_assignments(manager_user_id,location_id,is_primary) VALUES(?,?,1)')->execute([$managerId,$id]);}$pdo->commit();}catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}audit((int)$admin['id'],'update','parking_location',$id,$name);json_response(['ok'=>true]);
+        $pdo->beginTransaction();
+        try {
+            $previous=$pdo->prepare('SELECT DISTINCT manager_user_id FROM manager_location_assignments WHERE location_id=?');$previous->execute([$id]);$previousManagers=array_map('intval',$previous->fetchAll(PDO::FETCH_COLUMN));
+            $stmt=$pdo->prepare('UPDATE parking_locations SET name=?,address=?,area=?,base_hourly_rate=?,status=? WHERE id=?');$stmt->execute([$name,$address,$area,$rate,$status,$id]);
+            $exists=$pdo->prepare('SELECT id FROM parking_locations WHERE id=?');$exists->execute([$id]);if(!$exists->fetch())fail('Location not found.',404);
+            synchronize_location_capacity($pdo,$id,$capacity);
+            if($hasManagerAssignment){
+                $pdo->prepare('DELETE FROM manager_location_assignments WHERE location_id=?')->execute([$id]);
+                foreach($previousManagers as $previousManagerId) ensure_manager_primary_assignment($pdo,$previousManagerId);
+                if($managerId){$pdo->prepare('UPDATE manager_location_assignments SET is_primary=0 WHERE manager_user_id=?')->execute([$managerId]);$pdo->prepare('INSERT INTO manager_location_assignments(manager_user_id,location_id,is_primary) VALUES(?,?,1)')->execute([$managerId,$id]);ensure_manager_primary_assignment($pdo,$managerId);}
+            }
+            $pdo->commit();
+        }catch(Throwable $e){if($pdo->inTransaction())$pdo->rollBack();throw $e;}
+        audit((int)$admin['id'],'update','parking_location',$id,$name);json_response(['ok'=>true]);
     }
     if ($route === 'admin/pricing-preview' && $method === 'GET') {
         require_login(['admin']);
@@ -211,15 +244,19 @@ try {
         json_response(['ok'=>true,'location'=>['id'=>(int)$location['id'],'name'=>$location['name']],'base_hourly_rate'=>$base,'hourly_rate'=>$rate,'duration_hours'=>$hours,'base_parking'=>$baseParking,'demand_adjustment'=>round($parkingSubtotal-$baseParking,2),'parking_subtotal'=>$parkingSubtotal,'service_fee'=>$fee,'total_amount'=>$total,'applied_rules'=>$applied]);
     }
     if ($route === 'admin/pricing-rules' && $method === 'POST') {
-        $admin=require_login(['admin']); require_csrf(); $data=input(); $name=value($data,'name',120); $start=value($data,'start_time',8); $end=value($data,'end_time',8); $locationId=(int)($data['location_id']??0); $adjust=(float)($data['adjustment_value']??0);
+        $admin=require_login(['admin']); require_csrf(); $data=input(); $name=value($data,'name',120); $start=value($data,'start_time',8); $end=value($data,'end_time',8); $locationId=(int)($data['location_id']??0); $type=value($data,'adjustment_type',20) ?: 'percentage'; $adjust=(float)($data['adjustment_value']??0);
+        if(!in_array($type,['percentage','fixed_amount'],true))fail('Choose a valid pricing adjustment type.',422);
         if($name===''||$start===''||$end===''||$adjust===0.0)fail('Pricing rule name, times, and adjustment are required.',422);
-        $stmt=$pdo->prepare("INSERT INTO dynamic_pricing_rules(location_id,name,start_time,end_time,adjustment_type,adjustment_value,is_active,created_by_user_id) VALUES(?,?,?,?, 'percentage',?,?,?)");$stmt->execute([$locationId?:null,$name,$start,$end,$adjust,!empty($data['is_active'])?1:0,(int)$admin['id']]);$id=(int)$pdo->lastInsertId();audit((int)$admin['id'],'create','pricing_rule',$id,$name);json_response(['ok'=>true,'id'=>$id],201);
+        $stmt=$pdo->prepare("INSERT INTO dynamic_pricing_rules(location_id,name,start_time,end_time,adjustment_type,adjustment_value,is_active,created_by_user_id) VALUES(?,?,?,?,?,?,?,?)");$stmt->execute([$locationId?:null,$name,$start,$end,$type,$adjust,!empty($data['is_active'])?1:0,(int)$admin['id']]);$id=(int)$pdo->lastInsertId();audit((int)$admin['id'],'create','pricing_rule',$id,$name);json_response(['ok'=>true,'id'=>$id],201);
     }
     if ($route === 'admin/pricing-rules' && $method === 'GET') {
         require_login(['admin']);$sql="SELECT p.*,l.name AS location_name FROM dynamic_pricing_rules p LEFT JOIN parking_locations l ON l.id=p.location_id ORDER BY p.created_at DESC,p.id DESC";json_response(['ok'=>true,'rules'=>$pdo->query($sql)->fetchAll()]);
     }
     if (preg_match('#^admin/pricing-rules/(\d+)$#',$route,$match) && $method === 'PUT') {
-        $admin=require_login(['admin']);require_csrf();$id=(int)$match[1];$data=input();$name=value($data,'name',120);$start=value($data,'start_time',8);$end=value($data,'end_time',8);$locationId=(int)($data['location_id']??0);$adjust=(float)($data['adjustment_value']??0);if($name===''||$start===''||$end===''||$adjust===0.0)fail('Pricing rule name, times, and adjustment are required.',422);$stmt=$pdo->prepare("UPDATE dynamic_pricing_rules SET location_id=?,name=?,start_time=?,end_time=?,adjustment_value=?,is_active=? WHERE id=?");$stmt->execute([$locationId?:null,$name,$start,$end,$adjust,!empty($data['is_active'])?1:0,$id]);if(!$stmt->rowCount()){ $check=$pdo->prepare('SELECT id FROM dynamic_pricing_rules WHERE id=?');$check->execute([$id]);if(!$check->fetch())fail('Pricing rule not found.',404); }audit((int)$admin['id'],'update','pricing_rule',$id,$name);json_response(['ok'=>true]);
+        $admin=require_login(['admin']);require_csrf();$id=(int)$match[1];$data=input();$name=value($data,'name',120);$start=value($data,'start_time',8);$end=value($data,'end_time',8);$locationId=(int)($data['location_id']??0);$type=value($data,'adjustment_type',20) ?: 'percentage';$adjust=(float)($data['adjustment_value']??0);if(!in_array($type,['percentage','fixed_amount'],true))fail('Choose a valid pricing adjustment type.',422);if($name===''||$start===''||$end===''||$adjust===0.0)fail('Pricing rule name, times, and adjustment are required.',422);$stmt=$pdo->prepare("UPDATE dynamic_pricing_rules SET location_id=?,name=?,start_time=?,end_time=?,adjustment_type=?,adjustment_value=?,is_active=? WHERE id=?");$stmt->execute([$locationId?:null,$name,$start,$end,$type,$adjust,!empty($data['is_active'])?1:0,$id]);if(!$stmt->rowCount()){ $check=$pdo->prepare('SELECT id FROM dynamic_pricing_rules WHERE id=?');$check->execute([$id]);if(!$check->fetch())fail('Pricing rule not found.',404); }audit((int)$admin['id'],'update','pricing_rule',$id,$name);json_response(['ok'=>true]);
+    }
+    if (preg_match('#^admin/pricing-rules/(\d+)$#',$route,$match) && $method === 'DELETE') {
+        $admin=require_login(['admin']);require_csrf();$id=(int)$match[1];$rule=$pdo->prepare('SELECT name FROM dynamic_pricing_rules WHERE id=?');$rule->execute([$id]);$name=$rule->fetchColumn();if($name===false)fail('Pricing rule not found.',404);$pdo->prepare('DELETE FROM dynamic_pricing_rules WHERE id=?')->execute([$id]);audit((int)$admin['id'],'delete','pricing_rule',$id,(string)$name);json_response(['ok'=>true]);
     }
     if ($route === 'admin/violation-categories' && $method === 'POST') {
         $admin=require_login(['admin']);require_csrf();$data=input();$name=value($data,'name',120);$description=value($data,'description',500);$severity=strtolower(value($data,'severity',20));$penalty=(float)($data['penalty']??0);if(!in_array($severity,['low','medium','high','critical'],true))$severity='medium';if($name===''||$description==='')fail('Category name and description are required.',422);$stmt=$pdo->prepare('INSERT INTO violation_categories(name,description,default_severity,default_penalty) VALUES(?,?,?,?)');$stmt->execute([$name,$description,$severity,$penalty]);$id=(int)$pdo->lastInsertId();audit((int)$admin['id'],'create','violation_category',$id,$name);json_response(['ok'=>true,'id'=>$id],201);
@@ -229,6 +266,9 @@ try {
     }
     if (preg_match('#^admin/violation-categories/(\d+)$#',$route,$match) && $method === 'PUT') {
         $admin=require_login(['admin']);require_csrf();$id=(int)$match[1];$data=input();$name=value($data,'name',120);$description=value($data,'description',500);$severity=strtolower(value($data,'severity',20));$penalty=(float)($data['penalty']??0);if(!in_array($severity,['low','medium','high','critical'],true)||$name===''||$description==='')fail('Category name, description, and valid severity are required.',422);$stmt=$pdo->prepare('UPDATE violation_categories SET name=?,description=?,default_severity=?,default_penalty=? WHERE id=?');$stmt->execute([$name,$description,$severity,$penalty,$id]);if(!$stmt->rowCount()){ $check=$pdo->prepare('SELECT id FROM violation_categories WHERE id=?');$check->execute([$id]);if(!$check->fetch())fail('Violation category not found.',404); }audit((int)$admin['id'],'update','violation_category',$id,$name);json_response(['ok'=>true]);
+    }
+    if (preg_match('#^admin/violation-categories/(\d+)$#',$route,$match) && $method === 'DELETE') {
+        $admin=require_login(['admin']);require_csrf();$id=(int)$match[1];$category=$pdo->prepare('SELECT name FROM violation_categories WHERE id=? AND is_active=1');$category->execute([$id]);$name=$category->fetchColumn();if($name===false)fail('Active violation category not found.',404);$active=(int)$pdo->query('SELECT COUNT(*) FROM violation_categories WHERE is_active=1')->fetchColumn();if($active<=1)fail('At least one active violation category is required.',422);$pdo->prepare('UPDATE violation_categories SET is_active=0 WHERE id=?')->execute([$id]);audit((int)$admin['id'],'deactivate','violation_category',$id,(string)$name);json_response(['ok'=>true]);
     }
 
     if ($route === 'admin/forwarded-driver-reports' && $method === 'GET') {
@@ -242,7 +282,7 @@ try {
 
     /* Manager operations */
     if ($route === 'manager/profile' && $method === 'GET') {
-        $manager=require_login(['manager']);$stmt=$pdo->prepare("SELECT u.full_name,u.email,u.phone,mp.employee_code,mp.shift_name,a.shift_start,a.shift_end,l.name AS location_name FROM users u LEFT JOIN manager_profiles mp ON mp.user_id=u.id LEFT JOIN manager_location_assignments a ON a.manager_user_id=u.id AND a.is_primary=1 LEFT JOIN parking_locations l ON l.id=a.location_id WHERE u.id=? ORDER BY a.id ASC LIMIT 1");$stmt->execute([(int)$manager['id']]);json_response(['ok'=>true,'profile'=>$stmt->fetch()]);
+        $manager=require_login(['manager']);$stmt=$pdo->prepare("SELECT u.full_name,u.email,u.phone,mp.employee_code,mp.shift_name,a.shift_start,a.shift_end,l.name AS location_name FROM users u LEFT JOIN manager_profiles mp ON mp.user_id=u.id LEFT JOIN manager_location_assignments a ON a.manager_user_id=u.id LEFT JOIN parking_locations l ON l.id=a.location_id WHERE u.id=? ORDER BY a.is_primary DESC,a.id ASC LIMIT 1");$stmt->execute([(int)$manager['id']]);json_response(['ok'=>true,'profile'=>$stmt->fetch()]);
     }
     if ($route === 'manager/profile' && $method === 'PUT') {
         $manager=require_login(['manager']);require_csrf();$data=input();$name=value($data,'full_name',120);$phone=value($data,'phone',30);if($name==='')fail('Your full name is required.',422);$pdo->prepare('UPDATE users SET full_name=?,phone=? WHERE id=?')->execute([$name,$phone?:null,(int)$manager['id']]);audit((int)$manager['id'],'update','manager_profile',(int)$manager['id'],$name);json_response(['ok'=>true]);

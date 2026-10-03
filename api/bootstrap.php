@@ -152,6 +152,64 @@ function dynamic_hourly_rate(PDO $pdo, int $locationId, string $startsAt, float 
     return max(0, round($rate, 2));
 }
 
+function synchronize_location_capacity(PDO $pdo, int $locationId, int $targetCapacity): int {
+    if ($targetCapacity < 1 || $targetCapacity > 1000) {
+        fail('Parking capacity must be between 1 and 1000 spaces.', 422);
+    }
+
+    $location = $pdo->prepare('SELECT id FROM parking_locations WHERE id=? FOR UPDATE');
+    $location->execute([$locationId]);
+    if (!$location->fetch()) fail('Parking location not found.', 404);
+
+    $count = $pdo->prepare('SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=?');
+    $count->execute([$locationId]);
+    $actual = (int)$count->fetchColumn();
+
+    if ($actual < $targetCapacity) {
+        $zone = $pdo->prepare('SELECT id,code FROM parking_zones WHERE location_id=? ORDER BY id ASC LIMIT 1');
+        $zone->execute([$locationId]);
+        $zoneRow = $zone->fetch();
+        if (!$zoneRow) {
+            $pdo->prepare("INSERT INTO parking_zones(location_id,name,code,floor_label) VALUES(?,?,?,?)")->execute([$locationId, 'Main Zone', 'M', 'Ground']);
+            $zoneRow = ['id' => (int)$pdo->lastInsertId(), 'code' => 'M'];
+        }
+
+        $existing = $pdo->prepare('SELECT space_code FROM parking_spaces WHERE zone_id=?');
+        $existing->execute([(int)$zoneRow['id']]);
+        $codes = array_flip($existing->fetchAll(PDO::FETCH_COLUMN));
+        $insert = $pdo->prepare("INSERT INTO parking_spaces(zone_id,space_code,space_type,status,sensor_identifier,last_sensor_sync_at) VALUES(?,?, 'standard','available',?,NOW())");
+        $number = 1;
+        while ($actual < $targetCapacity) {
+            $code = strtoupper((string)$zoneRow['code']) . '-AUTO-' . str_pad((string)$number, 3, '0', STR_PAD_LEFT);
+            $number++;
+            if (isset($codes[$code])) continue;
+            $insert->execute([(int)$zoneRow['id'], $code, 'AUTO-' . $locationId . '-' . $code]);
+            $codes[$code] = true;
+            $actual++;
+        }
+    } elseif ($actual > $targetCapacity) {
+        $needed = $actual - $targetCapacity;
+        $removable = $pdo->prepare("SELECT ps.id FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='available' AND NOT EXISTS (SELECT 1 FROM reservations r WHERE r.space_id=ps.id) AND NOT EXISTS (SELECT 1 FROM parking_space_status_history h WHERE h.space_id=ps.id) ORDER BY ps.id DESC LIMIT $needed");
+        $removable->execute([$locationId]);
+        $ids = array_map('intval', $removable->fetchAll(PDO::FETCH_COLUMN));
+        if (count($ids) !== $needed) fail('Capacity cannot be reduced because enough unused available spaces do not exist. Move or close active space records first.', 422);
+        $pdo->exec('DELETE FROM parking_spaces WHERE id IN (' . implode(',', $ids) . ')');
+        $actual = $targetCapacity;
+    }
+
+    $pdo->prepare('UPDATE parking_locations SET total_capacity=? WHERE id=?')->execute([$actual, $locationId]);
+    return $actual;
+}
+
+function ensure_manager_primary_assignment(PDO $pdo, int $managerUserId): void {
+    $assignments = $pdo->prepare('SELECT id FROM manager_location_assignments WHERE manager_user_id=? ORDER BY is_primary DESC,id ASC');
+    $assignments->execute([$managerUserId]);
+    $ids = array_map('intval', $assignments->fetchAll(PDO::FETCH_COLUMN));
+    if (!$ids) return;
+    $pdo->prepare('UPDATE manager_location_assignments SET is_primary=0 WHERE manager_user_id=?')->execute([$managerUserId]);
+    $pdo->prepare('UPDATE manager_location_assignments SET is_primary=1 WHERE id=?')->execute([$ids[0]]);
+}
+
 function status_label(string $status): string {
     return ucwords(str_replace('_', ' ', $status));
 }
