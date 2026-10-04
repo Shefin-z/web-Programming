@@ -1244,9 +1244,11 @@ try {
             fail("No parking location is assigned to this manager.", 422);
         }
         $stmt = $pdo->prepare(
-            "SELECT (SELECT COUNT(*) FROM reservations WHERE location_id=? AND DATE(starts_at)=CURDATE()) reservations_today, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='occupied') occupied, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='available') free_spaces, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=?) spaces, (SELECT COUNT(*) FROM reservations WHERE location_id=? AND status IN ('confirmed','waiting_check_in','active')) awaiting_verification, (SELECT COUNT(*) FROM violations v JOIN parking_spaces ps ON ps.id=v.space_id JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND v.status IN ('open','under_review')) open_violations",
+            "SELECT (SELECT COUNT(*) FROM reservations WHERE location_id=? AND DATE(starts_at)=CURDATE() AND status NOT IN ('cancelled','expired','pending_payment')) reservations_today, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='occupied') occupied, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND ps.status='available') free_spaces, (SELECT COUNT(*) FROM parking_spaces ps JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=?) spaces, (SELECT COUNT(*) FROM reservations WHERE location_id=? AND status IN ('confirmed','waiting_check_in','active')) awaiting_verification, (SELECT COUNT(*) FROM violations v JOIN parking_spaces ps ON ps.id=v.space_id JOIN parking_zones z ON z.id=ps.zone_id WHERE z.location_id=? AND v.status IN ('open','under_review')) open_violations, (SELECT COUNT(*) FROM reservations WHERE location_id=? AND status IN ('confirmed','waiting_check_in')) awaiting_check_in, (SELECT COUNT(*) FROM reservations WHERE location_id=? AND status='active') awaiting_check_out",
         );
         $stmt->execute([
+            $locationId,
+            $locationId,
             $locationId,
             $locationId,
             $locationId,
@@ -1261,7 +1263,73 @@ try {
         $location->execute([$locationId]);
         $data["location"] = $location->fetch();
         $data["location_id"] = $locationId;
-        json_response(["ok" => true, "metrics" => $data]);
+        $capacity = (int) ($data["spaces"] ?? 0);
+        $occupancyCount = $pdo->prepare(
+            "SELECT COUNT(*) FROM reservations WHERE location_id=? AND status NOT IN ('cancelled','expired','pending_payment') AND starts_at < ? AND ends_at > ?",
+        );
+        $todayStart = new DateTimeImmutable("today");
+        $todayOccupancy = [];
+        for ($hour = 6; $hour <= 20; $hour += 2) {
+            $from = $todayStart->setTime($hour, 0);
+            $to = $from->modify("+2 hours");
+            $occupancyCount->execute([
+                $locationId,
+                $to->format("Y-m-d H:i:s"),
+                $from->format("Y-m-d H:i:s"),
+            ]);
+            $occupiedAtWindow = (int) $occupancyCount->fetchColumn();
+            $todayOccupancy[] = [
+                "label" => $from->format("g A"),
+                "value" => $capacity
+                    ? min(100, (int) round(($occupiedAtWindow * 100) / $capacity))
+                    : 0,
+            ];
+        }
+        $weekStart = (new DateTimeImmutable("monday this week"))->setTime(0, 0);
+        $weekOccupancy = [];
+        for ($day = 0; $day < 7; $day++) {
+            $from = $weekStart->modify("+$day days");
+            $to = $from->modify("+1 day");
+            $occupancyCount->execute([
+                $locationId,
+                $to->format("Y-m-d H:i:s"),
+                $from->format("Y-m-d H:i:s"),
+            ]);
+            $occupiedOnDay = (int) $occupancyCount->fetchColumn();
+            $weekOccupancy[] = [
+                "label" => $from->format("D"),
+                "value" => $capacity
+                    ? min(100, (int) round(($occupiedOnDay * 100) / $capacity))
+                    : 0,
+            ];
+        }
+        $stay = $pdo->prepare(
+            "SELECT COALESCE(AVG(CASE WHEN actual_check_in_at IS NOT NULL THEN TIMESTAMPDIFF(MINUTE,actual_check_in_at,COALESCE(actual_check_out_at,NOW())) ELSE TIMESTAMPDIFF(MINUTE,starts_at,ends_at) END),0) FROM reservations WHERE location_id=? AND DATE(starts_at)=CURDATE() AND status NOT IN ('cancelled','expired','pending_payment')",
+        );
+        $stay->execute([$locationId]);
+        $currentPercent = $capacity
+            ? (int) round(((int) ($data["occupied"] ?? 0) * 100) / $capacity)
+            : 0;
+        $peakPercent = max(
+            $currentPercent,
+            ...array_column($todayOccupancy, "value"),
+        );
+        $activityStmt = $pdo->prepare(
+            "SELECT h.status,h.created_at,v.registration_number,ps.space_code FROM reservation_status_history h JOIN reservations r ON r.id=h.reservation_id JOIN vehicles v ON v.id=r.vehicle_id LEFT JOIN parking_spaces ps ON ps.id=r.space_id WHERE r.location_id=? AND h.status IN ('active','completed') ORDER BY h.created_at DESC,h.id DESC LIMIT 8",
+        );
+        $activityStmt->execute([$locationId]);
+        json_response([
+            "ok" => true,
+            "metrics" => $data,
+            "occupancy" => [
+                "current_percent" => min(100, $currentPercent),
+                "peak_percent" => min(100, $peakPercent),
+                "average_stay_minutes" => (int) round((float) $stay->fetchColumn()),
+                "today" => $todayOccupancy,
+                "week" => $weekOccupancy,
+            ],
+            "activity" => $activityStmt->fetchAll(),
+        ]);
     }
     if ($route === "manager/reservations" && $method === "GET") {
         $manager = require_login(["manager"]);

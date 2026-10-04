@@ -23,6 +23,7 @@
     selectedViolation: null,
     selectedIssue: null,
     recipient: null,
+    occupancyMode: "today",
   };
   var esc = function (value) {
     var node = document.createElement("span");
@@ -113,6 +114,16 @@
   var dateTime = function (value) {
     var d = new Date(String(value || "").replace(" ", "T"));
     return isNaN(d) ? "—" : d.toLocaleString();
+  };
+  var relativeTime = function (value) {
+    var timestamp = new Date(String(value || "").replace(" ", "T")).getTime();
+    if (!timestamp) return "—";
+    var minutes = Math.max(0, Math.round((Date.now() - timestamp) / 60000));
+    return minutes < 1
+      ? "Now"
+      : minutes < 60
+        ? minutes + "m"
+        : Math.round(minutes / 60) + "h";
   };
   function detailItem(label, value, note, wide) {
     return (
@@ -238,6 +249,7 @@
 
   function renderDashboard(data) {
     state.metrics = data.metrics || {};
+    state.dashboard = data;
     var metrics = state.metrics;
     document.querySelectorAll("#overview .kpi-card").forEach(function (card) {
       var label = card.querySelector(".kpi-card__value span"),
@@ -253,9 +265,40 @@
       else if (key.indexOf("violation") >= 0)
         output.textContent = metrics.open_violations || 0;
     });
+    var cards = document.querySelectorAll("#overview .kpi-card"),
+      verificationCard = cards[2],
+      violationCard = cards[3];
+    if (verificationCard) {
+      var verificationBadge = verificationCard.querySelector(".badge"),
+        verificationTrend = verificationCard.querySelector(".kpi-card__trend");
+      if (verificationBadge)
+        verificationBadge.textContent = Number(metrics.awaiting_verification || 0)
+          ? "Action needed"
+          : "All clear";
+      if (verificationTrend)
+        verificationTrend.textContent =
+          Number(metrics.awaiting_check_in || 0) +
+          " check-in · " +
+          Number(metrics.awaiting_check_out || 0) +
+          " out";
+    }
+    if (violationCard) {
+      var violationBadge = violationCard.querySelector(".badge"),
+        violationTrend = violationCard.querySelector(".kpi-card__trend");
+      if (violationBadge)
+        violationBadge.textContent =
+          Number(metrics.open_violations || 0) + " open";
+      if (violationTrend)
+        violationTrend.textContent = "Live count";
+    }
     var title = document.getElementById("manager-overview-title");
     if (title)
       title.textContent = metrics.location
+        ? metrics.location.name
+        : "Assigned location";
+    var contextTitle = document.querySelector(".topbar-context strong");
+    if (contextTitle)
+      contextTitle.textContent = metrics.location
         ? metrics.location.name
         : "Assigned location";
     var summary = document.querySelector("#overview .page-header__copy p");
@@ -271,13 +314,117 @@
       spaces = Number(metrics.spaces || 0),
       percent = spaces ? Math.round((occupied * 100) / spaces) : 0;
     if (stats.length >= 3) {
-      stats[0].textContent = percent + "%";
-      stats[1].textContent = percent + "%";
-      stats[2].textContent = "Live";
+      stats[0].textContent =
+        Number((data.occupancy || {}).current_percent || percent) + "%";
+      stats[1].textContent =
+        Number((data.occupancy || {}).peak_percent || percent) + "%";
+      var averageMinutes = Number((data.occupancy || {}).average_stay_minutes || 0);
+      stats[2].textContent = averageMinutes
+        ? Math.floor(averageMinutes / 60) + "h " + (averageMinutes % 60) + "m"
+        : "—";
     }
+    renderOccupancy(data.occupancy || {});
+    renderActivity(data.activity || []);
+    updateLiveClock();
+  }
+  function updateLiveClock() {
+    var clock = document.querySelector(".manager-live-clock strong");
+    if (clock)
+      clock.textContent = new Date().toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+      });
+  }
+  function updateNavCount(route, value) {
+    var links = document.querySelectorAll(
+      '.manager-portal .sidebar-nav__link[href="#' + route + '"]',
+    );
+    links.forEach(function (link) {
+      var count = link.querySelector(".sidebar-nav__count");
+      if (count) {
+        count.textContent = Number(value || 0);
+        count.hidden = !Number(value || 0);
+      }
+    });
+  }
+  function renderOccupancy(data) {
+    var chart = document.querySelector(".occupancy-timeline .bar-chart"),
+      rows = data[state.occupancyMode] || [];
+    var stats = document.querySelectorAll(".manager-chart-stats strong"),
+      peak = rows.reduce(function (highest, row) {
+        return Math.max(highest, Number(row.value || 0));
+      }, 0),
+      averageMinutes = Number(data.average_stay_minutes || 0);
+    if (stats.length >= 3) {
+      stats[0].textContent = Number(data.current_percent || 0) + "%";
+      stats[1].textContent =
+        Number(state.occupancyMode === "week" ? peak : data.peak_percent || peak) +
+        "%";
+      stats[2].textContent = averageMinutes
+        ? Math.floor(averageMinutes / 60) + "h " + (averageMinutes % 60) + "m"
+        : "—";
+    }
+    if (!chart) return;
+    chart.innerHTML = rows.length
+      ? rows
+          .map(function (row) {
+            var value = Math.max(0, Math.min(100, Number(row.value || 0)));
+            return (
+              '<div class="bar-chart__item"><div class="bar-chart__track"><span class="bar-chart__bar" style="--bar-value:' +
+              value +
+              '%" title="' +
+              esc(value + "% occupied") +
+              '"></span></div><span>' +
+              esc(row.label) +
+              "</span></div>"
+            );
+          })
+          .join("")
+      : '<p class="text-muted">No occupancy data available yet.</p>';
+  }
+  function renderActivity(rows) {
+    var list = document.querySelector(".activity-list");
+    if (!list) return;
+    list.innerHTML = rows.length
+      ? rows
+          .map(function (row) {
+            var checkedOut = row.status === "completed";
+            return (
+              '<li class="activity-item"><span class="activity-item__icon ' +
+              (checkedOut ? "" : "activity-item__icon--success") +
+              '"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#m-car"></use></svg></span><span class="activity-item__body"><p><strong>' +
+              esc(row.registration_number || "Unknown vehicle") +
+              "</strong> " +
+              (checkedOut ? "checked out" : "checked in") +
+              '</p><small>Space ' +
+              esc(row.space_code || "—") +
+              "</small></span><time>" +
+              esc(relativeTime(row.created_at)) +
+              "</time></li>"
+            );
+          })
+          .join("")
+      : '<li class="activity-item"><span class="activity-item__body"><p>No gate activity recorded yet.</p></span></li>';
   }
   function renderReservations(rows) {
     state.reservations = rows;
+    updateNavCount("reservations", rows.length);
+    var reservationTabs = document.querySelectorAll(
+      "#reservations .segmented-control button",
+    );
+    if (reservationTabs.length >= 3) {
+      reservationTabs[0].textContent = "All " + rows.length;
+      reservationTabs[1].textContent =
+        "Upcoming " +
+        rows.filter(function (row) {
+          return /^(confirmed|pending)$/.test(row.status);
+        }).length;
+      reservationTabs[2].textContent =
+        "Active " +
+        rows.filter(function (row) {
+          return /^(active|waiting_check_in)$/.test(row.status);
+        }).length;
+    }
     rows = rows.filter(function (row) {
       var matchesFilter =
         state.reservationFilter === "all" ||
@@ -307,7 +454,7 @@
       rows
         .map(function (row) {
           var action =
-            row.status === "waiting_check_in"
+            /^(confirmed|waiting_check_in)$/.test(row.status)
               ? '<a class="btn btn--primary btn--sm" data-action="queue-reservation" data-purpose="check_in" href="#otp-checkin">Check in</a>'
               : row.status === "active"
                 ? '<a class="btn btn--secondary btn--sm" data-action="queue-reservation" data-purpose="check_out" href="#otp-checkout">Check out</a>'
@@ -370,6 +517,20 @@
       (zones[row.zone_code] || (zones[row.zone_code] = [])).push(row);
     });
     var codes = Object.keys(zones);
+    var context = document.querySelector(".topbar-context");
+    if (context) {
+      var contextSmall = context.querySelector("small");
+      if (contextSmall)
+        contextSmall.textContent = codes.length
+          ? codes
+              .map(function (code) {
+                return code === "EV" ? "EV Deck" : "Zone " + code;
+              })
+              .join(", ")
+          : "No zones assigned";
+    }
+    var sync = document.querySelector(".sensor-sync");
+    if (sync) sync.innerHTML = '<span class="live-dot"></span>Synced just now';
     var tabs = document.querySelector(".parking-zone-tabs");
     if (tabs) {
       tabs.innerHTML = codes
@@ -442,6 +603,7 @@
   }
   function renderQueue(rows) {
     state.queue = rows;
+    updateNavCount("verification", rows.length);
     var grid = document.querySelector(".verification-grid");
     if (!grid) return;
     grid.innerHTML =
@@ -482,6 +644,18 @@
   }
   function renderViolations(rows) {
     state.violations = rows;
+    var openCount = rows.filter(function (row) {
+        return !/resolved|dismissed/.test(row.status);
+      }).length,
+      resolvedCount = rows.length - openCount;
+    updateNavCount("violations", openCount);
+    var violationTabs = document.querySelectorAll(
+      "#violations .segmented-control button",
+    );
+    if (violationTabs.length >= 2) {
+      violationTabs[0].textContent = "Open " + openCount;
+      violationTabs[1].textContent = "Resolved " + resolvedCount;
+    }
     rows = rows.filter(function (row) {
       return (
         state.violationFilter === "all" ||
@@ -659,6 +833,12 @@
   }
   function renderConversations(rows) {
     state.conversations = rows;
+    updateNavCount(
+      "messages",
+      rows.reduce(function (total, row) {
+        return total + Number(row.unread || 0);
+      }, 0),
+    );
     var list = document.querySelector(".conversation-list");
     if (!list) return;
     list.innerHTML =
@@ -804,6 +984,8 @@
   window.setInterval(function () {
     if (document.visibilityState !== "hidden") syncSpaces(false);
   }, 15000);
+  updateLiveClock();
+  window.setInterval(updateLiveClock, 60000);
 
   document.addEventListener(
     "click",
@@ -1329,6 +1511,22 @@
   document.addEventListener(
     "click",
     function (event) {
+      var occupancyTab = event.target.closest(
+        ".occupancy-timeline .segmented-control button",
+      );
+      if (occupancyTab) {
+        event.preventDefault();
+        state.occupancyMode = /^week/i.test(occupancyTab.textContent)
+          ? "week"
+          : "today";
+        occupancyTab.parentElement
+          .querySelectorAll("button")
+          .forEach(function (button) {
+            button.classList.toggle("is-active", button === occupancyTab);
+          });
+        renderOccupancy((state.dashboard || {}).occupancy || {});
+        return;
+      }
       var reservationTab = event.target.closest(
         "#reservations .segmented-control button",
       );
