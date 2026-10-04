@@ -18,6 +18,9 @@
     quoteRequest: 0,
     historyPage: 1,
   };
+  // ================================================================
+  // DRIVER FEATURE 00: Shared state, formatting, and navigation helpers
+  // ================================================================
   var esc = function (value) {
     var node = document.createElement("span");
     node.textContent = value == null ? "" : String(value);
@@ -87,6 +90,9 @@
     return isNaN(ms) ? "—" : Math.max(1, Math.round(ms / 3600000)) + "h 00m";
   };
 
+  // ================================================================
+  // DRIVER FEATURE 01: Driver authentication and profile rendering
+  // ================================================================
   function guard() {
     return api.me().then(function (result) {
       if (!result.user || result.user.role !== "driver") {
@@ -117,6 +123,9 @@
       item.textContent = profile.full_name || "";
     });
   }
+  // ================================================================
+  // DRIVER FEATURE 02: Vehicle list, vehicle selection, and vehicle cards
+  // ================================================================
   function renderVehicles(rows) {
     state.vehicles = rows;
     var choices =
@@ -178,6 +187,9 @@
       grid.insertBefore(card, addCard);
     });
   }
+  // ================================================================
+  // DRIVER FEATURE 03: Parking location discovery and selection
+  // ================================================================
   function renderLocations(rows) {
     state.locations = rows;
     var select = locationSelect(),
@@ -268,6 +280,9 @@
       });
     updateReservationSummary();
   }
+  // ================================================================
+  // DRIVER FEATURE 04: Zone and parking-space selection
+  // ================================================================
   function renderSpaces(rows) {
     state.spaces = rows;
     state.selectedSpace = null;
@@ -340,6 +355,9 @@
         renderZones(result.zones);
       });
   }
+  // ================================================================
+  // DRIVER FEATURE 05: Active booking card, OTP display, and cancellation
+  // ================================================================
   function renderActiveBooking(row) {
     document
       .querySelectorAll("[data-active-booking-card]")
@@ -401,6 +419,9 @@
         count.textContent = row ? "1" : "0";
       });
   }
+  // ================================================================
+  // DRIVER FEATURE 06: Reservation history, receipts, and confirmation
+  // ================================================================
   function historyRows() {
     var filter = document.getElementById("history-filter"),
       days = Number((filter && filter.value) || 30),
@@ -548,6 +569,9 @@
         })
         .join("");
   }
+  // ================================================================
+  // DRIVER FEATURE 07: Driver issue reports and support notifications
+  // ================================================================
   function renderIssues(rows) {
     var box = document.querySelector(".issue-tracker");
     if (box)
@@ -624,6 +648,9 @@
         /* A notification failure must not block the portal. */
       });
   }
+  // ================================================================
+  // DRIVER FEATURE 08: Manager conversations and driver messaging
+  // ================================================================
   function setChatHeader(person) {
     var name = document.querySelector(".chat-person__text strong"),
       subtitle = document.querySelector(".chat-person__text small");
@@ -721,6 +748,9 @@
         .join("") || "<li>No conversations yet.</li>";
     if (rows[0]) loadMessages(rows[0]);
   }
+  // ================================================================
+  // DRIVER FEATURE 09: Live availability and price quote calculation
+  // ================================================================
   function loadSpaces() {
     var select = locationSelect(),
       zone = zoneSelect();
@@ -841,6 +871,9 @@
         if (button) button.textContent = "Price unavailable";
       });
   }
+  // ================================================================
+  // DRIVER FEATURE 10: Booking price summary, receipt, and confirmation UI
+  // ================================================================
   function showReceipt(row) {
     state.receipt = row;
     var modal = document.getElementById("receipt-preview");
@@ -896,6 +929,9 @@
     }
     ui.openModal(modal);
   }
+  // ================================================================
+  // DRIVER FEATURE 11: Initial portal data loading and synchronization
+  // ================================================================
   function load() {
     return Promise.all([
       api.request("driver/profile"),

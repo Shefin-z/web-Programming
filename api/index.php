@@ -1734,6 +1734,7 @@ try {
     }
 
     /* Driver account and reservations */
+    /* DRIVER FEATURE 01: Profile and account settings */
     if ($route === "driver/profile" && $method === "GET") {
         $driver = require_login(["driver"]);
         $stmt = $pdo->prepare(
@@ -1792,6 +1793,7 @@ try {
         );
         json_response(["ok" => true]);
     }
+    /* DRIVER FEATURE 02: Vehicle management */
     if ($route === "driver/vehicles" && $method === "GET") {
         $driver = require_login(["driver"]);
         $stmt = $pdo->prepare(
@@ -1915,6 +1917,7 @@ try {
         audit((int) $driver["id"], "update", "vehicle", $id, $plate);
         json_response(["ok" => true]);
     }
+    /* DRIVER FEATURE 03: Locations, zones, and parking spaces */
     if ($route === "driver/locations" && $method === "GET") {
         require_login(["driver"]);
         $stmt = $pdo->query(
@@ -1953,6 +1956,7 @@ try {
         $stmt->execute($params);
         json_response(["ok" => true, "spaces" => $stmt->fetchAll()]);
     }
+    /* DRIVER FEATURE 04: Dynamic parking price quote */
     if ($route === "driver/quote" && $method === "GET") {
         require_login(["driver"]);
         $locationId = (int) ($_GET["location_id"] ?? 0);
@@ -1983,6 +1987,7 @@ try {
         );
         json_response(array_merge(["ok" => true], $quote));
     }
+    /* DRIVER FEATURE 05: Reservation creation and reservation history */
     if ($route === "driver/reservations" && $method === "GET") {
         $driver = require_login(["driver"]);
         $stmt = $pdo->prepare(
@@ -2142,6 +2147,7 @@ try {
             201,
         );
     }
+    /* DRIVER FEATURE 06: Booking cancellation and OTP refresh */
     if (
         preg_match('#^driver/reservations/(\d+)/cancel$#', $route, $match) &&
         $method === "POST"
@@ -2282,6 +2288,7 @@ try {
             "expires_at" => $expires,
         ]);
     }
+    /* DRIVER FEATURE 07: Driver issue reports */
     if ($route === "driver/issues" && $method === "POST") {
         $driver = require_login(["driver"]);
         require_csrf();
@@ -2399,6 +2406,7 @@ try {
         $stmt->execute([(int) $driver["id"]]);
         json_response(["ok" => true, "issues" => $stmt->fetchAll()]);
     }
+    /* DRIVER FEATURE 08: Assigned managers and messaging */
     if ($route === "driver/managers" && $method === "GET") {
         require_login(["driver"]);
         $sql =
