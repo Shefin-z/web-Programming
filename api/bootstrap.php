@@ -7,6 +7,7 @@ const DB_HOST = "127.0.0.1";
 const DB_NAME = "parkflow";
 const DB_USER = "root";
 const DB_PASS = "";
+const PARKFLOW_SERVICE_FEE = 8.0;
 
 ini_set("display_errors", "0");
 header("Content-Type: application/json; charset=utf-8");
@@ -351,6 +352,37 @@ function dynamic_hourly_rate(
                 : $rate * (1 + $adjustment / 100);
     }
     return max(0, round($rate, 2));
+}
+
+function reservation_quote(
+    PDO $pdo,
+    int $locationId,
+    string $startsAt,
+    int $hours,
+    float $baseRate,
+): array {
+    $hourlyRate = dynamic_hourly_rate(
+        $pdo,
+        $locationId,
+        $startsAt,
+        $baseRate,
+    );
+    $parkingSubtotal = round($hourlyRate * $hours, 2);
+    $serviceFee = PARKFLOW_SERVICE_FEE;
+    $discountAmount = 0.0;
+
+    return [
+        "base_hourly_rate" => round($baseRate, 2),
+        "hourly_rate" => $hourlyRate,
+        "duration_hours" => $hours,
+        "parking_subtotal" => $parkingSubtotal,
+        "service_fee" => $serviceFee,
+        "discount_amount" => $discountAmount,
+        "total_amount" => round(
+            $parkingSubtotal + $serviceFee - $discountAmount,
+            2,
+        ),
+    ];
 }
 
 function synchronize_location_capacity(

@@ -917,16 +917,17 @@ try {
         $time = (new DateTimeImmutable($when))->format("H:i:s");
         $day = (int) (new DateTimeImmutable($when))->format("N");
         $base = (float) $location["base_hourly_rate"];
-        $rate = dynamic_hourly_rate($pdo, $locationId, $when, $base);
+        $quote = reservation_quote($pdo, $locationId, $when, $hours, $base);
+        $rate = $quote["hourly_rate"];
         $rules = $pdo->prepare(
             "SELECT name,adjustment_type,adjustment_value FROM dynamic_pricing_rules WHERE is_active=1 AND (location_id=? OR location_id IS NULL) AND (day_of_week IS NULL OR day_of_week=?) AND ((start_time<=end_time AND ? >= start_time AND ? < end_time) OR (start_time>end_time AND (? >= start_time OR ? < end_time))) ORDER BY id ASC",
         );
         $rules->execute([$locationId, $day, $time, $time, $time, $time]);
         $applied = $rules->fetchAll();
-        $fee = 8.0;
         $baseParking = round($base * $hours, 2);
-        $parkingSubtotal = round($rate * $hours, 2);
-        $total = round($parkingSubtotal + $fee, 2);
+        $parkingSubtotal = $quote["parking_subtotal"];
+        $fee = $quote["service_fee"];
+        $total = $quote["total_amount"];
         json_response([
             "ok" => true,
             "location" => [
@@ -1905,20 +1906,14 @@ try {
         if ($base === false) {
             fail("Parking location not found.", 404);
         }
-        $rate = dynamic_hourly_rate(
+        $quote = reservation_quote(
             $pdo,
             $locationId,
             (new DateTimeImmutable($starts))->format("Y-m-d H:i:s"),
+            $hours,
             (float) $base,
         );
-        $fee = 8.0;
-        json_response([
-            "ok" => true,
-            "base_hourly_rate" => (float) $base,
-            "hourly_rate" => $rate,
-            "service_fee" => $fee,
-            "total_amount" => round($rate * $hours + $fee, 2),
-        ]);
+        json_response(array_merge(["ok" => true], $quote));
     }
     if ($route === "driver/reservations" && $method === "GET") {
         $driver = require_login(["driver"]);
@@ -1987,14 +1982,16 @@ try {
                     409,
                 );
             }
-            $rate = dynamic_hourly_rate(
+            $quote = reservation_quote(
                 $pdo,
                 $locationId,
                 $startDate,
+                $hours,
                 (float) $spaceRow["base_hourly_rate"],
             );
-            $fee = 8.0;
-            $total = $rate * $hours + $fee;
+            $rate = $quote["hourly_rate"];
+            $fee = $quote["service_fee"];
+            $total = $quote["total_amount"];
             $code = "PF-" . random_int(10000, 99999);
             $stmt = $pdo->prepare(
                 "INSERT INTO reservations(reservation_code,driver_user_id,vehicle_id,location_id,space_id,starts_at,ends_at,hourly_rate,service_fee,total_amount,status) VALUES(?,?,?,?,?,?,?,?,?,?, 'confirmed')",
@@ -2064,14 +2061,16 @@ try {
             $code,
         );
         json_response(
-            [
-                "ok" => true,
-                "reservation_code" => $code,
-                "reservation_id" => $reservationId,
-                "total_amount" => $total,
-                "check_in_otp" => $otp,
-                "check_out_otp" => $checkoutOtp,
-            ],
+            array_merge(
+                [
+                    "ok" => true,
+                    "reservation_code" => $code,
+                    "reservation_id" => $reservationId,
+                    "check_in_otp" => $otp,
+                    "check_out_otp" => $checkoutOtp,
+                ],
+                $quote,
+            ),
             201,
         );
     }

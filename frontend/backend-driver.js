@@ -14,6 +14,7 @@
     selectedSpace: null,
     recipient: null,
     receipt: null,
+    quote: null,
     quoteRequest: 0,
     historyPage: 1,
   };
@@ -752,10 +753,10 @@
         "T" +
         document.getElementById("reservation-time").value +
         ":00",
-      ends = new Date(new Date(start).getTime() + hours * 3600000),
-      total = Number(selected.base_hourly_rate) * hours + 8;
+      ends = new Date(new Date(start).getTime() + hours * 3600000);
     var summary = document.querySelector(".booking-summary");
     if (!summary) return;
+    state.quote = null;
     summary.querySelector("h3").textContent = selected.name;
     summary.querySelector("header p").textContent = state.selectedSpace
       ? "Selected space " + state.selectedSpace.code
@@ -778,18 +779,27 @@
       parkingLabel.textContent =
         "Parking · " + hours + (hours === 1 ? " hour" : " hours");
     if (costs.length >= 4) {
-      costs[0].textContent = money(Number(selected.base_hourly_rate) * hours);
-      costs[1].textContent = money(8);
+      costs[0].textContent = "Calculating…";
+      costs[1].textContent = "Calculating…";
       costs[2].textContent = "Included";
-      costs[3].textContent = money(total);
+      costs[3].textContent = "Calculating…";
     }
+    document
+      .querySelectorAll(".duration-options label")
+      .forEach(function (label) {
+        var price = label.querySelector("small");
+        if (price) price.textContent = "Calculating…";
+      });
     var timelineDuration = summary.querySelector(
       ".booking-summary__timeline em",
     );
     if (timelineDuration)
       timelineDuration.textContent = hours + (hours === 1 ? " hour" : " hours");
     var button = document.getElementById("create-reservation");
-    if (button) button.textContent = "Reserve for " + money(total);
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Calculating price…";
+    }
     var requestId = ++state.quoteRequest;
     api
       .request(
@@ -802,16 +812,33 @@
       )
       .then(function (quote) {
         if (requestId !== state.quoteRequest) return;
+        state.quote = quote;
         if (costs.length >= 4) {
-          costs[0].textContent = money(Number(quote.hourly_rate) * hours);
+          costs[0].textContent = money(quote.parking_subtotal);
           costs[1].textContent = money(quote.service_fee);
           costs[3].textContent = money(quote.total_amount);
         }
-        if (button)
+        document
+          .querySelectorAll(".duration-options label")
+          .forEach(function (label, index) {
+            var price = label.querySelector("small");
+            if (price)
+              price.textContent = money(Number(quote.hourly_rate) * (index + 1));
+          });
+        if (button) {
+          button.disabled = false;
           button.textContent = "Reserve for " + money(quote.total_amount);
+        }
       })
       .catch(function () {
-        /* Base-rate preview remains available if a quote cannot be refreshed. */
+        if (requestId !== state.quoteRequest) return;
+        state.quote = null;
+        if (costs.length >= 4) {
+          costs[0].textContent = "Unavailable";
+          costs[1].textContent = "Unavailable";
+          costs[3].textContent = "Unavailable";
+        }
+        if (button) button.textContent = "Price unavailable";
       });
   }
   function showReceipt(row) {
@@ -831,7 +858,10 @@
     }
     var costs = modal.querySelectorAll(".receipt-sheet__cost strong");
     if (costs.length >= 3) {
-      costs[0].textContent = money(row.hourly_rate);
+      costs[0].textContent = money(
+        Number(row.hourly_rate) *
+          Math.max(1, Math.round((asDate(row.ends_at) - asDate(row.starts_at)) / 3600000)),
+      );
       costs[1].textContent = money(row.service_fee);
       costs[2].textContent = money(row.total_amount);
     }
@@ -1019,6 +1049,8 @@
           new Date(starts).getTime() < Date.now() - 60000
         )
           return ui.toast("Choose a future arrival date and time.", "warning");
+        if (!state.quote)
+          return ui.toast("Please wait for the final price to load.", "warning");
         var label = reserveButton.textContent;
         reserveButton.disabled = true;
         reserveButton.textContent = "Creating reservation…";
@@ -1048,8 +1080,10 @@
             );
           })
           .then(function () {
-            reserveButton.disabled = false;
-            reserveButton.textContent = label;
+            reserveButton.disabled = !state.quote;
+            reserveButton.textContent = state.quote
+              ? "Reserve for " + money(state.quote.total_amount)
+              : label;
           });
         return;
       }
