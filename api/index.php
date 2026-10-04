@@ -1734,7 +1734,13 @@ try {
     }
 
     /* Driver account and reservations */
-    /* DRIVER FEATURE 01: Profile and account settings */
+    /*
+     * ================================================================
+     * DRIVER FEATURE 01 — PROFILE AND ACCOUNT SETTINGS
+     * GET  driver/profile : reads the signed-in driver's account data.
+     * PUT  driver/profile : validates and updates users + driver_profiles.
+     * ================================================================
+     */
     if ($route === "driver/profile" && $method === "GET") {
         $driver = require_login(["driver"]);
         $stmt = $pdo->prepare(
@@ -1793,7 +1799,14 @@ try {
         );
         json_response(["ok" => true]);
     }
-    /* DRIVER FEATURE 02: Vehicle management */
+    /*
+     * ================================================================
+     * DRIVER FEATURE 02 — VEHICLE MANAGEMENT
+     * GET  driver/vehicles      : lists the driver's vehicles.
+     * POST driver/vehicles      : creates a vehicle and handles primary flag.
+     * PUT  driver/vehicles/{id} : edits an owned vehicle safely.
+     * ================================================================
+     */
     if ($route === "driver/vehicles" && $method === "GET") {
         $driver = require_login(["driver"]);
         $stmt = $pdo->prepare(
@@ -1917,7 +1930,14 @@ try {
         audit((int) $driver["id"], "update", "vehicle", $id, $plate);
         json_response(["ok" => true]);
     }
-    /* DRIVER FEATURE 03: Locations, zones, and parking spaces */
+    /*
+     * ================================================================
+     * DRIVER FEATURE 03 — LOCATION, ZONE, AND SPACE DISCOVERY
+     * GET driver/locations : lists operational locations and free-space counts.
+     * GET driver/zones     : lists zones belonging to the selected location.
+     * GET driver/spaces    : lists only available spaces, optionally by zone.
+     * ================================================================
+     */
     if ($route === "driver/locations" && $method === "GET") {
         require_login(["driver"]);
         $stmt = $pdo->query(
@@ -1956,7 +1976,14 @@ try {
         $stmt->execute($params);
         json_response(["ok" => true, "spaces" => $stmt->fetchAll()]);
     }
-    /* DRIVER FEATURE 04: Dynamic parking price quote */
+    /*
+     * ================================================================
+     * DRIVER FEATURE 04 — DYNAMIC PRICE QUOTE
+     * GET driver/quote : calculates base rate, dynamic rate, parking subtotal,
+     * service fee, discount, and final total before the driver books.
+     * The same reservation_quote() calculation is used during booking.
+     * ================================================================
+     */
     if ($route === "driver/quote" && $method === "GET") {
         require_login(["driver"]);
         $locationId = (int) ($_GET["location_id"] ?? 0);
@@ -1987,7 +2014,14 @@ try {
         );
         json_response(array_merge(["ok" => true], $quote));
     }
-    /* DRIVER FEATURE 05: Reservation creation and reservation history */
+    /*
+     * ================================================================
+     * DRIVER FEATURE 05 — RESERVATION AND PAYMENT FLOW
+     * GET  driver/reservations : returns the driver's booking history.
+     * POST driver/reservations : validates ownership/availability, creates the
+     * reservation, records payment, reserves the space, and creates both OTPs.
+     * ================================================================
+     */
     if ($route === "driver/reservations" && $method === "GET") {
         $driver = require_login(["driver"]);
         $stmt = $pdo->prepare(
@@ -2147,7 +2181,15 @@ try {
             201,
         );
     }
-    /* DRIVER FEATURE 06: Booking cancellation and OTP refresh */
+    /*
+     * ================================================================
+     * DRIVER FEATURE 06 — CANCELLATION AND ACCESS OTP
+     * POST driver/reservations/{id}/cancel : cancels an upcoming owned booking
+     * and releases its space back to available status.
+     * POST .../check-in-otp / .../check-out-otp : issues a fresh OTP only to
+     * the reservation owner for the correct access phase.
+     * ================================================================
+     */
     if (
         preg_match('#^driver/reservations/(\d+)/cancel$#', $route, $match) &&
         $method === "POST"
@@ -2288,7 +2330,14 @@ try {
             "expires_at" => $expires,
         ]);
     }
-    /* DRIVER FEATURE 07: Driver issue reports */
+    /*
+     * ================================================================
+     * DRIVER FEATURE 07 — ISSUE REPORTING
+     * POST driver/issues : validates the report, links it to the driver's
+     * reservation/location, assigns the area manager, and creates a ticket.
+     * GET  driver/issues : returns the driver's submitted issue history.
+     * ================================================================
+     */
     if ($route === "driver/issues" && $method === "POST") {
         $driver = require_login(["driver"]);
         require_csrf();
@@ -2406,7 +2455,14 @@ try {
         $stmt->execute([(int) $driver["id"]]);
         json_response(["ok" => true, "issues" => $stmt->fetchAll()]);
     }
-    /* DRIVER FEATURE 08: Assigned managers and messaging */
+    /*
+     * ================================================================
+     * DRIVER FEATURE 08 — MANAGER DIRECTORY AND MESSAGING
+     * GET  driver/managers       : lists active managers and assigned locations.
+     * GET  driver/conversations  : returns conversation summaries/unread counts.
+     * GET/POST driver/messages   : reads and sends driver-manager messages.
+     * ================================================================
+     */
     if ($route === "driver/managers" && $method === "GET") {
         require_login(["driver"]);
         $sql =

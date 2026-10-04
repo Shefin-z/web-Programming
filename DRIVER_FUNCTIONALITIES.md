@@ -20,7 +20,7 @@
 - Driver session verify করে portal-এ ঢুকতে দেয়।
 - Driver name, email, phone, city, emergency contact এবং preferences load/update হয়।
 - Frontend source: `frontend/backend-driver.js:94-124` — `guard()`, `setProfile()`
-- API source: `api/index.php:1737-1795` — `driver/profile` GET/PUT
+- API source: `api/index.php:1737-1802` — `driver/profile` GET/PUT
 
 ### 02. Vehicle management
 
@@ -28,7 +28,7 @@
 - New vehicle add, vehicle edit এবং primary vehicle select করা যায়।
 - Reservation form-এ vehicle select করা যায়।
 - Frontend source: `frontend/backend-driver.js:127-190` — `renderVehicles()` এবং vehicle action handlers
-- API source: `api/index.php:1796-1919` — `driver/vehicles` GET/POST, `driver/vehicles/{id}` PUT
+- API source: `api/index.php:1802-1934` — `driver/vehicles` GET/POST, `driver/vehicles/{id}` PUT
 
 ### 03. Parking location এবং zone selection
 
@@ -36,7 +36,7 @@
 - Location অনুযায়ী Zone A, Zone B, EV Deck ইত্যাদি load হয়।
 - Zone select করলে শুধু ওই zone-এর available spaces দেখায়।
 - Frontend source: `frontend/backend-driver.js:191-283, 309-357` — `renderLocations()`, `renderZones()`, `loadZones()`
-- API source: `api/index.php:1920-1939` — `driver/locations`, `driver/zones`
+- API source: `api/index.php:1935-1980` — `driver/locations`, `driver/zones`, `driver/spaces`
 
 ### 04. Parking space availability
 
@@ -44,7 +44,7 @@
 - Booked, occupied, blocked space driver select করতে পারে না।
 - Space list live refresh হয়।
 - Frontend source: `frontend/backend-driver.js:284-308, 752-767` — `renderSpaces()`, `loadSpaces()`
-- API source: `api/index.php:1940-1958` — `driver/spaces`
+- API source: `api/index.php:1935-1980` — `driver/spaces`
 
 ### 05. Price quote এবং reservation
 
@@ -52,7 +52,7 @@
 - Parking subtotal, service fee, discount এবং total আলাদা দেখায়।
 - Reservation create হলে payment record, reserved space এবং check-in/check-out OTP তৈরি হয়।
 - Frontend source: `frontend/backend-driver.js:768-873, 1080-1125` — `updateReservationSummary()` এবং reservation submit handler
-- API source: `api/index.php:1959-2149` — `driver/quote`, `driver/reservations` GET/POST
+- API source: `api/index.php:1981-2185` — `driver/quote`, `driver/reservations` GET/POST
 
 ### 06. Active booking, OTP এবং cancellation
 
@@ -61,7 +61,7 @@
 - Upcoming booking cancel করলে reservation cancelled হয় এবং space আবার free হয়।
 - Manager OTP verify করলে driver portal-এ একই status update হয়।
 - Frontend source: `frontend/backend-driver.js:359-421, 1220-1270` — `renderActiveBooking()`, `refresh-otp`, `cancel-booking`
-- API source: `api/index.php:2150-2289` — cancellation এবং check-in/check-out OTP routes
+- API source: `api/index.php:2186-2334` — cancellation এবং check-in/check-out OTP routes
 
 ### 07. Parking history এবং receipt
 
@@ -76,7 +76,7 @@
 - Driver parking issue report করতে পারে।
 - Issue status এবং manager/admin response দেখা যায়।
 - Frontend source: `frontend/backend-driver.js:573-650, 1460-1510` — `renderIssues()` এবং issue submit handler
-- API source: `api/index.php:2291-2408` — `driver/issues` GET/POST
+- API source: `api/index.php:2335-2459` — `driver/issues` GET/POST
 
 ### 09. Manager chat এবং notifications
 
@@ -84,7 +84,7 @@
 - Driver manager-কে message পাঠাতে পারে এবং reply দেখতে পারে।
 - Notifications read/mark-all-read করা যায়।
 - Frontend source: `frontend/backend-driver.js:652-750` — `renderConversations()`, `loadMessages()`
-- API source: `api/index.php:2409-2505` — `driver/managers`, `driver/conversations`, `driver/messages`, `notifications`
+- API source: `api/index.php:2460-2558` — `driver/managers`, `driver/conversations`, `driver/messages`
 
 ## End-to-end booking flow
 
